@@ -10,6 +10,7 @@ using System.Web.Http.ModelBinding;
 using System.Web.Http.ValueProviders;
 using Elders.Cronus.Api.Converters;
 using Elders.Cronus.IocContainer;
+using Elders.Web.Api.Filters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Owin;
@@ -45,7 +46,7 @@ namespace Elders.Cronus.Api
             //settings.Converters.Add(new ErrorConverter(() => HttpContext.Current.GetOwinContext()));
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.Formatting = Formatting.Indented;
-            //settings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
+            settings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
 
             var converters = typeof(StringTenantIdConverter).Assembly.GetTypes()
                 .Where(x => typeof(JsonConverter).IsAssignableFrom(x) && x.IsAbstract == false);
