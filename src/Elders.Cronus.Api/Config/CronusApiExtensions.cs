@@ -119,6 +119,4 @@ namespace Elders.Cronus.Api.Config
         string ICronusApiSettings.EventStoreName { get; set; }
         string ICronusApiSettings.ProjectionName { get; set; }
     }
-
-
 }
