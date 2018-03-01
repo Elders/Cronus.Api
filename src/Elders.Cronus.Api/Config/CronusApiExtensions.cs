@@ -100,7 +100,7 @@ namespace Elders.Cronus.Api.Config
 
             try
             {
-                log.Info(() => $"Starting Cronus API at http://+:{settings.Port}");
+                log.Info(() => $"Starting Cronus API at http://+:{settings.Port}{Environment.NewLine}If you are not able to access it using DNS or public IP make sure that you have firewall rule.{Environment.NewLine} Example: netsh advfirewall firewall add rule name=\"Cronus\" dir=in action=allow localport=9000-9010 protocol=tcp");
                 var server = Microsoft.Owin.Hosting.WebApp.Start($"http://+:{settings.Port}", appBuilder => appBuilder.ConfigurEventStoreApi(controllerActivator));
                 settings.Container.RegisterSingleton(() => server);
             }
