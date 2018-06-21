@@ -1,8 +1,5 @@
 ﻿using System.Web.Http;
-using Elders.Cronus;
 using Elders.Web.Api;
-using System.Web.Http.ModelBinding;
-using static Elders.Cronus.Api.ProjectionExplorer;
 using System;
 using System.Linq;
 using Elders.Cronus.Projections;
@@ -27,8 +24,9 @@ namespace Elders.Cronus.Api.Controllers
             foreach (var meta in projectionMetaData)
             {
                 var id = new ProjectionVersionManagerId(meta.GetContractId());
-                var dto = ProjectionExplorer.Explore(id, typeof(PersistentProjectionVersionHandler));
-                if (ReferenceEquals(null, dto?.State)) continue;
+                var dto = ProjectionExplorer.Explore(id, typeof(ProjectionVersionsHandler));
+                ProjectionVersionsHandlerState state = dto?.State as ProjectionVersionsHandlerState;
+                if (ReferenceEquals(null, state)) continue;
 
                 var metaProjection = new ProjectionMeta()
                 {
@@ -36,29 +34,17 @@ namespace Elders.Cronus.Api.Controllers
                     ProjectionName = meta.Name,
                 };
 
-                dynamic liveVersion = ((dynamic)dto.State).Live;
-                if (ReferenceEquals(null, liveVersion) == false)
-                {
-                    metaProjection.Versions.Add(new ProjectionVersion()
+                metaProjection.Versions = state.AllVersions
+                    .Select(ver => new ProjectionVersion()
                     {
-                        Hash = liveVersion.Hash,
-                        Revision = liveVersion.Revision.ToString(),
-                        Status = liveVersion.Status,
-                    });
-                }
-
-                dynamic buildingVersion = ((dynamic)dto.State).Building;
-                if (ReferenceEquals(null, buildingVersion) == false)
-                {
-                    metaProjection.Versions.Add(new ProjectionVersion()
-                    {
-                        Hash = buildingVersion.Hash,
-                        Revision = buildingVersion.Revision.ToString(),
-                        Status = buildingVersion.Status,
-                    });
-                }
+                        Hash = ver.Hash,
+                        Revision = ver.Revision.ToString(),
+                        Status = ver.Status
+                    })
+                    .ToList();
 
                 result.Projections.Add(metaProjection);
+
             }
 
             return new ResponseResult<ProjectionListDto>(result);
