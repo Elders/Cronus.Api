@@ -52,7 +52,7 @@ namespace Elders.Cronus.Api
 
         public AggregateDto Explore(IAggregateRootId id)
         {
-            EventStream stream = eventStore.Load(id, (aridaa) => boundedContext);
+            EventStream stream = eventStore.Load(id);
             if (stream.Commits.Count() == 0) return new AggregateDto();
 
             var commitsDto = stream.Commits.Select(commit =>
