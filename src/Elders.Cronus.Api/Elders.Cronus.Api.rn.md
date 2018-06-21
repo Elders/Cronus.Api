@@ -1,3 +1,6 @@
+#### 5.0.0-beta0001 - 21.06.2018
+* Projections' list now exposes the entire history of all projection versions
+
 #### 0.1.2 - 01.03.2018
 * Improves the log info start message
 
