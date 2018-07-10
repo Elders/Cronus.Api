@@ -8,6 +8,7 @@ using Elders.Cronus.Api.Converters;
 using Elders.Cronus.Api.Logging;
 using Elders.Cronus.Pipeline.Hosts;
 using Elders.Cronus.Projections;
+using Elders.Cronus.Serializer;
 
 namespace Elders.Cronus.Api.Config
 {
@@ -97,6 +98,8 @@ namespace Elders.Cronus.Api.Config
             settings.Container.RegisterSingleton<IProjectionRepository>(() => projectionFactory());
             settings.Container.RegisterSingleton<IEventStore>(() => eventStoreFactory());
             settings.Container.RegisterSingleton<ProjectionExplorer>(() => new ProjectionExplorer(projectionFactory()));
+            Func<ISerializer> serializer = () => settings.Container.Resolve<ISerializer>();
+            settings.Container.RegisterSingleton<IPublisher<ICommand>>(() => settings.Container.Resolve<ITransport>(settings.EventStoreName).GetPublisher<ICommand>(serializer()));
 
             try
             {

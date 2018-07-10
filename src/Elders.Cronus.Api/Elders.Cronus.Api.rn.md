@@ -1,3 +1,7 @@
+#### 5.0.0-beta0002 - 10.07.2018
+* Force projection rebuilding
+* Projection meta data api
+
 #### 5.0.0-beta0001 - 21.06.2018
 * Projections' list now exposes the entire history of all projection versions
 

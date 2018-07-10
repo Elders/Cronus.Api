@@ -27,7 +27,7 @@ namespace Elders.Cronus.Api
             config.Formatters.Remove(config.Formatters.XmlFormatter);
             config.Formatters.Remove(config.Formatters.FormUrlEncodedFormatter);
             config.ConfigureJsonSerializer();
-            config.EnableCors(new EnableCorsAttribute("*", "*", "GET"));
+            config.EnableCors(new EnableCorsAttribute("*", "*", "GET,POST"));
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",

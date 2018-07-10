@@ -34,7 +34,7 @@
       <HintPath>..\packages\CassandraCSharpDriver.3.6.0\lib\net45\Cassandra.dll</HintPath>
     </Reference>
     <Reference Include="Elders.Cronus, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cronus.5.0.0-beta0020\lib\net461\Elders.Cronus.dll</HintPath>
+      <HintPath>..\packages\Cronus.5.0.0-beta0021\lib\net461\Elders.Cronus.dll</HintPath>
     </Reference>
     <Reference Include="Elders.Cronus.DomainModeling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Cronus.DomainModeling.4.0.7\lib\net461\Elders.Cronus.DomainModeling.dll</HintPath>
@@ -134,6 +134,8 @@
     <Compile Include="Config\CronusApiExtensions.cs" />
     <Compile Include="Controllers\ProjectionListController.cs" />
     <Compile Include="Controllers\ProjectionController.cs" />
+    <Compile Include="Controllers\ProjectionMetaController.cs" />
+    <Compile Include="Controllers\ProjectionRebuildController.cs" />
     <Compile Include="Converters\StringExtensions.cs" />
     <Compile Include="Converters\StringTenantIdConverter.cs" />
     <Compile Include="Models\EventStoreExplorer.cs" />
