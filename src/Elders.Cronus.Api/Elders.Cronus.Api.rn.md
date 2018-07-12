@@ -1,3 +1,7 @@
+#### 5.0.0-beta0003 - 12.07.2018
+* Updates Cronus packages
+* Hide system projections from the list
+
 #### 5.0.0-beta0002 - 10.07.2018
 * Force projection rebuilding
 * Projection meta data api
