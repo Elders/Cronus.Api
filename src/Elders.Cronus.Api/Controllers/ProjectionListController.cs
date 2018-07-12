@@ -19,7 +19,11 @@ namespace Elders.Cronus.Api.Controllers
         {
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.IsDynamic == false);
 
-            var projectionMetaData = loadedAssemblies.SelectMany(ass => ass.GetExportedTypes().Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
+            var projectionMetaData = loadedAssemblies
+                .SelectMany(ass => ass.GetExportedTypes()
+                    .Where(x => typeof(ISystemProjection).IsAssignableFrom(x) == false)
+                    .Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
+
             ProjectionListDto result = new ProjectionListDto();
             foreach (var meta in projectionMetaData)
             {
