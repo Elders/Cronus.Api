@@ -42,7 +42,7 @@ namespace Elders.Cronus.Api.Controllers
                     .Select(ver => new ProjectionVersion()
                     {
                         Hash = ver.Hash,
-                        Revision = ver.Revision.ToString(),
+                        Revision = ver.Revision,
                         Status = ver.Status
                     })
                     .ToList();
@@ -83,7 +83,7 @@ namespace Elders.Cronus.Api.Controllers
     {
         public string Hash { get; set; }
 
-        public string Revision { get; set; }
+        public int Revision { get; set; }
 
         public string Status { get; set; }
     }
