@@ -1,3 +1,6 @@
+#### 5.0.0-beta0004 - 13.07.2018
+* Returning projection version revision as a number
+
 #### 5.0.0-beta0003 - 12.07.2018
 * Updates Cronus packages
 * Hide system projections from the list
