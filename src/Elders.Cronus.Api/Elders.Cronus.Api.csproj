@@ -132,6 +132,7 @@
     <Compile Include="BoundedContext.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Config\CronusApiExtensions.cs" />
+    <Compile Include="Controllers\ProjectionCancelController.cs" />
     <Compile Include="Controllers\ProjectionListController.cs" />
     <Compile Include="Controllers\ProjectionController.cs" />
     <Compile Include="Controllers\ProjectionMetaController.cs" />
