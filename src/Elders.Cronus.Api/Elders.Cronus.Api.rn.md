@@ -1,3 +1,6 @@
+#### 5.0.0-beta0005 - 16.07.2018
+* Cancel projection api
+
 #### 5.0.0-beta0004 - 13.07.2018
 * Returning projection version revision as a number
 
