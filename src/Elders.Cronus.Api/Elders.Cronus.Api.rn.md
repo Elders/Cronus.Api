@@ -1,3 +1,6 @@
+#### 5.0.0-beta0009 - 04.09.2018
+* Cleans up dependencies
+
 #### 5.0.0-beta0008 - 04.09.2018
 * Attempts to make the project work for applications using .net framework 4.7.2, again, again
 
