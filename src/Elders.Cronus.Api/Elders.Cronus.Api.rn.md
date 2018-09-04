@@ -1,3 +1,6 @@
+#### 5.0.0-beta0006 - 04.09.2018
+* Attempts to make the project work for applications using .net framework 4.7.2
+
 #### 5.0.0-beta0005 - 16.07.2018
 * Cancel projection api
 
