@@ -1,3 +1,6 @@
+#### 5.0.0-beta0007 - 04.09.2018
+* Attempts to make the project work for applications using .net framework 4.7.2, again
+
 #### 5.0.0-beta0006 - 04.09.2018
 * Attempts to make the project work for applications using .net framework 4.7.2
 
