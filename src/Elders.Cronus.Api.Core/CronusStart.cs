@@ -1,50 +1,24 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Elders.Cronus.Api.Core
 {
-    public class CronusStart
+    public partial class CronusStart
     {
         public static void UseCronusApi()
         {
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             var host = WebHost
              .CreateDefaultBuilder()
-             .UseUrls("http://localhost:" + GetAvailablePort(9000) + "/")
+             .UseUrls("http://localhost:" + GetAvailablePort(9000) + "/") //We need to figure out how to make this configurable
              .UseStartup<WebStartup>()
              .Build();
-            Console.WriteLine("Eat Bestman drriiiiiink today is your daaaaaay!");
 
             host.Run();
-        }
-
-        public class WebStartup
-        {
-            public IConfiguration Configuration { get; }
-            public WebStartup(IConfiguration configuration)
-            {
-                Configuration = configuration;
-            }
-            public void ConfigureServices(IServiceCollection services)
-            {
-                services.AddMvc();
-            }
-            public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-            {
-                if (env.IsDevelopment())
-                {
-                    app.UseDeveloperExceptionPage();
-                }
-
-                app.UseMvc();
-
-            }
         }
 
         private static int GetAvailablePort(int startingPort)

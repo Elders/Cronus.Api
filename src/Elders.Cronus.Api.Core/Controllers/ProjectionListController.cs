@@ -13,7 +13,14 @@ namespace Elders.Cronus.Api.Core.Controllers
     [Route("ProjectionList")]
     public class ProjectionListController : ControllerBase
     {
-        public ProjectionExplorer ProjectionExplorer { get; set; }
+        private readonly ProjectionExplorer _projectionExplorer;
+
+        public ProjectionListController(ProjectionExplorer projectionExplorer)
+        {
+            if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
+
+            _projectionExplorer = projectionExplorer;
+        }
 
         [HttpGet]
         public async Task<IActionResult> List()
@@ -29,7 +36,7 @@ namespace Elders.Cronus.Api.Core.Controllers
             foreach (var meta in projectionMetaData)
             {
                 var id = new ProjectionVersionManagerId(meta.GetContractId());
-                var dto = await ProjectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
+                var dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
                 ProjectionVersionsHandlerState state = dto?.State as ProjectionVersionsHandlerState;
                 if (ReferenceEquals(null, state)) continue;
 

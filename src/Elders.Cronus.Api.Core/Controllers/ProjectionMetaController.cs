@@ -14,7 +14,14 @@ namespace Elders.Cronus.Api.Core.Controllers
     [Route("ProjectionMeta")]
     public class ProjectionMetaController : ControllerBase
     {
-        public ProjectionExplorer ProjectionExplorer { get; set; }
+        private readonly ProjectionExplorer _projectionExplorer;
+
+        public ProjectionMetaController(ProjectionExplorer projectionExplorer)
+        {
+            if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
+
+            _projectionExplorer = projectionExplorer;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Meta(RequestModel model)
@@ -26,10 +33,10 @@ namespace Elders.Cronus.Api.Core.Controllers
 
             Type metadata = projectionMetaData.FirstOrDefault(x => x.GetContractId() == model.ProjectionContractId);
 
-            if (metadata is null) return new OkObjectResult(new ResponseResult<string>($"Projection with contract '{model.ProjectionContractId}' not found"));
+            if (metadata is null) return new BadRequestObjectResult(new ResponseResult<string>($"Projection with contract '{model.ProjectionContractId}' not found"));
 
             var id = new ProjectionVersionManagerId(model.ProjectionContractId);
-            ProjectionExplorer.ProjectionDto dto = await ProjectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
+            ProjectionExplorer.ProjectionDto dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
             var state = dto?.State as ProjectionVersionsHandlerState;
 
             var metaProjection = new ProjectionMeta()
