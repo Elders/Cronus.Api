@@ -7,18 +7,20 @@ using System.Linq;
 
 namespace Elders.Cronus.Api.Core
 {
-    public partial class CronusStart
+    public class CronusStart
     {
         public static void UseCronusApi()
         {
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var host = WebHost
-             .CreateDefaultBuilder()
-             .UseUrls("http://localhost:" + GetAvailablePort(9000) + "/") //We need to figure out how to make this configurable
-             .UseStartup<WebStartup>()
-             .Build();
 
-            host.Run();
+            var webHostBuilder = WebHost
+                .CreateDefaultBuilder()
+                .UseKestrel()
+                .UseUrls("http://localhost:" + GetAvailablePort(9000) + "/")
+                .UseStartup<WebStartup>()
+                .Build();
+
+            webHostBuilder.Run();
         }
 
         private static int GetAvailablePort(int startingPort)

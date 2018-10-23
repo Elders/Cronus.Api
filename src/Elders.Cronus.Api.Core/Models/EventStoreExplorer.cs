@@ -22,10 +22,10 @@ namespace Elders.Cronus.Api.Core
         {
             var result = new ProjectionDto();
             var projectionResult = await projections.GetAsync(id, projectionType);
-            if (projectionResult.Success)
+            if (projectionResult.IsSuccess)
             {
                 result.Name = projectionType.Name;
-                result.State = projectionResult.Projection.State;
+                result.State = projectionResult.Data.State;
             }
 
             return result;

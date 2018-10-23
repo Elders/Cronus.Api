@@ -5,29 +5,28 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Elders.Cronus.Api.Core
 {
-    public partial class CronusStart
+    public class WebStartup
     {
-        public class WebStartup
+        public IConfiguration Configuration { get; }
+
+        public WebStartup(IConfiguration configuration)
         {
-            public IConfiguration Configuration { get; }
-            public WebStartup(IConfiguration configuration)
-            {
-                Configuration = configuration;
-            }
-            public void ConfigureServices(IServiceCollection services)
-            {
-                services.AddMvc();
-            }
-            public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-            {
-                if (env.IsDevelopment())
-                {
-                    app.UseDeveloperExceptionPage();
-                }
+            Configuration = configuration;
+        }
 
-                app.UseMvc();
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc();
+            services.AddCronus(Configuration);
+        }
 
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
             }
+            app.UseMvc();
         }
     }
 }
