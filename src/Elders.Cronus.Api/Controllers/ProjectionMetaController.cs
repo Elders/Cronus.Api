@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Elders.Cronus.MessageProcessing;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -15,12 +16,14 @@ namespace Elders.Cronus.Api.Controllers
     public class ProjectionMetaController : ControllerBase
     {
         private readonly ProjectionExplorer _projectionExplorer;
+        private readonly CronusContext context;
 
-        public ProjectionMetaController(ProjectionExplorer projectionExplorer)
+        public ProjectionMetaController(ProjectionExplorer projectionExplorer, CronusContext context)
         {
             if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
 
             _projectionExplorer = projectionExplorer;
+            this.context = context;
         }
 
         [HttpGet]
@@ -35,7 +38,7 @@ namespace Elders.Cronus.Api.Controllers
 
             if (metadata is null) return new BadRequestObjectResult(new ResponseResult<string>($"Projection with contract '{model.ProjectionContractId}' not found"));
 
-            var id = new ProjectionVersionManagerId(model.ProjectionContractId);
+            var id = new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant);
             ProjectionExplorer.ProjectionDto dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
             var state = dto?.State as ProjectionVersionsHandlerState;
 

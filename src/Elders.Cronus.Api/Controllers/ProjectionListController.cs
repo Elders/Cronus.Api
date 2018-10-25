@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Elders.Cronus.MessageProcessing;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -14,12 +15,15 @@ namespace Elders.Cronus.Api.Controllers
     public class ProjectionListController : ControllerBase
     {
         private readonly ProjectionExplorer _projectionExplorer;
+        private readonly CronusContext context;
 
-        public ProjectionListController(ProjectionExplorer projectionExplorer)
+        public ProjectionListController(ProjectionExplorer projectionExplorer, CronusContext context)
         {
             if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
+            if (context is null) throw new ArgumentNullException(nameof(context));
 
             _projectionExplorer = projectionExplorer;
+            this.context = context;
         }
 
         [HttpGet]
@@ -35,7 +39,7 @@ namespace Elders.Cronus.Api.Controllers
             ProjectionListDto result = new ProjectionListDto();
             foreach (var meta in projectionMetaData)
             {
-                var id = new ProjectionVersionManagerId(meta.GetContractId());
+                var id = new ProjectionVersionManagerId(meta.GetContractId(), context.Tenant);
                 var dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
                 ProjectionVersionsHandlerState state = dto?.State as ProjectionVersionsHandlerState;
                 if (ReferenceEquals(null, state)) continue;
