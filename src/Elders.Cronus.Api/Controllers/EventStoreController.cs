@@ -1,24 +1,29 @@
-﻿using System.Web.Http;
-using Elders.Cronus;
-using Elders.Web.Api;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System;
 using static Elders.Cronus.Api.EventStoreExplorer;
-using System.Web.Http.ModelBinding;
 
 namespace Elders.Cronus.Api.Controllers
 {
-    [RoutePrefix("EventStore")]
-    public class EventStoreController : ApiController
+    [Route("EventStore")]
+    public class EventStoreController : ControllerBase
     {
-        public EventStoreExplorer EventStoreExplorer { get; set; }
+        private readonly EventStoreExplorer _eventExplorer;
 
-        [HttpGet, Route("Explore")]
-        public ResponseResult<AggregateDto> Explore(RequestModel model)
+        public EventStoreController(EventStoreExplorer eventStoreExplorer)
         {
-            AggregateDto result = EventStoreExplorer.Explore(model.Id);
-            return new ResponseResult<AggregateDto>(result);
+            if (eventStoreExplorer is null) throw new ArgumentNullException(nameof(eventStoreExplorer));
+
+            _eventExplorer = eventStoreExplorer;
         }
 
-        [ModelBinder(typeof(UrlBinder))]
+        [HttpGet, Route("Explore")]
+        public async Task<IActionResult> Explore(RequestModel model)
+        {
+            AggregateDto result = await _eventExplorer.ExploreAsync(model.Id);
+            return new OkObjectResult(new ResponseResult<AggregateDto>(result));
+        }
+
         public class RequestModel
         {
             public StringTenantId Id { get; set; }

@@ -1,24 +1,30 @@
-﻿using System.Web.Http;
-using Elders.Cronus.Projections;
+﻿using Elders.Cronus.Projections;
 using Elders.Cronus.Projections.Versioning;
-using Elders.Web.Api;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Elders.Cronus.Api.Controllers
 {
-    public class ProjectionCancelController : ApiController
+    public class ProjectionCancelController : ControllerBase
     {
-        public IPublisher<ICommand> Publisher { get; set; }
+        private readonly IPublisher<ICommand> _publisher;
+
+        public ProjectionCancelController(IPublisher<ICommand> publisher)
+        {
+            if (publisher is null) throw new ArgumentNullException(nameof(publisher));
+
+            _publisher = publisher;
+        }
 
         [HttpPost]
-        public IHttpActionResult Cancel(RequestModel model)
+        public IActionResult Cancel(RequestModel model)
         {
             var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);
             var command = new CancelProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId), version, model.Reason ?? "Canceled by user");
 
-            if (Publisher.Publish(command))
-                return this.Accepted(new ResponseResult());
+            if (_publisher.Publish(command)) return new OkObjectResult(new ResponseResult());
 
-            return this.NotAcceptable(new ResponseResult($"Unable to publish command '{nameof(CancelProjectionVersionRequest)}'"));
+            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(CancelProjectionVersionRequest)}'"));
         }
 
         public class RequestModel

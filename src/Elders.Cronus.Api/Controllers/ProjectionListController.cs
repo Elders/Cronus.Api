@@ -1,34 +1,42 @@
-﻿using System.Web.Http;
-using Elders.Web.Api;
-using System;
-using System.Linq;
+﻿using Elders.Cronus.Discoveries;
 using Elders.Cronus.Projections;
 using Elders.Cronus.Projections.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Elders.Cronus.Api.Controllers
 {
-    [RoutePrefix("ProjectionList")]
-    public class ProjectionListController : ApiController
+    [Route("ProjectionList")]
+    public class ProjectionListController : ControllerBase
     {
-        public ProjectionExplorer ProjectionExplorer { get; set; }
+        private readonly ProjectionExplorer _projectionExplorer;
+
+        public ProjectionListController(ProjectionExplorer projectionExplorer)
+        {
+            if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
+
+            _projectionExplorer = projectionExplorer;
+        }
 
         [HttpGet]
-        public ResponseResult<ProjectionListDto> List()
+        public async Task<IActionResult> List()
         {
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.IsDynamic == false);
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.IsDynamic == false);
 
             var projectionMetaData = loadedAssemblies
-                .SelectMany(ass => ass.GetExportedTypes()
-                    .Where(x => typeof(ISystemProjection).IsAssignableFrom(x) == false)
-                    .Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
+                .SelectMany(ass => ass.GetLoadableTypes()
+                .Where(x => typeof(ISystemProjection).IsAssignableFrom(x) == false)
+                .Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
 
             ProjectionListDto result = new ProjectionListDto();
             foreach (var meta in projectionMetaData)
             {
                 var id = new ProjectionVersionManagerId(meta.GetContractId());
-                var dto = ProjectionExplorer.Explore(id, typeof(ProjectionVersionsHandler));
+                var dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
                 ProjectionVersionsHandlerState state = dto?.State as ProjectionVersionsHandlerState;
                 if (ReferenceEquals(null, state)) continue;
 
@@ -51,7 +59,7 @@ namespace Elders.Cronus.Api.Controllers
 
             }
 
-            return new ResponseResult<ProjectionListDto>(result);
+            return new OkObjectResult(new ResponseResult<ProjectionListDto>(result));
         }
     }
 

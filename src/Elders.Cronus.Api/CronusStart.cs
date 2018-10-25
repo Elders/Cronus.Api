@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Elders.Cronus.Api.Core
+namespace Elders.Cronus.Api
 {
-    public class CronusStart
+    public class CronusStart : IConsumer<CronusStart>
     {
         public static void UseCronusApi()
         {
@@ -55,6 +55,16 @@ namespace Elders.Cronus.Api.Core
                     return i;
 
             return 0;
+        }
+
+        public void Start()
+        {
+            UseCronusApi();
+        }
+
+        public void Stop()
+        {
+
         }
     }
 }

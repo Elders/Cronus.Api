@@ -1,22 +1,29 @@
-﻿using System.Web.Http;
-using Elders.Cronus.Projections.Versioning;
-using Elders.Web.Api;
+﻿using Elders.Cronus.Projections.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Elders.Cronus.Api.Controllers
 {
-    public class ProjectionRebuildController : ApiController
+    public class ProjectionRebuildController : ControllerBase
     {
-        public IPublisher<ICommand> Publisher { get; set; }
+        private readonly IPublisher<ICommand> _publisher;
+
+        public ProjectionRebuildController(IPublisher<ICommand> publisher)
+        {
+            if (publisher is null) throw new ArgumentNullException(nameof(publisher));
+
+            _publisher = publisher;
+        }
 
         [HttpPost]
-        public IHttpActionResult Rebuild(RequestModel model)
+        public IActionResult Rebuild(RequestModel model)
         {
             var command = new RebuildProjection(new ProjectionVersionManagerId(model.ProjectionContractId), model.Hash);
 
-            if (Publisher.Publish(command))
-                return this.Accepted(new ResponseResult());
+            if (_publisher.Publish(command))
+                return new OkObjectResult(new ResponseResult());
 
-            return this.NotAcceptable(new ResponseResult($"Unable to publish command '{nameof(RebuildProjection)}'"));
+            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(RebuildProjection)}'"));
         }
 
         public class RequestModel

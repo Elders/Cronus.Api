@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Elders.Cronus.Api.Core.Controllers
+namespace Elders.Cronus.Api.Controllers
 {
     public class ResponseResult
     {

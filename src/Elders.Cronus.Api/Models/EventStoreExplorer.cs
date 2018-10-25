@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Elders.Cronus.EventStore;
 using Elders.Cronus.Projections;
 
@@ -8,23 +9,23 @@ namespace Elders.Cronus.Api
 {
     public class ProjectionExplorer
     {
-        private readonly IProjectionRepository projections;
+        private readonly IProjectionReader projections;
 
-        public ProjectionExplorer(IProjectionRepository projections)
+        public ProjectionExplorer(IProjectionReader projections)
         {
             if (ReferenceEquals(null, projections) == true) throw new ArgumentNullException(nameof(projections));
 
             this.projections = projections;
         }
 
-        public ProjectionDto Explore(IBlobId id, Type projectionType)
+        public async Task<ProjectionDto> ExploreAsync(IBlobId id, Type projectionType)
         {
             var result = new ProjectionDto();
-            var projectionResult = projections.Get(id, projectionType);
-            if (projectionResult.Success)
+            var projectionResult = await projections.GetAsync(id, projectionType);
+            if (projectionResult.IsSuccess)
             {
                 result.Name = projectionType.Name;
-                result.State = projectionResult.Projection.State;
+                result.State = projectionResult.Data.State;
             }
 
             return result;
@@ -50,7 +51,7 @@ namespace Elders.Cronus.Api
             this.boundedContext = boundedContext;
         }
 
-        public AggregateDto Explore(IAggregateRootId id)
+        public async Task<AggregateDto> ExploreAsync(IAggregateRootId id)
         {
             EventStream stream = eventStore.Load(id);
             if (stream.Commits.Count() == 0) return new AggregateDto();

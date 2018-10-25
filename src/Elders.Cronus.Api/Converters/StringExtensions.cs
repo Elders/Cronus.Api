@@ -26,7 +26,7 @@ namespace Elders.Cronus.Api.Converters
         public static bool IsBase64String(this string s)
         {
             s = s.Trim();
-            return (s.Length % 4 == 0) && System.Text.RegularExpressions.Regex.IsMatch(s, @"^[a-zA-Z0-9\+/]*={0,3}$", System.Text.RegularExpressions.RegexOptions.None);
+            return (s.Length % 4 == 0) && Regex.IsMatch(s, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
         }
 
         public static bool CanUrlDecode(this string input)
@@ -100,7 +100,7 @@ namespace Elders.Cronus.Api.Converters
 
         public static bool IsUrn(this string s)
         {
-            return System.Text.RegularExpressions.Regex.IsMatch(s, @"\b(urn):([a-z0-9][a-z0-9-]{0,31}):([a-z0-9()+,\-.=@;$_!:*'%\/?#]*[a-z0-9+=@$\/])", System.Text.RegularExpressions.RegexOptions.None);
+            return Regex.IsMatch(s, @"\b(urn):([a-z0-9][a-z0-9-]{0,31}):([a-z0-9()+,\-.=@;$_!:*'%\/?#]*[a-z0-9+=@$\/])", RegexOptions.None);
         }
     }
 }

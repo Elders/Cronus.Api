@@ -1,36 +1,48 @@
-﻿using System.Web.Http;
+﻿using Elders.Cronus.Discoveries;
+using Elders.Cronus.Projections;
+using Elders.Cronus.Projections.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
-using Elders.Cronus.Projections;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Web.Http.ModelBinding;
-using Elders.Web.Api;
-using Elders.Cronus.Projections.Versioning;
 
 namespace Elders.Cronus.Api.Controllers
 {
-    [RoutePrefix("ProjectionMeta")]
-    public class ProjectionMetaController : ApiController
+    [Route("ProjectionMeta")]
+    public class ProjectionMetaController : ControllerBase
     {
-        public ProjectionExplorer ProjectionExplorer { get; set; }
+        private readonly ProjectionExplorer _projectionExplorer;
 
-        [HttpGet, Route]
-        public IHttpActionResult Meta(RequestModel model)
+        public ProjectionMetaController(ProjectionExplorer projectionExplorer)
         {
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.IsDynamic == false);
-            var projectionMetaData = loadedAssemblies.SelectMany(ass => ass.GetExportedTypes().Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
-            var meta = projectionMetaData.FirstOrDefault(x => x.GetContractId() == model.ProjectionContractId);
-            if (ReferenceEquals(null, meta))
-                return Ok(new ResponseResult($"Projection with contract '{model.ProjectionContractId}' not found"));
+            if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
+
+            _projectionExplorer = projectionExplorer;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Meta(RequestModel model)
+        {
+            IEnumerable<Assembly> loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.IsDynamic == false);
+            IEnumerable<Type> projectionMetaData = loadedAssemblies
+                .SelectMany(assembly => assembly.GetLoadableTypes()
+                .Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
+
+            Type metadata = projectionMetaData.FirstOrDefault(x => x.GetContractId() == model.ProjectionContractId);
+
+            if (metadata is null) return new BadRequestObjectResult(new ResponseResult<string>($"Projection with contract '{model.ProjectionContractId}' not found"));
 
             var id = new ProjectionVersionManagerId(model.ProjectionContractId);
-            var dto = ProjectionExplorer.Explore(id, typeof(ProjectionVersionsHandler));
+            ProjectionExplorer.ProjectionDto dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
             var state = dto?.State as ProjectionVersionsHandlerState;
 
             var metaProjection = new ProjectionMeta()
             {
-                ProjectionContractId = meta.GetContractId(),
-                ProjectionName = meta.Name,
+                ProjectionContractId = metadata.GetContractId(),
+                ProjectionName = metadata.Name,
             };
 
             metaProjection.Versions = state.AllVersions
@@ -45,7 +57,6 @@ namespace Elders.Cronus.Api.Controllers
             return Ok(new ResponseResult<ProjectionMeta>(metaProjection));
         }
 
-        [ModelBinder(typeof(UrlBinder))]
         public class RequestModel
         {
             public string ProjectionContractId { get; set; }
