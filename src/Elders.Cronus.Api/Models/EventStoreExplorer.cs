@@ -3,47 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Elders.Cronus.EventStore;
-using Elders.Cronus.Projections;
 
 namespace Elders.Cronus.Api
 {
-    public class ProjectionExplorer
-    {
-        private readonly IProjectionReader projections;
-
-        public ProjectionExplorer(IProjectionReader projections)
-        {
-            if (ReferenceEquals(null, projections) == true) throw new ArgumentNullException(nameof(projections));
-
-            this.projections = projections;
-        }
-
-        public async Task<ProjectionDto> ExploreAsync(IBlobId id, Type projectionType)
-        {
-            var result = new ProjectionDto();
-            var projectionResult = await projections.GetAsync(id, projectionType);
-            if (projectionResult.IsSuccess)
-            {
-                result.Name = projectionType.Name;
-                result.State = projectionResult.Data.State;
-            }
-
-            return result;
-        }
-
-        public class ProjectionDto
-        {
-            public string Name { get; set; }
-            public object State { get; set; }
-        }
-    }
-
     public class EventStoreExplorer
     {
         private readonly IEventStore eventStore;
-        private readonly string boundedContext;
+        private readonly BoundedContext boundedContext;
 
-        public EventStoreExplorer(IEventStore eventStore, string boundedContext)
+        public EventStoreExplorer(IEventStore eventStore, BoundedContext boundedContext)
         {
             if (ReferenceEquals(null, eventStore) == true) throw new ArgumentNullException(nameof(eventStore));
 
@@ -66,7 +34,7 @@ namespace Elders.Cronus.Api
 
             var arDto = new AggregateDto()
             {
-                BoundedContext = boundedContext,
+                BoundedContext = boundedContext.Name,
                 AggregateId = id.Urn.Value,
                 Commits = commitsDto
             };

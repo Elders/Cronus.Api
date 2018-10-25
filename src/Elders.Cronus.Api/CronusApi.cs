@@ -1,26 +1,29 @@
 ﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Elders.Cronus.Api
 {
-    public class CronusStart : IConsumer<CronusStart>
+    public static class CronusApi
     {
-        public static void UseCronusApi()
+        public static Task RunAsync(IConfigurationSource additionalConfiguration = null, string hostUrl = null)
         {
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            string url = hostUrl ?? "http://localhost:" + GetAvailablePort(9000) + "/";
 
             var webHostBuilder = WebHost
                 .CreateDefaultBuilder()
                 .UseKestrel()
-                .UseUrls("http://localhost:" + GetAvailablePort(9000) + "/")
-                .UseStartup<WebStartup>()
-                .Build();
+                .UseUrls(url)
+                .UseStartup<Startup>();
 
-            webHostBuilder.Run();
+            if (additionalConfiguration is null == false)
+                webHostBuilder.ConfigureAppConfiguration(cfg => cfg.Add(additionalConfiguration));
+
+            return webHostBuilder.Build().RunAsync();
         }
 
         private static int GetAvailablePort(int startingPort)
@@ -55,16 +58,6 @@ namespace Elders.Cronus.Api
                     return i;
 
             return 0;
-        }
-
-        public void Start()
-        {
-            UseCronusApi();
-        }
-
-        public void Stop()
-        {
-
         }
     }
 }
