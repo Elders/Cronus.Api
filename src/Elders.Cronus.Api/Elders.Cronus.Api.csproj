@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus" Version="5.0.0-discovery0014" />
+    <PackageReference Include="Cronus" Version="5.0.0-discovery0016" />
     <PackageReference Include="LibLog" Version="5.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
