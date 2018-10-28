@@ -1,3 +1,6 @@
+#### 5.0.0-beta0010 - 28.10.2018
+* Bumps Cronus
+
 #### 5.0.0-beta0009 - 04.09.2018
 * Cleans up dependencies
 
