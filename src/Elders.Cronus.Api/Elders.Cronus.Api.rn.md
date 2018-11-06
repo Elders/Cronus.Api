@@ -1,3 +1,6 @@
+#### 5.0.0-beta0011 - 06.11.2018
+* Only supports for dotnetcore
+
 #### 5.0.0-beta0010 - 28.10.2018
 * Bumps Cronus
 
