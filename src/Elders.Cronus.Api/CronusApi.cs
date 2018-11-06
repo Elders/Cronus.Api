@@ -10,7 +10,7 @@ namespace Elders.Cronus.Api
 {
     public static class CronusApi
     {
-        public static Task RunAsync(IConfigurationSource additionalConfiguration = null, string hostUrl = null)
+        public static async Task<IWebHost> RunAsync(IConfigurationSource additionalConfiguration = null, string hostUrl = null)
         {
             string url = hostUrl ?? "http://localhost:" + GetAvailablePort(9000) + "/";
 
@@ -23,7 +23,10 @@ namespace Elders.Cronus.Api
             if (additionalConfiguration is null == false)
                 webHostBuilder.ConfigureAppConfiguration(cfg => cfg.Add(additionalConfiguration));
 
-            return webHostBuilder.Build().RunAsync();
+            var webHost = webHostBuilder.Build();
+            await webHost.RunAsync();
+
+            return webHost;
         }
 
         private static int GetAvailablePort(int startingPort)
