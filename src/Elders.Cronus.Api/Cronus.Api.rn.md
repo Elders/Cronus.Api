@@ -1,3 +1,6 @@
+#### 5.0.0-beta0012 - 08.11.2018
+* Adds Authentication 
+
 #### 5.0.0-beta0011 - 06.11.2018
 * Only supports for dotnetcore
 
