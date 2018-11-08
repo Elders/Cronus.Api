@@ -19,6 +19,19 @@ namespace Elders.Cronus.Api
             services.AddMvc();
             services.AddCronus(Configuration);
 
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(o =>
+            {
+                string authority = Configuration["idsrv_authority"];
+                o.Authority = authority;
+                o.Audience = authority + "/resources";
+                o.RequireHttpsMetadata = true;
+            });
+
             services.AddTransient<EventStoreExplorer>();
             services.AddTransient<ProjectionExplorer>();
         }
