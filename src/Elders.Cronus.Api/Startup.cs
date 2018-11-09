@@ -1,9 +1,12 @@
 ﻿using Elders.Cronus.Api.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Elders.Cronus.Api
 {
@@ -18,7 +21,10 @@ namespace Elders.Cronus.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(o =>
+            {
+                o.Conventions.Add(new AddAuthorizeFiltersControllerConvention("global-scope"));
+            });
             services.AddSingleton<IControllerFactory, CronusControllerFactory>();
             services.AddCronus(Configuration);
 
@@ -32,11 +38,10 @@ namespace Elders.Cronus.Api
                 string authority = Configuration["idsrv_authority"];
                 o.Authority = authority;
                 o.Audience = authority + "/resources";
-                o.RequireHttpsMetadata = true;
+                o.RequireHttpsMetadata = false;
             });
 
-            services.AddTransient<EventStoreExplorer>();
-            services.AddTransient<ProjectionExplorer>();
+            services.AddCronusApi();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -45,7 +50,34 @@ namespace Elders.Cronus.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseAuthentication();
             app.UseMvc();
+        }
+    }
+
+    public static class CronusApiExtensions
+    {
+        public static IServiceCollection AddCronusApi(this IServiceCollection services )
+        {
+            services.AddTransient<EventStoreExplorer>();
+            services.AddTransient<ProjectionExplorer>();
+
+            return services;
+        }
+    }
+
+    public class AddAuthorizeFiltersControllerConvention : IControllerModelConvention
+    {
+        private readonly string globalScope;
+
+        public AddAuthorizeFiltersControllerConvention(string globalScope)
+        {
+            this.globalScope = globalScope;
+        }
+
+        public void Apply(ControllerModel controller)
+        {
+            controller.Filters.Add(new AuthorizeFilter());
         }
     }
 }
