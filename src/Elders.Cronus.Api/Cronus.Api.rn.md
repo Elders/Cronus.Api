@@ -1,3 +1,6 @@
+#### 5.0.0-beta0014 - 09.11.2018
+* Adds Authentication correctly
+
 #### 5.0.0-beta0013 - 08.11.2018
 * Adds CronusControllerFactory 
 
