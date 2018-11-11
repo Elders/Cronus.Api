@@ -1,3 +1,6 @@
+#### 5.0.0-beta0015 - 11.11.2018
+* Adds the option to run the API as a service
+
 #### 5.0.0-beta0014 - 09.11.2018
 * Adds Authentication correctly
 * Trigger CI
