@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.WindowsServices;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Elders.Cronus.Api
 {
     public static class CronusApi
     {
-        public static async Task<IWebHost> RunAsync(IConfigurationSource additionalConfiguration = null, string hostUrl = null)
+        public static IWebHost GetHost(IConfigurationSource additionalConfiguration = null, string hostUrl = null)
         {
             string url = hostUrl ?? "http://localhost:" + GetAvailablePort(9000) + "/";
 
@@ -24,9 +24,13 @@ namespace Elders.Cronus.Api
                 webHostBuilder.ConfigureAppConfiguration(cfg => cfg.Add(additionalConfiguration));
 
             var webHost = webHostBuilder.Build();
-            await webHost.RunAsync();
 
             return webHost;
+        }
+
+        public static void RunAsService(IConfigurationSource additionalConfiguration = null, string hostUrl = null)
+        {
+            GetHost(additionalConfiguration, hostUrl).RunAsService();
         }
 
         private static int GetAvailablePort(int startingPort)
