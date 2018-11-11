@@ -33,6 +33,14 @@ namespace Elders.Cronus.Api
             GetHost(additionalConfiguration, hostUrl).RunAsService();
         }
 
+        public static IWebHost Run(IConfigurationSource additionalConfiguration = null, string hostUrl = null)
+        {
+            var host = GetHost(additionalConfiguration, hostUrl);
+            host.RunAsync();
+
+            return host;
+        }
+
         private static int GetAvailablePort(int startingPort)
         {
             System.Net.IPEndPoint[] endPoints;
