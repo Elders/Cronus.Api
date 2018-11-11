@@ -2,9 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <OutputType>Exe</OutputType>
     <IsPackable>true</IsPackable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <!--Nuget-->
