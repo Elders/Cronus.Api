@@ -51,13 +51,18 @@ namespace Elders.Cronus.Api
                 app.UseDeveloperExceptionPage();
             }
             app.UseAuthentication();
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
             app.UseMvc();
         }
     }
 
     public static class CronusApiExtensions
     {
-        public static IServiceCollection AddCronusApi(this IServiceCollection services )
+        public static IServiceCollection AddCronusApi(this IServiceCollection services)
         {
             services.AddTransient<EventStoreExplorer>();
             services.AddTransient<ProjectionExplorer>();
