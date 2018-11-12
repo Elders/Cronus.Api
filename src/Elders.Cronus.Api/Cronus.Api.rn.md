@@ -1,3 +1,6 @@
+#### 5.0.0-beta0019 - 12.11.2018
+* Configures CORS as: AllowAnyOrigin, AllowAnyMethod, AllowAnyHeader, AllowCredentials
+
 #### 5.0.0-beta0018 - 12.11.2018
 * Fixes API hosting for windows
 
