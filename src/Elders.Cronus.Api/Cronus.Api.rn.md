@@ -1,3 +1,6 @@
+#### 5.0.0-beta0018 - 12.11.2018
+* Fixes API hosting for windows
+
 #### 5.0.0-beta0017 - 11.11.2018
 * Improves startup configuration
 
