@@ -18,7 +18,7 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpGet, Route("Explore")]
-        public async Task<IActionResult> Explore(RequestModel model)
+        public async Task<IActionResult> Explore([FromQuery]RequestModel model)
         {
             var projectionType = model.ProjectionContractId.GetTypeByContract();
             ProjectionDto result = await _projectionExplorer.ExploreAsync(model.Id, projectionType);

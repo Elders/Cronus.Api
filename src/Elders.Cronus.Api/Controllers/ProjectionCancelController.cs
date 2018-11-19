@@ -6,6 +6,7 @@ using System;
 
 namespace Elders.Cronus.Api.Controllers
 {
+    [Route("Projection")]
     public class ProjectionCancelController : ControllerBase
     {
         private readonly IPublisher<ICommand> _publisher;
@@ -20,8 +21,8 @@ namespace Elders.Cronus.Api.Controllers
             this.context = context;
         }
 
-        [HttpPost]
-        public IActionResult Cancel(RequestModel model)
+        [HttpGet, Route("Cancel")]
+        public IActionResult Cancel([FromBody]RequestModel model)
         {
             var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);
             var command = new CancelProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), version, model.Reason ?? "Canceled by user");
