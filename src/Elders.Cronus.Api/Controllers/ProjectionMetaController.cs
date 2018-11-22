@@ -12,7 +12,7 @@ using Elders.Cronus.MessageProcessing;
 
 namespace Elders.Cronus.Api.Controllers
 {
-    [Route("ProjectionMeta")]
+    [Route("Projection")]
     public class ProjectionMetaController : ControllerBase
     {
         private readonly ProjectionExplorer _projectionExplorer;
@@ -26,8 +26,8 @@ namespace Elders.Cronus.Api.Controllers
             this.context = context;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Meta(RequestModel model)
+        [HttpGet, Route("Meta")]
+        public async Task<IActionResult> Meta([FromQuery]RequestModel model)
         {
             IEnumerable<Assembly> loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.IsDynamic == false);
             IEnumerable<Type> projectionMetaData = loadedAssemblies

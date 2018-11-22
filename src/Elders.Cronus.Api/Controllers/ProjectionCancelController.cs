@@ -21,7 +21,7 @@ namespace Elders.Cronus.Api.Controllers
             this.context = context;
         }
 
-        [HttpGet, Route("Cancel")]
+        [HttpPost, Route("Cancel")]
         public IActionResult Cancel([FromBody]RequestModel model)
         {
             var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);

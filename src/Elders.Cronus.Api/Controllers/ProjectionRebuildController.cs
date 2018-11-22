@@ -5,6 +5,7 @@ using System;
 
 namespace Elders.Cronus.Api.Controllers
 {
+    [Route("Projection")]
     public class ProjectionRebuildController : ControllerBase
     {
         private readonly IPublisher<ICommand> _publisher;
@@ -18,8 +19,8 @@ namespace Elders.Cronus.Api.Controllers
             this.context = context;
         }
 
-        [HttpPost]
-        public IActionResult Rebuild(RequestModel model)
+        [HttpPost, Route("Rebuild")]
+        public IActionResult Rebuild([FromBody]RequestModel model)
         {
             var command = new RebuildProjection(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash);
 
