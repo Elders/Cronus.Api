@@ -26,8 +26,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus" Version="5.0.0-migrations0008" />
-    <PackageReference Include="LibLog" Version="5.0.2" />
+    <PackageReference Include="Cronus" Version="5.0.0-migrations0009" />
+    <PackageReference Include="LibLog" Version="5.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />

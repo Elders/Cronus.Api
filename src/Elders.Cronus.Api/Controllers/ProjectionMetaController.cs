@@ -17,13 +17,15 @@ namespace Elders.Cronus.Api.Controllers
     {
         private readonly ProjectionExplorer _projectionExplorer;
         private readonly CronusContext context;
+        private readonly ProjectionHasher projectionHasher;
 
-        public ProjectionMetaController(ProjectionExplorer projectionExplorer, CronusContext context)
+        public ProjectionMetaController(ProjectionExplorer projectionExplorer, CronusContext context, ProjectionHasher projectionHasher)
         {
             if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
 
             _projectionExplorer = projectionExplorer;
             this.context = context;
+            this.projectionHasher = projectionHasher;
         }
 
         [HttpGet, Route("Meta")]
@@ -48,14 +50,26 @@ namespace Elders.Cronus.Api.Controllers
                 ProjectionName = metadata.Name,
             };
 
-            metaProjection.Versions = state.AllVersions
-                .Select(ver => new ProjectionVersion()
+            if (state is null)
+            {
+                metaProjection.Versions.Add(new ProjectionVersion()
                 {
-                    Hash = ver.Hash,
-                    Revision = ver.Revision,
-                    Status = ver.Status
-                })
-                .ToList();
+                    Status = ProjectionStatus.NotPresent,
+                    Hash = projectionHasher.CalculateHash(typeof(ProjectionVersionsHandler)),
+                    Revision = 0
+                });
+            }
+            else
+            {
+                metaProjection.Versions = state.AllVersions
+                    .Select(ver => new ProjectionVersion()
+                    {
+                        Hash = ver.Hash,
+                        Revision = ver.Revision,
+                        Status = ver.Status
+                    })
+                    .ToList();
+            }
 
             return Ok(new ResponseResult<ProjectionMeta>(metaProjection));
         }

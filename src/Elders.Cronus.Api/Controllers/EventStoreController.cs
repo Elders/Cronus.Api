@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System;
 using static Elders.Cronus.Api.EventStoreExplorer;
+using System.ComponentModel.DataAnnotations;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -18,15 +19,16 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpGet, Route("Explore")]
-        public async Task<IActionResult> Explore(RequestModel model)
+        public async Task<IActionResult> Explore([FromQuery]RequestModel model)
         {
-            AggregateDto result = await _eventExplorer.ExploreAsync(model.Id);
+            AggregateDto result = await _eventExplorer.ExploreAsync(model.Id.ToStringTenantId());
             return new OkObjectResult(new ResponseResult<AggregateDto>(result));
         }
 
         public class RequestModel
         {
-            public StringTenantId Id { get; set; }
+            [Required]
+            public string Id { get; set; }
         }
     }
 }

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Elders.Cronus.Api
 {
@@ -57,17 +56,6 @@ namespace Elders.Cronus.Api
                 .AllowAnyHeader()
                 .AllowCredentials());
             app.UseMvc();
-        }
-    }
-
-    public static class CronusApiExtensions
-    {
-        public static IServiceCollection AddCronusApi(this IServiceCollection services)
-        {
-            services.AddTransient<EventStoreExplorer>();
-            services.AddTransient<ProjectionExplorer>();
-
-            return services;
         }
     }
 

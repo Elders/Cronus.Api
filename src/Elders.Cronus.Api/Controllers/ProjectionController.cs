@@ -20,16 +20,16 @@ namespace Elders.Cronus.Api.Controllers
         [HttpGet, Route("Explore")]
         public async Task<IActionResult> Explore([FromQuery]RequestModel model)
         {
-            var projectionType = model.ProjectionContractId.GetTypeByContract();
-            ProjectionDto result = await _projectionExplorer.ExploreAsync(model.Id, projectionType);
+            var projectionType = model.ProjectionName.GetTypeByContract();
+            ProjectionDto result = await _projectionExplorer.ExploreAsync(model.Id.ToStringTenantId(), projectionType);
             return new OkObjectResult(new ResponseResult<ProjectionDto>(result));
         }
 
         public class RequestModel
         {
-            public StringTenantId Id { get; set; }
+            public string Id { get; set; }
 
-            public string ProjectionContractId { get; set; }
+            public string ProjectionName { get; set; }
         }
     }
 }
