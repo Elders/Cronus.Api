@@ -1,3 +1,7 @@
+#### 5.0.0-beta0020 - 22.11.2018
+* Returns projection with status not_present if we are unable to load it from the DB
+* Fixes routes
+
 #### 5.0.0-beta0019 - 12.11.2018
 * Configures CORS as: AllowAnyOrigin, AllowAnyMethod, AllowAnyHeader, AllowCredentials
 
