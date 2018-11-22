@@ -1,3 +1,6 @@
+#### 5.0.0-beta0021 - 22.11.2018
+* Various fixes
+
 #### 5.0.0-beta0020 - 22.11.2018
 * Returns projection with status not_present if we are unable to load it from the DB
 * Fixes routes
