@@ -1,48 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Elders.Cronus.EventStore;
-using Elders.Cronus.Projections;
 
 namespace Elders.Cronus.Api
 {
-    public class ProjectionExplorer
-    {
-        private readonly IProjectionRepository projections;
-
-        public ProjectionExplorer(IProjectionRepository projections)
-        {
-            if (ReferenceEquals(null, projections) == true) throw new ArgumentNullException(nameof(projections));
-
-            this.projections = projections;
-        }
-
-        public ProjectionDto Explore(IBlobId id, Type projectionType)
-        {
-            var result = new ProjectionDto();
-            var projectionResult = projections.Get(id, projectionType);
-            if (projectionResult.Success)
-            {
-                result.Name = projectionType.Name;
-                result.State = projectionResult.Projection.State;
-            }
-
-            return result;
-        }
-
-        public class ProjectionDto
-        {
-            public string Name { get; set; }
-            public object State { get; set; }
-        }
-    }
-
     public class EventStoreExplorer
     {
         private readonly IEventStore eventStore;
-        private readonly string boundedContext;
+        private readonly BoundedContext boundedContext;
 
-        public EventStoreExplorer(IEventStore eventStore, string boundedContext)
+        public EventStoreExplorer(IEventStore eventStore, BoundedContext boundedContext)
         {
             if (ReferenceEquals(null, eventStore) == true) throw new ArgumentNullException(nameof(eventStore));
 
@@ -50,9 +19,9 @@ namespace Elders.Cronus.Api
             this.boundedContext = boundedContext;
         }
 
-        public AggregateDto Explore(IAggregateRootId id)
+        public async Task<AggregateDto> ExploreAsync(IAggregateRootId id)
         {
-            EventStream stream = eventStore.Load(id, (aridaa) => boundedContext);
+            EventStream stream = eventStore.Load(id);
             if (stream.Commits.Count() == 0) return new AggregateDto();
 
             var commitsDto = stream.Commits.Select(commit =>
@@ -65,7 +34,7 @@ namespace Elders.Cronus.Api
 
             var arDto = new AggregateDto()
             {
-                BoundedContext = boundedContext,
+                BoundedContext = boundedContext.Name,
                 AggregateId = id.Urn.Value,
                 Commits = commitsDto
             };

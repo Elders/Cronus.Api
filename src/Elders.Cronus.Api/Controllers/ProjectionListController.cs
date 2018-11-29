@@ -1,67 +1,77 @@
-﻿using System.Web.Http;
-using Elders.Cronus;
-using Elders.Web.Api;
-using System.Web.Http.ModelBinding;
-using static Elders.Cronus.Api.ProjectionExplorer;
-using System;
-using System.Linq;
+﻿using Elders.Cronus.Discoveries;
 using Elders.Cronus.Projections;
 using Elders.Cronus.Projections.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Elders.Cronus.MessageProcessing;
 
 namespace Elders.Cronus.Api.Controllers
 {
-    [RoutePrefix("ProjectionList")]
-    public class ProjectionListController : ApiController
+    [Route("Projections")]
+    public class ProjectionListController : ControllerBase
     {
-        public ProjectionExplorer ProjectionExplorer { get; set; }
+        private readonly ProjectionExplorer _projectionExplorer;
+        private readonly CronusContext context;
+        private readonly ProjectionHasher projectionHasher;
+
+        public ProjectionListController(ProjectionExplorer projectionExplorer, CronusContext context, ProjectionHasher projectionHasher)
+        {
+            if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
+            if (context is null) throw new ArgumentNullException(nameof(context));
+
+            _projectionExplorer = projectionExplorer;
+            this.context = context;
+            this.projectionHasher = projectionHasher;
+        }
 
         [HttpGet]
-        public ResponseResult<ProjectionListDto> List()
+        public async Task<IActionResult> List()
         {
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.IsDynamic == false);
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.IsDynamic == false);
 
-            var projectionMetaData = loadedAssemblies.SelectMany(ass => ass.GetExportedTypes().Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
+            var projectionMetaData = loadedAssemblies
+                .SelectMany(ass => ass.GetLoadableTypes()
+                .Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
+
             ProjectionListDto result = new ProjectionListDto();
             foreach (var meta in projectionMetaData)
             {
-                var id = new ProjectionVersionManagerId(meta.GetContractId());
-                var dto = ProjectionExplorer.Explore(id, typeof(PersistentProjectionVersionHandler));
-                if (ReferenceEquals(null, dto?.State)) continue;
-
+                var id = new ProjectionVersionManagerId(meta.GetContractId(), context.Tenant);
+                var dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
+                ProjectionVersionsHandlerState state = dto?.State as ProjectionVersionsHandlerState;
                 var metaProjection = new ProjectionMeta()
                 {
                     ProjectionContractId = meta.GetContractId(),
                     ProjectionName = meta.Name,
                 };
-
-                dynamic liveVersion = ((dynamic)dto.State).Live;
-                if (ReferenceEquals(null, liveVersion) == false)
+                if (ReferenceEquals(null, state))
                 {
                     metaProjection.Versions.Add(new ProjectionVersion()
                     {
-                        Hash = liveVersion.Hash,
-                        Revision = liveVersion.Revision.ToString(),
-                        Status = liveVersion.Status,
+                        Status = ProjectionStatus.NotPresent,
+                        Hash = projectionHasher.CalculateHash(meta),
+                        Revision = 0
                     });
                 }
-
-                dynamic buildingVersion = ((dynamic)dto.State).Building;
-                if (ReferenceEquals(null, buildingVersion) == false)
+                else
                 {
-                    metaProjection.Versions.Add(new ProjectionVersion()
-                    {
-                        Hash = buildingVersion.Hash,
-                        Revision = buildingVersion.Revision.ToString(),
-                        Status = buildingVersion.Status,
-                    });
+                    metaProjection.Versions = state.AllVersions
+                        .Select(ver => new ProjectionVersion()
+                        {
+                            Hash = ver.Hash,
+                            Revision = ver.Revision,
+                            Status = ver.Status
+                        })
+                        .ToList();
                 }
-
                 result.Projections.Add(metaProjection);
             }
 
-            return new ResponseResult<ProjectionListDto>(result);
+            return new OkObjectResult(new ResponseResult<ProjectionListDto>(result));
         }
     }
 
@@ -93,7 +103,7 @@ namespace Elders.Cronus.Api.Controllers
     {
         public string Hash { get; set; }
 
-        public string Revision { get; set; }
+        public int Revision { get; set; }
 
         public string Status { get; set; }
     }

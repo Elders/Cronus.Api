@@ -1,0 +1,22 @@
+#### 5.0.0 - 22.11.2018
+* Returns projection with status not_present if we are unable to load it from the DB
+* Configures CORS as: AllowAnyOrigin, AllowAnyMethod, AllowAnyHeader, AllowCredentials
+* Fixes API hosting for windows
+* Improves startup configuration
+* Adds the option to run the API as a service
+* Adds CronusControllerFactory 
+* Adds Authentication 
+* Only supports for dotnetcore
+* Returning projection version revision as a number
+* Force projection rebuilding
+* Projection meta data api
+* Projections' list now exposes the entire history of all projection versions
+
+#### 0.1.2 - 01.03.2018
+* Improves the log info start message
+
+#### 0.1.1 - 28.02.2018
+* Configures camelCase json formatter response
+
+#### 0.1.0 - 28.02.2018
+* Initial Release

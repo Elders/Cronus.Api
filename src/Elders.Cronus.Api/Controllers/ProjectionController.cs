@@ -1,30 +1,35 @@
-﻿using System.Web.Http;
-using Elders.Cronus;
-using Elders.Web.Api;
-using System.Web.Http.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System;
 using static Elders.Cronus.Api.ProjectionExplorer;
 
 namespace Elders.Cronus.Api.Controllers
 {
-    [RoutePrefix("Projection")]
-    public class ProjectionController : ApiController
+    [Route("Projection")]
+    public class ProjectionController : ControllerBase
     {
-        public ProjectionExplorer ProjectionExplorer { get; set; }
+        private readonly ProjectionExplorer _projectionExplorer;
 
-        [HttpGet, Route("Explore")]
-        public ResponseResult<ProjectionDto> Explore(RequestModel model)
+        public ProjectionController(ProjectionExplorer projectionExplorer)
         {
-            var projectionType = model.ProjectionContractId.GetTypeByContract();
-            ProjectionDto result = ProjectionExplorer.Explore(model.Id, projectionType);
-            return new ResponseResult<ProjectionDto>(result);
+            if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
+
+            _projectionExplorer = projectionExplorer;
         }
 
-        [ModelBinder(typeof(UrlBinder))]
+        [HttpGet, Route("Explore")]
+        public async Task<IActionResult> Explore([FromQuery]RequestModel model)
+        {
+            var projectionType = model.ProjectionName.GetTypeByContract();
+            ProjectionDto result = await _projectionExplorer.ExploreAsync(model.Id.ToStringTenantId(), projectionType);
+            return new OkObjectResult(new ResponseResult<ProjectionDto>(result));
+        }
+
         public class RequestModel
         {
-            public StringTenantId Id { get; set; }
+            public string Id { get; set; }
 
-            public string ProjectionContractId { get; set; }
+            public string ProjectionName { get; set; }
         }
     }
 }
