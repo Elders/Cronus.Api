@@ -12,7 +12,7 @@ using Elders.Cronus.MessageProcessing;
 namespace Elders.Cronus.Api.Controllers
 {
     [Route("Projections")]
-    public class ProjectionListController : ControllerBase
+    public class ProjectionListController : ApiControllerBase
     {
         private readonly ProjectionExplorer _projectionExplorer;
         private readonly CronusContext context;

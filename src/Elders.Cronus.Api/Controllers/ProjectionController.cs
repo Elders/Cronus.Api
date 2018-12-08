@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 using System;
 using static Elders.Cronus.Api.ProjectionExplorer;
+using System.ComponentModel.DataAnnotations;
 
 namespace Elders.Cronus.Api.Controllers
 {
     [Route("Projection")]
-    public class ProjectionController : ControllerBase
+    public class ProjectionController : ApiControllerBase
     {
         private readonly ProjectionExplorer _projectionExplorer;
 
@@ -27,8 +28,10 @@ namespace Elders.Cronus.Api.Controllers
 
         public class RequestModel
         {
+            [Required]
             public string Id { get; set; }
 
+            [Required]
             public string ProjectionName { get; set; }
         }
     }

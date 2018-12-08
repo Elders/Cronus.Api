@@ -1,9 +1,8 @@
-﻿using Elders.Cronus.Api.Controllers;
+﻿using Elders.Cronus.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,11 +10,13 @@ namespace Elders.Cronus.Api
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration configuration;
+        private readonly CronusApiBuilder cronusApiBuilder;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, CronusApiBuilder cronusApiBuilder)
         {
-            Configuration = configuration;
+            this.configuration = configuration;
+            this.cronusApiBuilder = cronusApiBuilder;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -24,8 +25,14 @@ namespace Elders.Cronus.Api
             {
                 o.Conventions.Add(new AddAuthorizeFiltersControllerConvention("global-scope"));
             });
-            services.AddSingleton<IControllerFactory, CronusControllerFactory>();
-            services.AddCronus(Configuration);
+            services.AddCronusAspNetCore();
+
+            if (cronusApiBuilder.CronusServicesProvider is null)
+                services.AddCronus(configuration);
+            else
+                services.AddCronus(cronusApiBuilder.CronusServicesProvider(services, configuration));
+
+            services.AddCronus(configuration);
 
             services.AddAuthentication(o =>
             {
@@ -34,7 +41,7 @@ namespace Elders.Cronus.Api
             })
             .AddJwtBearer(o =>
             {
-                string authority = Configuration["idsrv_authority"];
+                string authority = configuration["idsrv_authority"];
                 o.Authority = authority;
                 o.Audience = authority + "/resources";
                 o.RequireHttpsMetadata = false;
