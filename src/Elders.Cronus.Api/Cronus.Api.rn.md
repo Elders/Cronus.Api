@@ -1,3 +1,6 @@
+#### 5.1.0-beta0001 - 08.12.2018
+* Adds an extension point to override Cronus services
+
 #### 5.0.1 - 03.12.2018
 * ReRelease
 
