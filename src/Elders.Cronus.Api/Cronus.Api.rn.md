@@ -1,3 +1,6 @@
+#### 5.1.0-beta0001 - 08.12.2018
+* Adds an extension point to override Cronus services
+
 #### 5.0.0 - 22.11.2018
 * Returns projection with status not_present if we are unable to load it from the DB
 * Configures CORS as: AllowAnyOrigin, AllowAnyMethod, AllowAnyHeader, AllowCredentials
