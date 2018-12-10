@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Elders.Cronus.Api.Controllers
 {
     [Route("EventStore")]
-    public class EventStoreController : ControllerBase
+    public class EventStoreController : ApiControllerBase
     {
         private readonly EventStoreExplorer _eventExplorer;
 

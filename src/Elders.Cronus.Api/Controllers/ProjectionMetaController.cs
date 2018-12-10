@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Elders.Cronus.MessageProcessing;
+using System.ComponentModel.DataAnnotations;
 
 namespace Elders.Cronus.Api.Controllers
 {
     [Route("Projection")]
-    public class ProjectionMetaController : ControllerBase
+    public class ProjectionMetaController : ApiControllerBase
     {
         private readonly ProjectionExplorer _projectionExplorer;
         private readonly CronusContext context;
@@ -76,6 +77,7 @@ namespace Elders.Cronus.Api.Controllers
 
         public class RequestModel
         {
+            [Required]
             public string ProjectionContractId { get; set; }
         }
     }

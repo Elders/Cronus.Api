@@ -2,11 +2,12 @@
 using Elders.Cronus.Projections.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Elders.Cronus.Api.Controllers
 {
     [Route("Projection")]
-    public class ProjectionRebuildController : ControllerBase
+    public class ProjectionRebuildController : ApiControllerBase
     {
         private readonly IPublisher<ICommand> _publisher;
         private readonly CronusContext context;
@@ -32,8 +33,10 @@ namespace Elders.Cronus.Api.Controllers
 
         public class RequestModel
         {
+            [Required]
             public string ProjectionContractId { get; set; }
 
+            [Required]
             public string Hash { get; set; }
         }
     }
