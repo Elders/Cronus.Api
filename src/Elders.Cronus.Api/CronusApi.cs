@@ -40,7 +40,7 @@ namespace Elders.Cronus.Api
             if (cronusApiBuilder.AdditionalConfigurationSource is null == false)
                 webHostBuilder.ConfigureAppConfiguration(cfg => cfg.Add(cronusApiBuilder.AdditionalConfigurationSource));
 
-            webHostBuilder.ConfigureServices(services => services.AddSingleton<CronusApiBuilder>());
+            webHostBuilder.ConfigureServices(services => services.AddSingleton<CronusApiBuilder>(cronusApiBuilder));
 
             webHostBuilder
                 .UseKestrel()
