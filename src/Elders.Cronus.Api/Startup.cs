@@ -1,6 +1,7 @@
 ﻿using Elders.Cronus.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,13 @@ namespace Elders.Cronus.Api
             {
                 o.Conventions.Add(new AddAuthorizeFiltersControllerConvention("global-scope"));
             });
+
+            //services.AddHttpsRedirection(options =>
+            //{
+            //    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+            //    options.HttpsPort = 7477;
+            //});
+
             services.AddCronusAspNetCore();
 
             if (cronusApiBuilder.CronusServicesProvider is null)
@@ -56,6 +64,7 @@ namespace Elders.Cronus.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseCors(builder => builder
                 .AllowAnyOrigin()
