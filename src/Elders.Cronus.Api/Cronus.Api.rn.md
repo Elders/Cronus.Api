@@ -1,3 +1,6 @@
+#### 5.2.0 - 10.12.2018
+* Adds the ability to host the API under HTTPS
+
 #### 5.1.0 - 08.12.2018
 * Adds an extension point to override Cronus services
 * Updates to DNC 2.2
