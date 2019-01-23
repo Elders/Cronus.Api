@@ -62,7 +62,7 @@ namespace Elders.Cronus.Api.Controllers
             }
             else
             {
-                metaProjection.Versions = state.AllVersions
+                metaProjection.Versions = state.AllVersions.WithoutTheGarbage()
                     .Select(ver => new ProjectionVersion()
                     {
                         Hash = ver.Hash,
