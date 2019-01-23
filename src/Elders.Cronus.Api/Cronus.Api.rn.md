@@ -1,3 +1,6 @@
+#### 5.2.1 - 10.12.2018
+* Updates Cronus
+
 #### 5.2.0 - 10.12.2018
 * Adds the ability to host the API under HTTPS
 
