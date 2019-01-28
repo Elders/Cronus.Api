@@ -1,3 +1,6 @@
+#### 5.3.0 - 28.12.2018
+* Updates Cronus
+
 #### 5.2.1 - 10.12.2018
 * Updates Cronus
 
