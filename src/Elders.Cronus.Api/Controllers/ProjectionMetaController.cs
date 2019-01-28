@@ -62,14 +62,15 @@ namespace Elders.Cronus.Api.Controllers
             }
             else
             {
-                metaProjection.Versions = state.AllVersions.WithoutTheGarbage()
-                    .Select(ver => new ProjectionVersion()
+                foreach (var ver in state.AllVersions)
+                {
+                    metaProjection.Versions.Add(new ProjectionVersion()
                     {
                         Hash = ver.Hash,
                         Revision = ver.Revision,
                         Status = ver.Status
-                    })
-                    .ToList();
+                    });
+                }
             }
 
             return Ok(new ResponseResult<ProjectionMeta>(metaProjection));
