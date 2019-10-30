@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Elders.Cronus.Api
 {
@@ -58,12 +59,13 @@ namespace Elders.Cronus.Api
             services.AddCronusApi();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCronusAspNetCore();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseCors(builder => builder
@@ -71,7 +73,6 @@ namespace Elders.Cronus.Api
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
-            app.UseMvc();
         }
     }
 
