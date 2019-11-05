@@ -1,7 +1,7 @@
 ﻿using Elders.Cronus.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -23,9 +23,13 @@ namespace Elders.Cronus.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            IConfigurationSection jwtSection = configuration.GetSection("CronusApiJwt");
+            bool hasAuthorization = jwtSection.Exists();
+
             services.AddMvc(o =>
             {
-                o.Conventions.Add(new AddAuthorizeFiltersControllerConvention("global-scope"));
+                if (hasAuthorization)
+                    o.Conventions.Add(new AddAuthorizeFiltersControllerConvention("global-scope"));
             });
 
             //services.AddHttpsRedirection(options =>
@@ -43,18 +47,16 @@ namespace Elders.Cronus.Api
 
             services.AddCronus(configuration);
 
-            services.AddAuthentication(o =>
+            if (hasAuthorization)
             {
-                o.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(o =>
-            {
-                string authority = configuration["idsrv_authority"];
-                o.Authority = authority;
-                o.Audience = authority + "/resources";
-                o.RequireHttpsMetadata = false;
-            });
+                services.Configure<JwtBearerOptions>(jwtSection);
+                services.AddAuthentication(o =>
+                {
+                    o.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+                    o.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer();
+            }
 
             services.AddCronusApi();
         }
