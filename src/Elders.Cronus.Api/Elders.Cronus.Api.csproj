@@ -25,6 +25,7 @@
     <RootNamespace>Elders.Cronus.Api</RootNamespace>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AssemblyVersion>6.0.0</AssemblyVersion>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
