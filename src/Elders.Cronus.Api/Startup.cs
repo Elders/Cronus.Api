@@ -12,44 +12,32 @@ namespace Elders.Cronus.Api
 {
     public class Startup
     {
-        private readonly IConfiguration configuration;
-        private readonly CronusApiBuilder cronusApiBuilder;
+        const string JwtSectionName = "Cronus:Api:JwtAuthentication";
 
-        public Startup(IConfiguration configuration, CronusApiBuilder cronusApiBuilder)
+        private readonly IConfiguration configuration;
+        private readonly bool authenticationEnabled = false;
+
+        public Startup(IConfiguration configuration)
         {
             this.configuration = configuration;
-            this.cronusApiBuilder = cronusApiBuilder;
+            this.authenticationEnabled = configuration.GetSection(JwtSectionName).Exists();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            IConfigurationSection jwtSection = configuration.GetSection("CronusApiJwt");
-            bool hasAuthorization = jwtSection.Exists();
-
             services.AddMvc(o =>
             {
-                if (hasAuthorization)
+                if (authenticationEnabled)
                     o.Conventions.Add(new AddAuthorizeFiltersControllerConvention("global-scope"));
             });
 
-            //services.AddHttpsRedirection(options =>
-            //{
-            //    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-            //    options.HttpsPort = 7477;
-            //});
-
-            services.AddCronusAspNetCore();
-
-            if (cronusApiBuilder.CronusServicesProvider is null)
-                services.AddCronus(configuration);
-            else
-                services.AddCronus(cronusApiBuilder.CronusServicesProvider(services, configuration));
-
             services.AddCronus(configuration);
+            services.AddCronusAspNetCore();
+            services.AddCronusApi();
 
-            if (hasAuthorization)
+            if (authenticationEnabled)
             {
-                services.Configure<JwtBearerOptions>(jwtSection);
+                services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, configuration.GetSection(JwtSectionName));
                 services.AddAuthentication(o =>
                 {
                     o.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
@@ -57,8 +45,6 @@ namespace Elders.Cronus.Api
                 })
                 .AddJwtBearer();
             }
-
-            services.AddCronusApi();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -67,14 +53,18 @@ namespace Elders.Cronus.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            if (authenticationEnabled)
+            {
+                app.UseAuthentication();
+                app.UseHttpsRedirection();
+            }
             app.UseCronusAspNetCore();
-            app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseCors(builder => builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+            app.UseCors();
         }
     }
 
