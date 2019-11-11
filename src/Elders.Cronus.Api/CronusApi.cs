@@ -33,9 +33,8 @@ namespace Elders.Cronus.Api
                 .CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    if (cronusApiBuilder.CronusServicesProvider is null)
-                        services.AddCronus(context.Configuration);
-                    else
+                    services.AddCronus(context.Configuration);
+                    if (cronusApiBuilder.CronusServicesProvider is null == false)
                         services.AddCronus(cronusApiBuilder.CronusServicesProvider(services, context.Configuration));
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
