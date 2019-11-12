@@ -1,9 +1,7 @@
-﻿using Elders.Cronus;
-using Elders.Cronus.Projections;
-using Elders.Locus.Samples.Events;
+﻿using Elders.Cronus.Projections;
 using System.Runtime.Serialization;
 
-namespace Elders.Locus.Samples.Projections
+namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
     /// <summary>
     /// A Projection which serves the SampleApi specific data requirements.

@@ -1,8 +1,4 @@
-﻿using Elders.Cronus;
-using Elders.Locus.Samples;
-using Elders.Locus.Samples.Events;
-
-namespace Elders.Cronus.Api.Playground.Domain.Samples
+﻿namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
     public class Sample : AggregateRoot<SampleState>
     {

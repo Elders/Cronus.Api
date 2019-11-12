@@ -1,9 +1,6 @@
-﻿using Elders.Cronus;
-using Elders.Cronus.Api.Playground.Domain.Samples;
-using Elders.Locus.Samples.Events;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
-namespace Elders.Locus.Samples
+namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
     [DataContract(Name = "20be246f-206d-4456-86a4-f4b46943f7a7")]
     public class SampleState : AggregateRootState<Sample, SampleId>

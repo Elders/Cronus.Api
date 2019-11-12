@@ -1,8 +1,4 @@
-﻿using Elders.Cronus;
-using Elders.Cronus.Api.Playground.Domain.Samples;
-using Elders.Locus.Samples.Commands;
-
-namespace Elders.Locus.Samples.AppServices
+﻿namespace Elders.Cronus.Api.Playground.Domain.Samples.AppServices
 {
     public class SampleAppService : ApplicationService<Sample>,
         ICommandHandler<CreateSample>,

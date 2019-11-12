@@ -1,9 +1,7 @@
-﻿using Elders.Cronus;
-using Elders.Cronus.Projections;
-using Elders.Locus.Samples.Events;
+﻿using Elders.Cronus.Projections;
 using System.Runtime.Serialization;
 
-namespace Elders.Locus.Samples.Projections
+namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
     [DataContract(Name = "2cb8a10c-1ca0-41cd-a451-53dc520a4085")]
     public class IsSampleReservedProjection : ProjectionDefinition<SampleApiProjectionState, SampleId>,

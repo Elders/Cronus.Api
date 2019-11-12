@@ -1,8 +1,7 @@
-﻿using Elders.Cronus;
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 
-namespace Elders.Locus.Samples.Commands
+namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
     [DataContract(Name = "8d710982-9126-44a5-acce-e0db20d93a43")]
     public class ReserveSample : ICommand

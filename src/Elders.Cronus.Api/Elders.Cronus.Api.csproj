@@ -42,4 +42,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Elders.Cronus.Api.Playground.Domain\Elders.Cronus.Api.Playground.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

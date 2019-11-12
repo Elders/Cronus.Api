@@ -1,8 +1,7 @@
-﻿using Elders.Cronus;
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 
-namespace Elders.Locus.Samples
+namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
     [DataContract(Name = "b16a81fb-9b3f-4225-bdee-aa14d6a725f8")]
     public class SampleId : CronusApiId<SampleId>
@@ -80,7 +79,7 @@ namespace Elders.Locus.Samples
 
         public override string ToString()
         {
-            return urnFormatProvider.Format(this.Urn);
+            return urnFormatProvider.Format(Urn);
         }
     }
 }
