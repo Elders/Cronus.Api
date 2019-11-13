@@ -7,14 +7,12 @@ using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Elders.Cronus.Projections;
-using Elders.Cronus.Api.Playground.Domain.Samples.AppServices;
-using Elders.Cronus.Api.Playground.Domain.Samples;
 
 namespace Elders.Cronus.Api.Controllers
 {
     [Route("domain")]
     [AllowAnonymous]
-    public class DomainController : ApiControllerBase
+    public partial class DomainController : ApiControllerBase
     {
         [HttpGet, Route("explore")]
         public IActionResult Explore()
@@ -33,13 +31,39 @@ namespace Elders.Cronus.Api.Controllers
             return new OkObjectResult(result);
         }
 
+        private ICollection<TResult> RetrieveTypesFromAssemblies<TResult>(IEnumerable<Assembly> loadedAssemblies, Func<Type, bool> typeFilter, Func<Type, TResult> retrieveResult)
+        {
+            var result = new List<TResult>();
+
+            var typesMeta = loadedAssemblies
+                .SelectMany(ass => ass.GetLoadableTypes()
+                .Where(typeFilter));
+
+            foreach (var typeMeta in typesMeta)
+            {
+                result.Add(retrieveResult(typeMeta));
+            }
+
+            return result;
+        }
+
         private ICollection<Gateway_Response> GetGateways(IEnumerable<Assembly> loadedAssemblies)
         {
             return RetrieveTypesFromAssemblies(loadedAssemblies,
                 x => typeof(IGateway).IsAssignableFrom(x) && x.IsInterface == false,
                 meta => new Gateway_Response
                 {
-                    Name = meta.Name
+                    Name = meta.Name,
+                    Events = meta
+                                .GetInterfaces()
+                                    .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEventHandler<>))
+                                    .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(IEvent).IsAssignableFrom(x))
+                                    .Select(x =>
+                                        new Event_Response
+                                        {
+                                            Id = x.GetCustomAttribute<DataContractAttribute>().Name,
+                                            Name = x.Name
+                                        }).ToList()
                 });
         }
 
@@ -49,7 +73,17 @@ namespace Elders.Cronus.Api.Controllers
                 x => typeof(IPort).IsAssignableFrom(x) && x.IsInterface == false,
                 meta => new Port_Response
                 {
-                    Name = meta.Name
+                    Name = meta.Name,
+                    Events = meta
+                                .GetInterfaces()
+                                    .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEventHandler<>))
+                                    .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(IEvent).IsAssignableFrom(x))
+                                    .Select(x =>
+                                        new Event_Response
+                                        {
+                                            Id = x.GetCustomAttribute<DataContractAttribute>().Name,
+                                            Name = x.Name
+                                        }).ToList()
                 });
         }
 
@@ -60,6 +94,16 @@ namespace Elders.Cronus.Api.Controllers
                meta => new Saga_Response
                {
                    Name = meta.Name,
+                   Events = meta
+                                .GetInterfaces()
+                                    .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEventHandler<>))
+                                    .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(IEvent).IsAssignableFrom(x))
+                                    .Select(x =>
+                                        new Event_Response
+                                        {
+                                            Id = x.GetCustomAttribute<DataContractAttribute>().Name,
+                                            Name = x.Name
+                                        }).ToList()
                });
         }
 
@@ -71,7 +115,17 @@ namespace Elders.Cronus.Api.Controllers
                {
                    Id = meta.GetCustomAttribute<DataContractAttribute>().Name,
                    Name = meta.Name,
-                   IsEventSourced = typeof(IAmEventSourcedProjection).IsAssignableFrom(meta)
+                   IsEventSourced = typeof(IAmEventSourcedProjection).IsAssignableFrom(meta),
+                   Events = meta
+                                .GetInterfaces()
+                                    .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEventHandler<>))
+                                    .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(IEvent).IsAssignableFrom(x))
+                                    .Select(x =>
+                                        new Event_Response
+                                        {
+                                            Id = x.GetCustomAttribute<DataContractAttribute>().Name,
+                                            Name = x.Name
+                                        }).ToList()
                });
         }
 
@@ -108,21 +162,30 @@ namespace Elders.Cronus.Api.Controllers
                                     .GetInterfaces()
                                     .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ICommandHandler<>))
                                     .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(ICommand).IsAssignableFrom(x))
-                                    .Select(x => x.GetCustomAttribute<DataContractAttribute>().Name).ToList(),
-                    Events = GetWhenEvents(GetAggregateState(loadedAssemblies, meta))
-
-                }); ;
+                                    .Select(x =>
+                                        new Command_Response
+                                        {
+                                            Id = x.GetCustomAttribute<DataContractAttribute>().Name,
+                                            Name = x.Name
+                                        }).ToList(),
+                    Events = GetWhenEvents(GetAggregateState(meta))
+                });
         }
 
-        private ICollection<string> GetWhenEvents(Type type)
+        private ICollection<Event_Response> GetWhenEvents(Type type)
         {
             var allMethods = type.GetMethods()
                  .Where(x => x.GetParameters().Count() == 1 && typeof(IEvent).IsAssignableFrom(x.GetParameters().FirstOrDefault().ParameterType));
 
-            return allMethods.Select(x => x.GetParameters().FirstOrDefault().ParameterType.GetCustomAttribute<DataContractAttribute>().Name).ToList();
+            return allMethods.Select(x =>
+                                        new Event_Response
+                                        {
+                                            Id = x.GetParameters().FirstOrDefault().ParameterType.GetCustomAttribute<DataContractAttribute>().Name,
+                                            Name = x.GetParameters().FirstOrDefault().ParameterType.Name
+                                        }).ToList();
         }
 
-        private Type GetAggregateState(IEnumerable<Assembly> loadedAssemblies, Type meta)
+        private Type GetAggregateState(Type meta)
         {
             return meta.BaseType.GetGenericArguments().FirstOrDefault(x => typeof(IAggregateRootState).IsAssignableFrom(x));
         }
@@ -141,89 +204,5 @@ namespace Elders.Cronus.Api.Controllers
             return appService;
         }
 
-        private ICollection<TResult> RetrieveTypesFromAssemblies<TResult>(IEnumerable<Assembly> loadedAssemblies, Func<Type, bool> typeFilter, Func<Type, TResult> retrieveResult)
-        {
-            var result = new List<TResult>();
-
-            var typesMeta = loadedAssemblies
-                .SelectMany(ass => ass.GetLoadableTypes()
-                .Where(typeFilter));
-
-            foreach (var typeMeta in typesMeta)
-            {
-                result.Add(retrieveResult(typeMeta));
-            }
-
-            return result;
-        }
-
-        public class Domain_Response
-        {
-            public Domain_Response()
-            {
-                Aggregates = new List<Aggregate_Response>();
-            }
-
-            public IEnumerable<Aggregate_Response> Aggregates { get; set; }
-
-            public IEnumerable<Event_Response> Events { get; set; }
-
-            public IEnumerable<Command_Response> Commands { get; set; }
-
-            public IEnumerable<Projection_Response> Projections { get; set; }
-
-            public IEnumerable<Saga_Response> Sagas { get; set; }
-
-            public IEnumerable<Port_Response> Ports { get; set; }
-
-            public IEnumerable<Gateway_Response> Gateways { get; set; }
-        }
-
-        public class Aggregate_Response : BaseDomainModel_Response
-        {
-            public ICollection<string> Events { get; set; }
-
-            public IEnumerable<string> Commands { get; set; }
-        }
-
-        public class BaseDomainModel_Response
-        {
-            public string Name { get; set; }
-        }
-
-        public class BaseSerializableDomainModel_Response : BaseDomainModel_Response
-        {
-            /// <summary>
-            /// Data contract name
-            /// </summary>
-            public string Id { get; set; }
-        }
-
-        public class Event_Response : BaseSerializableDomainModel_Response
-        {
-        }
-
-        public class Command_Response : BaseSerializableDomainModel_Response
-        {
-        }
-
-        public class Projection_Response : BaseSerializableDomainModel_Response
-        {
-            public bool IsEventSourced { get; set; }
-        }
-
-        public class Saga_Response : BaseDomainModel_Response
-        {
-        }
-
-        public class Port_Response : BaseDomainModel_Response
-        {
-
-        }
-
-        public class Gateway_Response : BaseDomainModel_Response
-        {
-
-        }
     }
 }
