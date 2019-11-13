@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using Elders.Cronus.Projections;
 using Elders.Cronus.Api.Playground.Domain.Samples.AppServices;
+using Elders.Cronus.Api.Playground.Domain.Samples;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -106,10 +107,24 @@ namespace Elders.Cronus.Api.Controllers
                     Commands = GetAggregateAppService(loadedAssemblies, meta)
                                     .GetInterfaces()
                                     .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ICommandHandler<>))
-                                    .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(ICommand).IsAssignableFrom(x)).Select(x => x.Name).ToList()
-                });
+                                    .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(ICommand).IsAssignableFrom(x))
+                                    .Select(x => x.GetCustomAttribute<DataContractAttribute>().Name).ToList(),
+                    Events = GetWhenEvents(GetAggregateState(loadedAssemblies, meta))
 
+                }); ;
+        }
 
+        private ICollection<string> GetWhenEvents(Type type)
+        {
+            var allMethods = type.GetMethods()
+                 .Where(x => x.GetParameters().Count() == 1 && typeof(IEvent).IsAssignableFrom(x.GetParameters().FirstOrDefault().ParameterType));
+
+            return allMethods.Select(x => x.GetParameters().FirstOrDefault().ParameterType.GetCustomAttribute<DataContractAttribute>().Name).ToList();
+        }
+
+        private Type GetAggregateState(IEnumerable<Assembly> loadedAssemblies, Type meta)
+        {
+            return meta.BaseType.GetGenericArguments().FirstOrDefault(x => typeof(IAggregateRootState).IsAssignableFrom(x));
         }
 
         private Type GetAggregateAppService(IEnumerable<Assembly> loadedAssemblies, Type aggregate)
