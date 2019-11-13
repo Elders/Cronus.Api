@@ -59,12 +59,16 @@ namespace Elders.Cronus.Api
                 app.UseHttpsRedirection();
             }
             app.UseCronusAspNetCore();
+            app.UseCors(policy => policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod());
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-            app.UseCors();
+
         }
     }
 
