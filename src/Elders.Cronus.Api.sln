@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elders.Cronus.Api", "Elders
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elders.Cronus.Api.Host", "Elders.Cronus.Api.Host\Elders.Cronus.Api.Host.csproj", "{41F88306-075C-4EAE-97CC-FF2717450B37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elders.Cronus.Api.Playground.Domain", "Elders.Cronus.Api.Playground.Domain\Elders.Cronus.Api.Playground.Domain.csproj", "{127ED143-ECEE-45A5-A972-E9AA7E0910C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elders.Cronus.Api.Playground.Domain", "Elders.Cronus.Api.Playground.Domain\Elders.Cronus.Api.Playground.Domain.csproj", "{127ED143-ECEE-45A5-A972-E9AA7E0910C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Playground", "Playground", "{1AF14E68-083C-4B66-856D-D9EB84103DEF}"
 EndProject
@@ -21,10 +21,10 @@ Global
 		{604C5AF7-CE52-4C91-A3DC-11810F4C6A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{604C5AF7-CE52-4C91-A3DC-11810F4C6A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{604C5AF7-CE52-4C91-A3DC-11810F4C6A1E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51C875E6-8655-4D24-B006-81757B2FCCB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51C875E6-8655-4D24-B006-81757B2FCCB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51C875E6-8655-4D24-B006-81757B2FCCB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51C875E6-8655-4D24-B006-81757B2FCCB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41F88306-075C-4EAE-97CC-FF2717450B37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41F88306-075C-4EAE-97CC-FF2717450B37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41F88306-075C-4EAE-97CC-FF2717450B37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41F88306-075C-4EAE-97CC-FF2717450B37}.Release|Any CPU.Build.0 = Release|Any CPU
 		{127ED143-ECEE-45A5-A972-E9AA7E0910C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{127ED143-ECEE-45A5-A972-E9AA7E0910C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{127ED143-ECEE-45A5-A972-E9AA7E0910C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
