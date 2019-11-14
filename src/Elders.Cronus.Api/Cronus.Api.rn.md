@@ -1,3 +1,7 @@
+#### 6.0.0-beta0003 - 11.11.2019
+* Added Playground
+* Added Domain Explore API
+
 #### 6.0.0-beta0002 - 11.11.2019
 * Updates packages
 
