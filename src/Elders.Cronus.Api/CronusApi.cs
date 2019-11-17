@@ -60,11 +60,11 @@ namespace Elders.Cronus.Api
 
                     webBuilder.UseStartup<Startup>();
                 })
-                //.UseDefaultServiceProvider((context, options) =>
-                //{
-                //    options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
-                //    options.ValidateOnBuild = false;
-                //})
+                .UseDefaultServiceProvider((context, options) =>
+                {
+                    options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
+                    options.ValidateOnBuild = false;
+                })
 
                 .Build();
 
