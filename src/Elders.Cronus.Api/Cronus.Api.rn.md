@@ -1,3 +1,6 @@
+#### 6.0.0-beta0004 - 17.11.2019
+* Removes accidentally added reference to the playground project
+
 #### 6.0.0-beta0003 - 11.11.2019
 * Added Playground
 * Added Domain Explore API
