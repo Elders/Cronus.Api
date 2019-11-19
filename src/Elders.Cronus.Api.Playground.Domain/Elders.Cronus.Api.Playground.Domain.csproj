@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus" Version="6.0.0-beta0010" />
+    <PackageReference Include="Cronus" Version="6.0.0-beta0011" />
   </ItemGroup>
 
 </Project>
