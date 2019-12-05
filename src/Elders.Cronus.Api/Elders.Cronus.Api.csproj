@@ -31,7 +31,7 @@
   <ItemGroup>
     <PackageReference Include="Cronus" Version="6.0.0-beta0012" />
     <PackageReference Include="Cronus.AspNetCore" Version="6.0.0-beta0004" />
-    <PackageReference Include="LibLog" Version="5.0.6">
+    <PackageReference Include="LibLog" Version="5.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
