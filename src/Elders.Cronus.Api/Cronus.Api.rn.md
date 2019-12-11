@@ -1,3 +1,6 @@
+#### 6.0.0-beta0005 - 11.12.2019
+* Updates packages
+
 #### 6.0.0-beta0004 - 17.11.2019
 * Removes accidentally added reference to the playground project
 
