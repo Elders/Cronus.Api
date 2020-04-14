@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus" Version="6.0.0-beta0023" />
+    <PackageReference Include="Cronus" Version="6.0.0-beta0024" />
     <PackageReference Include="Cronus.AspNetCore" Version="6.0.0-beta0008" />
     <PackageReference Include="LibLog" Version="5.0.8">
       <PrivateAssets>all</PrivateAssets>
