@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Net;
-using Elders.Cronus.Api.Logging;
 using Elders.Cronus.Discoveries;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Elders.Cronus.Api
 {
@@ -19,7 +19,7 @@ namespace Elders.Cronus.Api
 
     public static class CronusApi
     {
-        private static readonly ILog log = LogProvider.GetLogger(typeof(CronusApi));
+        private static readonly ILogger logger = CronusLogger.CreateLogger(typeof(CronusApi));
 
         public static IHost GetHost(Action<CronusApiBuilder> builder = null)
         {
@@ -27,7 +27,7 @@ namespace Elders.Cronus.Api
             if (builder != null)
                 builder(cronusApiBuilder);
 
-            log.Info(() => $"Starting Cronus API.{Environment.NewLine}If you are not able to access it using DNS or public IP make sure that you have firewall rule and urlacl setup on the hosting machine.{Environment.NewLine}Example firewall: netsh advfirewall firewall add rule name=\"Cronus\" dir=in action=allow localport=7477 protocol=tcp{Environment.NewLine}Example urlacl: netsh http add urlacl url=http://[::]:7477 user=Everyone listen=yes");
+            logger.Info(() => $"Starting Cronus API.{Environment.NewLine}If you are not able to access it using DNS or public IP make sure that you have firewall rule and urlacl setup on the hosting machine.{Environment.NewLine}Example firewall: netsh advfirewall firewall add rule name=\"Cronus\" dir=in action=allow localport=7477 protocol=tcp{Environment.NewLine}Example urlacl: netsh http add urlacl url=http://[::]:7477 user=Everyone listen=yes");
 
             var host = Host
                 .CreateDefaultBuilder()
