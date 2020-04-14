@@ -1,3 +1,6 @@
+#### 6.0.0-beta0007 - 15.04.2020
+* Replaced LibLog
+
 #### 6.0.0-beta0006 - 10.04.2020
 * Updates packages
 
