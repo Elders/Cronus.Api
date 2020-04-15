@@ -18,7 +18,7 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
         }
     }
 
-    public abstract class CronusApiId<T> : StringTenantId
+    public abstract class CronusApiId<T> : AggregateRootId
         where T : CronusApiId<T>
     {
         static UberUrnFormatProvider urnFormatProvider = new UberUrnFormatProvider();
@@ -31,9 +31,9 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
         {
             var instance = (T)Activator.CreateInstance(typeof(T), true);
 
-            var stringTenantUrn = StringTenantUrn.Parse(id, urnFormatProvider);
+            var stringTenantUrn = AggregateRootId.Parse(id, urnFormatProvider);
             var newId = instance.Construct(stringTenantUrn.Id, stringTenantUrn.Tenant);
-            if (stringTenantUrn.ArName == newId.AggregateRootName)
+            if (stringTenantUrn.AggregateRootName == newId.AggregateRootName)
                 return newId;
             else
                 throw new Exception("bum");
@@ -46,9 +46,9 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
             {
                 var instance = (T)Activator.CreateInstance(typeof(T), true);
 
-                var stringTenantUrn = StringTenantUrn.Parse(id, urnFormatProvider);
+                var stringTenantUrn = AggregateRootId.Parse(id, urnFormatProvider);
                 var newId = instance.Construct(stringTenantUrn.Id, stringTenantUrn.Tenant);
-                if (stringTenantUrn.ArName == newId.AggregateRootName)
+                if (stringTenantUrn.AggregateRootName == newId.AggregateRootName)
                     result = newId;
                 else
                     throw new Exception("bum");
@@ -76,10 +76,5 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
         }
 
         protected abstract T Construct(string id, string tenant);
-
-        public override string ToString()
-        {
-            return urnFormatProvider.Format(Urn);
-        }
     }
 }

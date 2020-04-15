@@ -5,14 +5,14 @@ using Newtonsoft.Json.Linq;
 
 namespace Elders.Cronus.Api.Converters
 {
-    public class StringTenantIdConverter : GenericJsonConverter<string, StringTenantId>
+    public class StringTenantIdConverter : GenericJsonConverter<string, AggregateRootId>
     {
         public override bool CanConvertValue(Type valueType)
         {
             return typeof(IConvertible).IsAssignableFrom(valueType);
         }
 
-        public override StringTenantId Convert(string value, Type objectType, IEnumerable<System.Security.Claims.Claim> claims)
+        public override AggregateRootId Convert(string value, Type objectType, IEnumerable<System.Security.Claims.Claim> claims)
         {
             if (string.IsNullOrEmpty(value.ToString()))
                 return null;
@@ -24,13 +24,13 @@ namespace Elders.Cronus.Api.Converters
             if (urn.IsBase64String())
                 urn = urn.Base64Decode();
 
-            var urnParsed = StringTenantUrn.Parse(urn);
-            return new StringTenantId(urnParsed, urnParsed.ArName);
+            var urnParsed = AggregateUrn.Parse(urn);
+            return new AggregateRootId(urnParsed.AggregateRootName, urnParsed);
         }
 
-        public override object GetValue(StringTenantId instance)
+        public override object GetValue(AggregateRootId instance)
         {
-            return instance.Urn.Value;
+            return instance.Value;
         }
     }
 

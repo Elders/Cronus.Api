@@ -35,7 +35,7 @@ namespace Elders.Cronus.Api
             var arDto = new AggregateDto()
             {
                 BoundedContext = boundedContext.Name,
-                AggregateId = id.Urn.Value,
+                AggregateId = id.Value,
                 Commits = commitsDto
             };
             return arDto;
