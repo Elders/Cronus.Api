@@ -1,30 +1,7 @@
-#### 6.0.0-beta0008 - 15.04.2020
-* Updates packages
-
-#### 6.0.0-beta0007 - 15.04.2020
-* Replaced LibLog
-
-#### 6.0.0-beta0006 - 10.04.2020
-* Updates packages
-
-#### 6.0.0-beta0006 - 26.03.2020
-* Updates packages
-
-#### 6.0.0-beta0005 - 11.12.2019
-* Updates packages
-
-#### 6.0.0-beta0004 - 17.11.2019
+#### 6.0.0 - 16.04.2020
 * Removes accidentally added reference to the playground project
-
-#### 6.0.0-beta0003 - 11.11.2019
 * Added Playground
 * Added Domain Explore API
-
-#### 6.0.0-beta0002 - 11.11.2019
-* Updates packages
-
-#### 6.0.0-beta0001 - 30.10.2019
-* Updates packages
 
 #### 5.3.0 - 28.12.2018
 * Updates Cronus
