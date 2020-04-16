@@ -1,3 +1,8 @@
+#### 6.0.0 - 16.04.2020
+* Removes accidentally added reference to the playground project
+* Added Playground
+* Added Domain Explore API
+
 #### 5.3.0 - 28.12.2018
 * Updates Cronus
 

@@ -4,10 +4,10 @@
     {
         static IUrnFormatProvider urnFormatProvider = new UberUrnFormatProvider();
 
-        public static StringTenantId ToStringTenantId(this string input)
+        public static AggregateRootId ToStringTenantId(this string input)
         {
-            var urn = StringTenantUrn.Parse(input, urnFormatProvider);
-            StringTenantId id = new StringTenantId(urn, urn.ArName);
+            var urn = AggregateUrn.Parse(input, urnFormatProvider);
+            AggregateRootId id = new AggregateRootId(urn.AggregateRootName, urn);
 
             return id;
         }

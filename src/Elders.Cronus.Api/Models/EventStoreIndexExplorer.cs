@@ -6,12 +6,12 @@ using Elders.Cronus.EventStore;
 
 namespace Elders.Cronus.Api
 {
-    public class EventStoreExplorer
+    public class EventStoreIndexExplorer
     {
         private readonly IEventStore eventStore;
         private readonly BoundedContext boundedContext;
 
-        public EventStoreExplorer(IEventStore eventStore, BoundedContext boundedContext)
+        public EventStoreIndexExplorer(IEventStore eventStore, BoundedContext boundedContext)
         {
             if (ReferenceEquals(null, eventStore) == true) throw new ArgumentNullException(nameof(eventStore));
 
