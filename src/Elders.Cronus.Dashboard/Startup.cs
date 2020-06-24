@@ -48,6 +48,8 @@ namespace Elders.Cronus.Dashboard
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // D:\_\obs\UniCom.Commerce.Funnel\src\UniCom.Commerce.Funnel.Service
+            app.UsePathBase("/");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -61,6 +63,7 @@ namespace Elders.Cronus.Dashboard
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            //app.UseStaticWebAssets();
 
             app.UseRouting();
 

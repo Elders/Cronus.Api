@@ -39,6 +39,12 @@ namespace Elders.Cronus.Dashboard
                     if (cronusApiBuilder.AdditionalConfigurationSource is null == false)
                         webBuilder.ConfigureAppConfiguration((ctx, cfg) => cfg.Add(cronusApiBuilder.AdditionalConfigurationSource));
 
+                    var p = System.Reflection.Assembly.GetEntryAssembly().Location;
+                    p = p.Substring(0, p.LastIndexOf(@"\") + 1);
+
+                    webBuilder.UseContentRoot(p);
+                    //webBuilder.UseWebRoot("/wwwroot");
+                    webBuilder.UseStaticWebAssets();
                     webBuilder.UseKestrel((context, options) =>
                     {
                         IConfigurationSection kestrelSection = context.Configuration.GetSection("Cronus:Api:Kestrel");
@@ -54,6 +60,10 @@ namespace Elders.Cronus.Dashboard
                             });
                         }
                     });
+
+                    webBuilder.UseStaticWebAssets();
+                    //webBuilder.UseWebRoot("/wwwroot");
+                    webBuilder.UseContentRoot(p);
 
                     webBuilder.UseStartup<Startup>();
                 })
