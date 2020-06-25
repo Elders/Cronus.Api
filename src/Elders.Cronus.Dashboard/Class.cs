@@ -14,6 +14,8 @@ namespace Elders.Cronus.Dashboard
         public Func<IServiceCollection, IConfiguration, CronusServicesProvider> CronusServicesProvider { get; set; }
 
         public IConfigurationSource AdditionalConfigurationSource { get; set; }
+
+        public Action<WebHostBuilderContext, IConfigurationBuilder> ConfigurationBuilder { get; set; }
     }
 
     public static class CronusDashboard
@@ -38,6 +40,9 @@ namespace Elders.Cronus.Dashboard
                 {
                     if (cronusApiBuilder.AdditionalConfigurationSource is null == false)
                         webBuilder.ConfigureAppConfiguration((ctx, cfg) => cfg.Add(cronusApiBuilder.AdditionalConfigurationSource));
+
+                    if (cronusApiBuilder.ConfigurationBuilder is null == false)
+                        webBuilder.ConfigureAppConfiguration((ctx, cfg) => cronusApiBuilder.ConfigurationBuilder(ctx, cfg));
 
                     var p = System.Reflection.Assembly.GetEntryAssembly().Location;
                     p = p.Substring(0, p.LastIndexOf(@"\") + 1);

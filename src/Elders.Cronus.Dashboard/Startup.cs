@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Elders.Cronus.Dashboard.Data;
 using System.Net.Http;
 using Elders.Cronus.AspNetCore;
+using Elders.Cronus.MessageProcessing;
 
 namespace Elders.Cronus.Dashboard
 {
@@ -24,8 +25,13 @@ namespace Elders.Cronus.Dashboard
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+
             services.AddRazorPages();
-            services.AddServerSideBlazor();
+            services.AddServerSideBlazor(co => { co.DetailedErrors = true; });
+            services
+                .AddSignalR(options => options.EnableDetailedErrors = true)
+                .AddJsonProtocol();
             services.AddSingleton<WeatherForecastService>();
 
             services.AddScoped<HttpClient>(s =>
@@ -38,17 +44,16 @@ namespace Elders.Cronus.Dashboard
                 };
             });
 
-
             // Cronus
             services.AddCronus(Configuration);
             services.AddCronusAspNetCore();
-            //services.AddCronusApi();
+            services.AddCronusApi();
+            services.AddSingleton<CronusContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // D:\_\obs\UniCom.Commerce.Funnel\src\UniCom.Commerce.Funnel.Service
             app.UsePathBase("/");
             if (env.IsDevelopment())
             {
@@ -60,7 +65,7 @@ namespace Elders.Cronus.Dashboard
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            //app.UseCronusAspNetCore();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             //app.UseStaticWebAssets();
@@ -70,6 +75,7 @@ namespace Elders.Cronus.Dashboard
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
+                endpoints.MapRazorPages();
                 endpoints.MapFallbackToPage("/_Host");
             });
         }
