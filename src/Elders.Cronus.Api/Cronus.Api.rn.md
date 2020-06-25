@@ -1,3 +1,6 @@
+#### 6.1.0-beta0002 - 25.06.2020
+* Fixes strange problem with serialization
+
 #### 6.1.0-beta0001 - 25.06.2020
 * Fixes how we inject the current BoundedContext
 
