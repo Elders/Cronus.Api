@@ -64,7 +64,7 @@ namespace Elders.Cronus.Api
         {
             public string EventName { get; set; }
 
-            public IEvent EventData { get; set; }
+            public object EventData { get; set; }
         }
     }
 }
