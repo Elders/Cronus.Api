@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Elders.Cronus.EventStore;
+using Microsoft.Extensions.Options;
 
 namespace Elders.Cronus.Api
 {
@@ -11,12 +12,12 @@ namespace Elders.Cronus.Api
         private readonly IEventStore eventStore;
         private readonly BoundedContext boundedContext;
 
-        public EventStoreExplorer(IEventStore eventStore, BoundedContext boundedContext)
+        public EventStoreExplorer(IEventStore eventStore, IOptionsMonitor<BoundedContext> boundedContextMonitor)
         {
             if (ReferenceEquals(null, eventStore) == true) throw new ArgumentNullException(nameof(eventStore));
 
             this.eventStore = eventStore;
-            this.boundedContext = boundedContext;
+            this.boundedContext = boundedContextMonitor.CurrentValue;
         }
 
         public async Task<AggregateDto> ExploreAsync(IAggregateRootId id)
