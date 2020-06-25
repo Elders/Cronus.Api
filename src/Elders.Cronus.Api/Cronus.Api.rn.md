@@ -1,3 +1,6 @@
+#### 6.1.0-beta0001 - 25.06.2020
+* Fixes how we inject the current BoundedContext
+
 #### 6.0.0 - 16.04.2020
 * Removes accidentally added reference to the playground project
 * Added Playground
