@@ -22,7 +22,7 @@ namespace Elders.Cronus.Api.Controllers
         public async Task<IActionResult> Explore([FromQuery]RequestModel model)
         {
             var projectionType = model.ProjectionName.GetTypeByContract();
-            ProjectionDto result = await _projectionExplorer.ExploreAsync(model.Id.ToStringTenantId(), projectionType);
+            ProjectionDto result = await _projectionExplorer.ExploreAsync(Urn.Parse(model.Id), projectionType);
             return new OkObjectResult(new ResponseResult<ProjectionDto>(result));
         }
 
