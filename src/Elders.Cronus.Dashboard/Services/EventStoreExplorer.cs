@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Elders.Cronus.EventStore;
 using Microsoft.Extensions.Options;
 
-namespace Elders.Cronus.Api
+namespace Elders.Cronus.Dashboard.Services
 {
     public class EventStoreExplorer
     {
@@ -42,29 +42,42 @@ namespace Elders.Cronus.Api
             return arDto;
         }
 
-        public class AggregateDto
+
+    }
+
+    public class AggregateDto
+    {
+        public string BoundedContext { get; set; }
+
+        public string AggregateId { get; set; }
+
+        public List<AggregateCommitDto> Commits { get; set; }
+    }
+
+    public class AggregateCommitDto
+    {
+        public int AggregateRootRevision { get; set; }
+
+        public List<EventDto> Events { get; set; }
+
+        public DateTime Timestamp { get; set; }
+    }
+
+    public class EventDto
+    {
+        public string EventName { get; set; }
+
+        public IEvent EventData { get; set; }
+    }
+
+    public static class StringTenantIdExtensions
+    {
+        public static AggregateRootId ToStringTenantId(this string input)
         {
-            public string BoundedContext { get; set; }
+            var urn = AggregateUrn.Parse(input, Urn.Uber);
+            AggregateRootId id = new AggregateRootId(urn.AggregateRootName, urn);
 
-            public string AggregateId { get; set; }
-
-            public List<AggregateCommitDto> Commits { get; set; }
-        }
-
-        public class AggregateCommitDto
-        {
-            public int AggregateRootRevision { get; set; }
-
-            public List<EventDto> Events { get; set; }
-
-            public DateTime Timestamp { get; set; }
-        }
-
-        public class EventDto
-        {
-            public string EventName { get; set; }
-
-            public object EventData { get; set; }
+            return id;
         }
     }
 }

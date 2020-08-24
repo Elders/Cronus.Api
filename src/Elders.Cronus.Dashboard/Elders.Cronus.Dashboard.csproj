@@ -7,7 +7,7 @@
 
   <!--Nuget-->
   <PropertyGroup>
-    <PackageId>Cronus.Api</PackageId>
+    <PackageId>Cronus.Dashboard</PackageId>
     <Product>Cronus</Product>
     <Title>Cronus</Title>
     <Authors>Elders OSS</Authors>
@@ -20,23 +20,18 @@
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/Elders/logo/master/cronus/frame.png</PackageIconUrl>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyName>Elders.Cronus.Api</AssemblyName>
+    <AssemblyName>Elders.Cronus.Dashboard</AssemblyName>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <RootNamespace>Elders.Cronus.Api</RootNamespace>
+    <RootNamespace>Elders.Cronus.Dashboard</RootNamespace>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AssemblyVersion>6.0.0</AssemblyVersion>
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus" Version="6.1.0" />
+    <PackageReference Include="Cronus" Version="6.1.0-beta0011" />
     <PackageReference Include="Cronus.AspNetCore" Version="6.0.0" />
-    <PackageReference Include="Cronus.DomainModeling" Version="6.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.7" />
-    <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+    <PackageReference Include="MatBlazor" Version="2.3.0" />
   </ItemGroup>
 
 </Project>

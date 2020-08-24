@@ -1,3 +1,8 @@
+#### 6.1.0 - 24.08.2020
+* Fixes how the URN ids are parsed
+* Fixes strange problem with serialization
+* Fixes how we inject the current BoundedContext
+
 #### 6.0.0 - 16.04.2020
 * Removes accidentally added reference to the playground project
 * Added Playground

@@ -21,7 +21,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpGet, Route("Explore")]
         public async Task<IActionResult> Explore([FromQuery]RequestModel model)
         {
-            AggregateDto result = await _eventExplorer.ExploreAsync(model.Id.ToStringTenantId());
+            AggregateDto result = await _eventExplorer.ExploreAsync(AggregateUrn.Parse(model.Id));
             return new OkObjectResult(new ResponseResult<AggregateDto>(result));
         }
 
