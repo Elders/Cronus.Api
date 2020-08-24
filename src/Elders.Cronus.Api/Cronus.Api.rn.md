@@ -1,7 +1,6 @@
-#### 6.1.0-beta0002 - 25.06.2020
+#### 6.1.0 - 24.08.2020
+* Fixes how the URN ids are parsed
 * Fixes strange problem with serialization
-
-#### 6.1.0-beta0001 - 25.06.2020
 * Fixes how we inject the current BoundedContext
 
 #### 6.0.0 - 16.04.2020
