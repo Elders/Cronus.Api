@@ -147,7 +147,8 @@ namespace Elders.Cronus.Api.Controllers
                meta => new Event_Response
                {
                    Id = meta.GetCustomAttribute<DataContractAttribute>().Name,
-                   Name = meta.Name
+                   Name = meta.Name,
+                   Properties = meta.GetProperties(BindingFlags.Public).Select(x => x.Name).ToList()
                });
         }
 
@@ -159,15 +160,16 @@ namespace Elders.Cronus.Api.Controllers
                 {
                     Name = meta.Name,
                     Commands = GetAggregateAppService(loadedAssemblies, meta)
-                                    .GetInterfaces()
-                                    .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ICommandHandler<>))
-                                    .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(ICommand).IsAssignableFrom(x))
-                                    .Select(x =>
+                                    ?.GetInterfaces()
+                                    ?.Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ICommandHandler<>))
+                                    ?.SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(ICommand).IsAssignableFrom(x))
+                                    ?.Select(x =>
                                         new Command_Response
                                         {
                                             Id = x.GetCustomAttribute<DataContractAttribute>().Name,
                                             Name = x.Name
-                                        }).ToList(),
+                                        })
+                                    ?.ToList(),
                     Events = GetWhenEvents(GetAggregateState(meta))
                 });
         }
@@ -196,10 +198,12 @@ namespace Elders.Cronus.Api.Controllers
             Type[] typeArgs = { aggregate };
             var makeme = d1.MakeGenericType(typeArgs);
 
-            var appService = loadedAssemblies
-                .SelectMany(ass => ass.GetLoadableTypes()
-                .Where(x => makeme.IsAssignableFrom(x) && x.IsInterface == false && x.IsAbstract == false))
-                .Single();
+            var allTypes = loadedAssemblies
+                .SelectMany(ass => ass.GetLoadableTypes());
+
+            var appService = allTypes
+                .Where(x => makeme.IsAssignableFrom(x) && x.IsInterface == false && x.IsAbstract == false)
+                .SingleOrDefault(); // Just imagine that there is an Aggregate without an AppService, see?
 
             return appService;
         }
