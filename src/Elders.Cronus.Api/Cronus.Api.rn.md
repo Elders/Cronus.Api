@@ -1,3 +1,6 @@
+#### 6.1.1 - 18.19.2020
+* Allows to finalize an index rebuild request manually
+
 #### 6.1.0 - 24.08.2020
 * Fixes how the URN ids are parsed
 * Fixes strange problem with serialization
