@@ -29,8 +29,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus" Version="6.1.0-beta0011" />
-    <PackageReference Include="Cronus.AspNetCore" Version="6.0.0" />
+    <PackageReference Include="Cronus" Version="6.1.0" />
+    <PackageReference Include="Cronus.AspNetCore" Version="6.1.0" />
     <PackageReference Include="MatBlazor" Version="2.3.0" />
   </ItemGroup>
 
