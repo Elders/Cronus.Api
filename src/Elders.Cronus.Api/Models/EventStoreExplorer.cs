@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Elders.Cronus.EventStore;
+using Elders.Cronus.Projections.Cassandra.EventSourcing;
 using Microsoft.Extensions.Options;
 
 namespace Elders.Cronus.Api
@@ -29,7 +30,7 @@ namespace Elders.Cronus.Api
                 new AggregateCommitDto()
                 {
                     AggregateRootRevision = commit.Revision,
-                    Events = commit.Events.Select(x => new EventDto() { EventName = x.GetType().Name, EventData = x }).ToList(),
+                    Events = commit.Events.Select(x => x.Unwrap()).Select(x => new EventDto() { EventName = x.GetType().Name, EventData = x }).Union(commit.PublicEvents.Select(x => new EventDto() { EventName = x.GetType().Name, EventData = x })).ToList(),
                     Timestamp = DateTime.FromFileTimeUtc(commit.Timestamp)
                 }).ToList();
 
