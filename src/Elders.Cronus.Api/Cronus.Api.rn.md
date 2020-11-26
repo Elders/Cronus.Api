@@ -1,4 +1,7 @@
-#### 6.1.1 - 18.19.2020
+#### 6.1.2 - 26.11.2020
+* Adds additional info when querying and aggregate from the event store
+
+#### 6.1.1 - 18.09.2020
 * Allows to finalize an index rebuild request manually
 
 #### 6.1.0 - 24.08.2020
