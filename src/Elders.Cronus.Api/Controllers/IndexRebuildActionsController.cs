@@ -20,6 +20,17 @@ namespace Elders.Cronus.Api.Controllers
             this.context = context;
         }
 
+        [HttpPost, Route("Rebuild")]
+        public IActionResult Rebuild([FromBody] RequestModel model)
+        {
+            var command = new RebuildIndex(new EventStoreIndexManagerId(model.IndexContractId, context.Tenant));
+
+            if (_publisher.Publish(command))
+                return new OkObjectResult(new ResponseResult());
+
+            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(FinalizeEventStoreIndexRequest)}'"));
+        }
+
         [HttpPost, Route("Finalize")]
         public IActionResult Finalize([FromBody] RequestModel model)
         {
