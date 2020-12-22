@@ -1,3 +1,6 @@
+#### 6.1.3 - 22.12.2020
+* Allows to republish events
+
 #### 6.1.2 - 26.11.2020
 * Adds additional info when querying and aggregate from the event store
 
