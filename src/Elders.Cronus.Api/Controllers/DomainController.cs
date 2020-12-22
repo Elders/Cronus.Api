@@ -90,9 +90,10 @@ namespace Elders.Cronus.Api.Controllers
         private ICollection<Saga_Response> GetSagas(IEnumerable<Assembly> loadedAssemblies)
         {
             return RetrieveTypesFromAssemblies(loadedAssemblies,
-               x => typeof(Saga).IsAssignableFrom(x),
+               x => x.IsAbstract == false && typeof(Saga).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0,
                meta => new Saga_Response
                {
+                   Id = meta.GetContractId(),
                    Name = meta.Name,
                    Events = meta
                                 .GetInterfaces()
@@ -110,7 +111,7 @@ namespace Elders.Cronus.Api.Controllers
         private ICollection<Projection_Response> GetProjections(IEnumerable<Assembly> loadedAssemblies)
         {
             return RetrieveTypesFromAssemblies(loadedAssemblies,
-               x => typeof(IProjection).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0,
+               x => x.IsAbstract == false && typeof(IProjection).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0,
                meta => new Projection_Response
                {
                    Id = meta.GetCustomAttribute<DataContractAttribute>().Name,

@@ -45,6 +45,38 @@ namespace Elders.Cronus.Api
             return arDto;
         }
 
+        public async Task<IEvent> FindEventAsync(IAggregateRootId id, int commitRevision, int eventPosition)
+        {
+            EventStream stream = eventStore.Load(id);
+
+            AggregateCommit commit = stream.Commits.Where(commit => commit.Revision == commitRevision).SingleOrDefault();
+            if (commit is null == false)
+            {
+                if (commit.Events.Count > eventPosition)
+                {
+                    return commit.Events[eventPosition].Unwrap();
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<IPublicEvent> FindPublicEventAsync(IAggregateRootId id, int commitRevision, int eventPosition)
+        {
+            EventStream stream = eventStore.Load(id);
+
+            AggregateCommit commit = stream.Commits.Where(commit => commit.Revision == commitRevision).SingleOrDefault();
+            if (commit is null == false)
+            {
+                if (commit.Events.Count > eventPosition)
+                {
+                    return commit.PublicEvents[eventPosition];
+                }
+            }
+
+            return null;
+        }
+
         public class AggregateDto
         {
             public string BoundedContext { get; set; }
@@ -65,6 +97,8 @@ namespace Elders.Cronus.Api
 
         public class EventDto
         {
+            public string Id { get; set; }
+
             public string EventName { get; set; }
 
             public object EventData { get; set; }
@@ -91,6 +125,7 @@ namespace Elders.Cronus.Api
                 {
                     yield return new EventStoreExplorer.EventDto()
                     {
+                        Id = @event.GetType().GetContractId(),
                         EventName = @event.GetType().Name,
                         EventData = @event,
                         EventPosition = eventPosition
@@ -100,6 +135,7 @@ namespace Elders.Cronus.Api
                 {
                     yield return new EventStoreExplorer.EventDto()
                     {
+                        Id = entityEvent.Event.GetType().GetContractId(),
                         EventName = entityEvent.Event.GetType().Name,
                         EventData = entityEvent.Event,
                         IsEntityEvent = true,
@@ -117,6 +153,7 @@ namespace Elders.Cronus.Api
             {
                 yield return new EventStoreExplorer.EventDto()
                 {
+                    Id = @event.GetType().GetContractId(),
                     EventName = @event.GetType().Name,
                     EventData = @event,
                     IsPublicEvent = true

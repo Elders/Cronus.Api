@@ -30,14 +30,15 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpGet, Route("Meta")]
-        public async Task<IActionResult> Meta([FromQuery]RequestModel model)
+        public async Task<IActionResult> Meta([FromQuery] RequestModel model)
         {
             IEnumerable<Assembly> loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.IsDynamic == false);
-            IEnumerable<Type> projectionMetaData = loadedAssemblies
+            Type metadata = loadedAssemblies
                 .SelectMany(assembly => assembly.GetLoadableTypes()
-                .Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
-
-            Type metadata = projectionMetaData.FirstOrDefault(x => x.GetContractId() == model.ProjectionContractId);
+                .Where(x => typeof(IProjection).IsAssignableFrom(x))
+                .Where(x => x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0))
+                .Where(x => x.GetContractId() == model.ProjectionContractId)
+                .FirstOrDefault();
 
             if (metadata is null) return new BadRequestObjectResult(new ResponseResult<string>($"Projection with contract '{model.ProjectionContractId}' not found"));
 
@@ -49,6 +50,7 @@ namespace Elders.Cronus.Api.Controllers
             {
                 ProjectionContractId = metadata.GetContractId(),
                 ProjectionName = metadata.Name,
+                IsReplayable = typeof(IAmEventSourcedProjection).IsAssignableFrom(metadata)
             };
 
             if (state is null)

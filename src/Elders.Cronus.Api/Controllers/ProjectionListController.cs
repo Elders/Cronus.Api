@@ -35,7 +35,7 @@ namespace Elders.Cronus.Api.Controllers
 
             var projectionMetaData = loadedAssemblies
                 .SelectMany(ass => ass.GetLoadableTypes()
-                .Where(x => typeof(IProjectionDefinition).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
+                .Where(x => typeof(IProjection).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0));
 
             ProjectionListDto result = new ProjectionListDto();
             foreach (var meta in projectionMetaData)
@@ -47,6 +47,7 @@ namespace Elders.Cronus.Api.Controllers
                 {
                     ProjectionContractId = meta.GetContractId(),
                     ProjectionName = meta.Name,
+                    IsReplayable = typeof(IAmEventSourcedProjection).IsAssignableFrom(meta)
                 };
                 if (ReferenceEquals(null, state))
                 {
@@ -96,6 +97,8 @@ namespace Elders.Cronus.Api.Controllers
         public string ProjectionContractId { get; set; }
 
         public string ProjectionName { get; set; }
+
+        public bool IsReplayable { get; set; }
 
         public List<ProjectionVersion> Versions { get; set; }
     }
