@@ -26,7 +26,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpGet, Route("Explore")]
         public async Task<IActionResult> Explore([FromQuery] RequestModel model)
         {
-            AggregateDto result = await _eventExplorer.ExploreAsync(AggregateUrn.Parse(model.Id));
+            AggregateDto result = await _eventExplorer.ExploreAsync(AggregateUrn.Parse(model.Id, Urn.Uber));
             return new OkObjectResult(new ResponseResult<AggregateDto>(result));
         }
 
@@ -41,7 +41,7 @@ namespace Elders.Cronus.Api.Controllers
         {
             if (model.IsPublicEvent)
             {
-                IPublicEvent @event = await _eventExplorer.FindPublicEventAsync(AggregateUrn.Parse(model.Id), model.CommitRevision, model.EventPosition);
+                IPublicEvent @event = await _eventExplorer.FindPublicEventAsync(AggregateUrn.Parse(model.Id, Urn.Uber), model.CommitRevision, model.EventPosition);
 
                 if (@event is null) return BadRequest("Event not found");
 
@@ -50,7 +50,7 @@ namespace Elders.Cronus.Api.Controllers
             }
             else
             {
-                IEvent @event = await _eventExplorer.FindEventAsync(AggregateUrn.Parse(model.Id), model.CommitRevision, model.EventPosition);
+                IEvent @event = await _eventExplorer.FindEventAsync(AggregateUrn.Parse(model.Id, Urn.Uber), model.CommitRevision, model.EventPosition);
 
                 if (@event is null) return BadRequest("Event not found");
 

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Elders.Cronus;
-using Elders.Cronus.Api;
 using Elders.Cronus.EventStore;
 using Elders.Cronus.Projections.Cassandra.EventSourcing;
 using Microsoft.Extensions.Options;
