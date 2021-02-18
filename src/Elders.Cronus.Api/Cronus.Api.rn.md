@@ -1,3 +1,6 @@
+#### 6.1.4 - 22.12.2020
+* Fixes how the IDs are parsed
+
 #### 6.1.3 - 22.12.2020
 * Allows to republish events
 
