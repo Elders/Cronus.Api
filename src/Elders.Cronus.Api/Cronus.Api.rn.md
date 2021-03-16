@@ -1,3 +1,6 @@
+#### 6.2.0-beta0002 - 16.03.2021
+* Configures CORS
+
 #### 6.2.0-beta0001 - 16.03.2021
 * Projection rebuild progress
 
