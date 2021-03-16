@@ -57,9 +57,16 @@ namespace Elders.Cronus.Api
                 .AddJwtBearer();
             }
 
+            services.AddCors(options => options.AddPolicy("CorsPolicy",
+                builder =>
+                {
+                    builder.AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .SetIsOriginAllowed((host) => true)
+                           .AllowCredentials();
+                }));
+
             services.AddSignalR();
-            //.AddJsonProtocol();
-            //services.Replace<ChatHub, ChatHub>();
             services.AddResponseCompression(opts =>
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -69,6 +76,8 @@ namespace Elders.Cronus.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("CorsPolicy");
+
             app.UseResponseCompression();
 
             if (env.IsDevelopment())
@@ -81,15 +90,12 @@ namespace Elders.Cronus.Api
                 app.UseHttpsRedirection();
             }
             app.UseCronusAspNetCore();
-            app.UseCors(policy => policy
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod());
+
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<RebuildProjectionHub>("/projectionshub");
+                endpoints.MapHub<RebuildProjectionHub>("/hub/projections");
             });
         }
     }
