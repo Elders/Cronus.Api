@@ -1,12 +1,16 @@
-﻿using Elders.Cronus.AspNetCore;
+﻿using Elders.Cronus.Api.Hubs;
+using Elders.Cronus.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
 
 namespace Elders.Cronus.Api
 {
@@ -29,7 +33,14 @@ namespace Elders.Cronus.Api
             {
                 if (authenticationEnabled)
                     o.Conventions.Add(new AddAuthorizeFiltersControllerConvention("global-scope"));
+
+                var noContentFormatter = o.OutputFormatters.OfType<HttpNoContentOutputFormatter>().FirstOrDefault();
+                if (noContentFormatter != null)
+                {
+                    noContentFormatter.TreatNullValueAsNoContent = false;
+                }
             });
+
 
             services.AddCronus(configuration);
             services.AddCronusAspNetCore();
@@ -45,10 +56,21 @@ namespace Elders.Cronus.Api
                 })
                 .AddJwtBearer();
             }
+
+            services.AddSignalR();
+            //.AddJsonProtocol();
+            //services.Replace<ChatHub, ChatHub>();
+            services.AddResponseCompression(opts =>
+            {
+                opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                    new[] { "application/octet-stream" });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseResponseCompression();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -67,8 +89,8 @@ namespace Elders.Cronus.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<RebuildProjectionHub>("/projectionshub");
             });
-
         }
     }
 
