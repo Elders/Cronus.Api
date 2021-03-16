@@ -1,3 +1,6 @@
+#### 6.2.0-beta0001 - 16.03.2021
+* Projection rebuild progress
+
 #### 6.1.4 - 22.12.2020
 * Fixes how the IDs are parsed
 
