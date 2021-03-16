@@ -62,7 +62,7 @@ namespace Elders.Cronus.Api.Controllers
                 publisher.Publish(@event, headers);
             }
 
-            return Ok();
+            return new OkObjectResult(new ResponseResult());
         }
 
         public class RepublishRequest
