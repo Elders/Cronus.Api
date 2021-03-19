@@ -1,3 +1,6 @@
+#### 6.2.0-beta0003 - 19.03.2021
+* Adds projection's events to Projection Explore API
+
 #### 6.2.0-beta0002 - 16.03.2021
 * Configures CORS
 
