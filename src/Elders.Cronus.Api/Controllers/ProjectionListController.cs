@@ -51,7 +51,7 @@ namespace Elders.Cronus.Api.Controllers
                 };
                 if (ReferenceEquals(null, state))
                 {
-                    metaProjection.Versions.Add(new ProjectionVersion()
+                    metaProjection.Versions.Add(new ProjectionVersionDto()
                     {
                         Status = ProjectionStatus.NotPresent,
                         Hash = projectionHasher.CalculateHash(meta),
@@ -62,7 +62,7 @@ namespace Elders.Cronus.Api.Controllers
                 {
                     foreach (var ver in state.AllVersions)
                     {
-                        metaProjection.Versions.Add(new ProjectionVersion()
+                        metaProjection.Versions.Add(new ProjectionVersionDto()
                         {
                             Hash = ver.Hash,
                             Revision = ver.Revision,
@@ -91,7 +91,7 @@ namespace Elders.Cronus.Api.Controllers
     {
         public ProjectionMeta()
         {
-            Versions = new List<ProjectionVersion>();
+            Versions = new List<ProjectionVersionDto>();
         }
 
         public string ProjectionContractId { get; set; }
@@ -100,10 +100,10 @@ namespace Elders.Cronus.Api.Controllers
 
         public bool IsReplayable { get; set; }
 
-        public List<ProjectionVersion> Versions { get; set; }
+        public List<ProjectionVersionDto> Versions { get; set; }
     }
 
-    public class ProjectionVersion
+    public class ProjectionVersionDto
     {
         public string Hash { get; set; }
 

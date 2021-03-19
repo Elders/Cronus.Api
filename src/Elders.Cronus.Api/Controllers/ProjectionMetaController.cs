@@ -55,7 +55,7 @@ namespace Elders.Cronus.Api.Controllers
 
             if (state is null)
             {
-                metaProjection.Versions.Add(new ProjectionVersion()
+                metaProjection.Versions.Add(new ProjectionVersionDto()
                 {
                     Status = ProjectionStatus.NotPresent,
                     Hash = projectionHasher.CalculateHash(typeof(ProjectionVersionsHandler)),
@@ -66,7 +66,7 @@ namespace Elders.Cronus.Api.Controllers
             {
                 foreach (var ver in state.AllVersions)
                 {
-                    metaProjection.Versions.Add(new ProjectionVersion()
+                    metaProjection.Versions.Add(new ProjectionVersionDto()
                     {
                         Hash = ver.Hash,
                         Revision = ver.Revision,
