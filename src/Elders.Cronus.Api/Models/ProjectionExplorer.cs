@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Elders.Cronus.MessageProcessing;
 using Elders.Cronus.Projections;
@@ -49,7 +50,7 @@ namespace Elders.Cronus.Api
                 if (liveVersion is null == false)
                 {
                     IEnumerable<ProjectionCommit> projectionCommits = projectionStore.EnumerateProjection(liveVersion, id);
-                    result.Events = projectionCommits.ExtractEventData();
+                    result.Commits = projectionCommits.Select(commit => commit.ToProjectionDto());
                 }
             }
 
@@ -59,24 +60,25 @@ namespace Elders.Cronus.Api
         private async Task<ProjectionVersion> GetLiveVersion(Type projectionType)
         {
             var projectionVersionManagerId = new ProjectionVersionManagerId(projectionType.GetContractId(), context.Tenant);
-            ProjectionDto dto = await ExploreAsync(projectionVersionManagerId, typeof(ProjectionVersionsHandler));
+            ProjectionDto dto = await ExploreAsync(projectionVersionManagerId, typeof(ProjectionVersionsHandler)).ConfigureAwait(false);
             var state = dto?.State as ProjectionVersionsHandlerState;
 
             ProjectionVersion liveVersion = state is null ? null : state.AllVersions.GetLive();
             return liveVersion;
         }
+    }
 
-        public class ProjectionDto
-        {
-            public string Name { get; set; }
-            public object State { get; set; }
-            public IEnumerable<ProjectionEventDto> Events { get; set; }
-        }
+    public class ProjectionDto
+    {
+        public string Name { get; set; }
+        public object State { get; set; }
+        public IEnumerable<ProjectionCommitDto> Commits { get; set; }
+    }
 
-        public class ProjectionEventDto
-        {
-            public object Data { get; set; }
-            public DateTime Timestamp { get; set; }
-        }
+    public class ProjectionCommitDto
+    {
+        public IEnumerable<EventDto> Events { get; set; }
+
+        public DateTimeOffset Timestamp { get; set; }
     }
 }

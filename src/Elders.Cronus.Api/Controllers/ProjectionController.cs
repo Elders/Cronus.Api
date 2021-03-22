@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
-using static Elders.Cronus.Api.ProjectionExplorer;
 using System.ComponentModel.DataAnnotations;
 
 namespace Elders.Cronus.Api.Controllers
@@ -19,10 +18,20 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpGet, Route("Explore")]
-        public async Task<IActionResult> Explore([FromQuery] RequestModel model)
+        public async Task<IActionResult> ExploreAsync([FromQuery] RequestModel model)
         {
             var projectionType = model.ProjectionName.GetTypeByContract();
-            ProjectionDto result = await _projectionExplorer.ExploreIncludingEventsAsync(Urn.Parse(model.Id), projectionType);
+            ProjectionDto result = await _projectionExplorer.ExploreAsync(Urn.Parse(model.Id), projectionType).ConfigureAwait(false);
+            return new OkObjectResult(new ResponseResult<ProjectionDto>(result));
+        }
+
+        [HttpGet, Route("ExploreEvents")]
+        public async Task<IActionResult> ExploreEvents([FromQuery] RequestModel model)
+        {
+            var projectionType = model.ProjectionName.GetTypeByContract();
+            ProjectionDto result = await _projectionExplorer.ExploreIncludingEventsAsync(Urn.Parse(model.Id), projectionType).ConfigureAwait(false);
+            result.State = null;
+
             return new OkObjectResult(new ResponseResult<ProjectionDto>(result));
         }
 
