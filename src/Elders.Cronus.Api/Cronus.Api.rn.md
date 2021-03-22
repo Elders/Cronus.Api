@@ -1,3 +1,6 @@
+#### 6.2.0-beta0004 - 22.03.2021
+* Separates the projection events from the state
+  
 #### 6.2.0-beta0003 - 19.03.2021
 * Adds projection's events to Projection Explore API
 
