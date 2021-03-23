@@ -126,7 +126,7 @@ namespace Elders.Cronus.Api
             return new ProjectionCommitDto()
             {
                 Events = new List<EventDto> { commit.Event.ToEventDto(commit.TimeStamp) },
-                Timestamp = commit.TimeStamp
+                Timestamp = DateTime.FromFileTimeUtc(commit.EventOrigin.Timestamp)
             };
         }
 
