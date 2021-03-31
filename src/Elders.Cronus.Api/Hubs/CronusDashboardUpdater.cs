@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Elders.Cronus.Api.Hubs
 {
-    public class CronusDashboardUpdater : ITrigger,
+    public class CronusDashboardUpdater : ISystemTrigger,
         ISignalHandle<RebuildProjectionProgress>,
         ISignalHandle<RebuildProjectionStarted>,
         ISignalHandle<RebuildProjectionFinished>
