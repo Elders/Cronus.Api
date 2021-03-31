@@ -1,3 +1,6 @@
+#### 6.2.0-beta0006 - 31.03.2021
+* Updates Cronus
+
 #### 6.2.0-beta0005 - 23.03.2021
 * Fixes the projection commit timestamp
 
