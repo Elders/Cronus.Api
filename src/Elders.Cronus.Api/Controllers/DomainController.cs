@@ -73,6 +73,7 @@ namespace Elders.Cronus.Api.Controllers
                 x => typeof(IPort).IsAssignableFrom(x) && x.IsInterface == false,
                 meta => new Port_Response
                 {
+                    Id = meta.GetContractId(),
                     Name = meta.Name,
                     Events = meta
                                 .GetInterfaces()
