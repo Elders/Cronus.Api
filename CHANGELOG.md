@@ -1,3 +1,10 @@
+# [6.2.0-preview.3](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.2...v6.2.0-preview.3) (2021-05-07)
+
+
+### Bug Fixes
+
+* Adds ID to the Ports response ([c8e791c](https://github.com/Elders/Cronus.Api/commit/c8e791c5828031e71380196f5ccf118d2829266a))
+
 # [6.2.0-preview.2](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.1...v6.2.0-preview.2) (2021-05-07)
 
 
