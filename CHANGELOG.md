@@ -1,3 +1,10 @@
+# [6.2.0-preview.5](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.4...v6.2.0-preview.5) (2021-05-12)
+
+
+### Bug Fixes
+
+* Updates Cronus ([adddde3](https://github.com/Elders/Cronus.Api/commit/adddde3e5e44f3f7d2c8adfef2cf8151910d2fda))
+
 # [6.2.0-preview.4](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.3...v6.2.0-preview.4) (2021-05-11)
 
 
