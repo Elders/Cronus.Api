@@ -1,3 +1,10 @@
+# [6.2.0-preview.6](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.5...v6.2.0-preview.6) (2021-05-13)
+
+
+### Bug Fixes
+
+* Fixes how handlers are collected. We do not load abstract handler anymore ([24480cd](https://github.com/Elders/Cronus.Api/commit/24480cdb04478cad8da6b0b0274c26e1dd947891))
+
 # [6.2.0-preview.5](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.4...v6.2.0-preview.5) (2021-05-12)
 
 
