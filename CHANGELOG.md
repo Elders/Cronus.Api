@@ -1,3 +1,10 @@
+# [6.2.0-preview.7](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.6...v6.2.0-preview.7) (2021-05-19)
+
+
+### Bug Fixes
+
+* Adds ping controller ([f46bc16](https://github.com/Elders/Cronus.Api/commit/f46bc1619d5cc27b3099c72aebb207678e190c67))
+
 # [6.2.0-preview.6](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.5...v6.2.0-preview.6) (2021-05-13)
 
 
