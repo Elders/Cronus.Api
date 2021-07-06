@@ -1,3 +1,10 @@
+# [6.2.0-preview.8](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.7...v6.2.0-preview.8) (2021-07-06)
+
+
+### Bug Fixes
+
+* Add additional message headers to the republish api ([1becc07](https://github.com/Elders/Cronus.Api/commit/1becc0758749355be29d2427c961ea8d4e825c5d))
+
 # [6.2.0-preview.7](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.6...v6.2.0-preview.7) (2021-05-19)
 
 
