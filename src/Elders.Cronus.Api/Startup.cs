@@ -76,6 +76,7 @@ namespace Elders.Cronus.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseRouting();
             app.UseCors("CorsPolicy");
 
             app.UseResponseCompression();
@@ -89,9 +90,8 @@ namespace Elders.Cronus.Api
                 app.UseAuthentication();
                 app.UseHttpsRedirection();
             }
-            app.UseCronusAspNetCore();
 
-            app.UseRouting();
+            app.UseCronusAspNetCore(httpContext => httpContext.Request.Path.Value.Contains("/domain/", System.StringComparison.OrdinalIgnoreCase) == false);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

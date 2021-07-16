@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Elders.Cronus.Projections;
+using Microsoft.Extensions.Options;
+using Elders.Cronus.Multitenancy;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -14,6 +16,13 @@ namespace Elders.Cronus.Api.Controllers
     [AllowAnonymous]
     public partial class DomainController : ApiControllerBase
     {
+        public IOptions<TenantsOptions> options;
+
+        public DomainController(IOptions<TenantsOptions> options)
+        {
+            this.options = options;
+        }
+
         [HttpGet, Route("explore")]
         public IActionResult Explore()
         {
@@ -29,6 +38,13 @@ namespace Elders.Cronus.Api.Controllers
             result.Gateways = GetGateways(loadedAssemblies);
 
             return new OkObjectResult(result);
+        }
+
+        [HttpGet, Route("tenants")]
+        public IActionResult GetTenants()
+        {
+            return Ok(options.Value.Tenants);
+
         }
 
         private ICollection<TResult> RetrieveTypesFromAssemblies<TResult>(IEnumerable<Assembly> loadedAssemblies, Func<Type, bool> typeFilter, Func<Type, TResult> retrieveResult)
