@@ -70,7 +70,8 @@ namespace Elders.Cronus.Api.Controllers
                     {
                         Hash = ver.Hash,
                         Revision = ver.Revision,
-                        Status = ver.Status
+                        Status = ver.Status,
+                        RebuildStatus = ver.RebuildStatus
                     });
                 }
             }

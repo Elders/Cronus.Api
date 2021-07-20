@@ -54,6 +54,7 @@ namespace Elders.Cronus.Api.Controllers
                     metaProjection.Versions.Add(new ProjectionVersionDto()
                     {
                         Status = ProjectionStatus.NotPresent,
+                        RebuildStatus = ProjectionRebuildStatus.Idle,
                         Hash = projectionHasher.CalculateHash(meta),
                         Revision = 0
                     });
@@ -66,7 +67,8 @@ namespace Elders.Cronus.Api.Controllers
                         {
                             Hash = ver.Hash,
                             Revision = ver.Revision,
-                            Status = ver.Status
+                            Status = ver.Status,
+                            RebuildStatus = ver.RebuildStatus
                         });
                     }
                 }
@@ -110,5 +112,7 @@ namespace Elders.Cronus.Api.Controllers
         public int Revision { get; set; }
 
         public string Status { get; set; }
+
+        public string RebuildStatus { get; set; }
     }
 }
