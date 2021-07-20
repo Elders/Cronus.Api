@@ -1,3 +1,21 @@
+#### 6.2.0-beta0006 - 31.03.2021
+* Updates Cronus
+
+#### 6.2.0-beta0005 - 23.03.2021
+* Fixes the projection commit timestamp
+
+#### 6.2.0-beta0004 - 22.03.2021
+* Separates the projection events from the state
+  
+#### 6.2.0-beta0003 - 19.03.2021
+* Adds projection's events to Projection Explore API
+
+#### 6.2.0-beta0002 - 16.03.2021
+* Configures CORS
+
+#### 6.2.0-beta0001 - 16.03.2021
+* Projection rebuild progress
+
 #### 6.1.4 - 22.12.2020
 * Fixes how the IDs are parsed
 

@@ -39,7 +39,7 @@ namespace Elders.Cronus.Api.Controllers
             public string ProjectionContractId { get; set; }
 
             [Required]
-            public ProjectionVersion Version { get; set; }
+            public ProjectionVersionDto Version { get; set; }
 
             [Required]
             public string Reason { get; set; }

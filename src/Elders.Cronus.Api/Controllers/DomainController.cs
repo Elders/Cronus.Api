@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Elders.Cronus.Projections;
+using Microsoft.Extensions.Options;
+using Elders.Cronus.Multitenancy;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -14,6 +16,13 @@ namespace Elders.Cronus.Api.Controllers
     [AllowAnonymous]
     public partial class DomainController : ApiControllerBase
     {
+        public IOptions<TenantsOptions> options;
+
+        public DomainController(IOptions<TenantsOptions> options)
+        {
+            this.options = options;
+        }
+
         [HttpGet, Route("explore")]
         public IActionResult Explore()
         {
@@ -29,6 +38,13 @@ namespace Elders.Cronus.Api.Controllers
             result.Gateways = GetGateways(loadedAssemblies);
 
             return new OkObjectResult(result);
+        }
+
+        [HttpGet, Route("tenants")]
+        public IActionResult GetTenants()
+        {
+            return Ok(options.Value.Tenants);
+
         }
 
         private ICollection<TResult> RetrieveTypesFromAssemblies<TResult>(IEnumerable<Assembly> loadedAssemblies, Func<Type, bool> typeFilter, Func<Type, TResult> retrieveResult)
@@ -47,10 +63,15 @@ namespace Elders.Cronus.Api.Controllers
             return result;
         }
 
+        private bool HandlerRetrieveRequirements<T>(Type handlerCandidate)
+        {
+            return handlerCandidate.IsAbstract == false && handlerCandidate.IsInterface == false && typeof(T).IsAssignableFrom(handlerCandidate);
+        }
+
         private ICollection<Gateway_Response> GetGateways(IEnumerable<Assembly> loadedAssemblies)
         {
             return RetrieveTypesFromAssemblies(loadedAssemblies,
-                x => typeof(IGateway).IsAssignableFrom(x) && x.IsInterface == false,
+                x => HandlerRetrieveRequirements<IGateway>(x),
                 meta => new Gateway_Response
                 {
                     Name = meta.Name,
@@ -70,9 +91,10 @@ namespace Elders.Cronus.Api.Controllers
         private ICollection<Port_Response> GetPorts(IEnumerable<Assembly> loadedAssemblies)
         {
             return RetrieveTypesFromAssemblies(loadedAssemblies,
-                x => typeof(IPort).IsAssignableFrom(x) && x.IsInterface == false,
+                x => HandlerRetrieveRequirements<IPort>(x),
                 meta => new Port_Response
                 {
+                    Id = meta.GetContractId(),
                     Name = meta.Name,
                     Events = meta
                                 .GetInterfaces()
@@ -90,7 +112,7 @@ namespace Elders.Cronus.Api.Controllers
         private ICollection<Saga_Response> GetSagas(IEnumerable<Assembly> loadedAssemblies)
         {
             return RetrieveTypesFromAssemblies(loadedAssemblies,
-               x => x.IsAbstract == false && typeof(Saga).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0,
+               x => HandlerRetrieveRequirements<ISaga>(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0,
                meta => new Saga_Response
                {
                    Id = meta.GetContractId(),
@@ -111,7 +133,7 @@ namespace Elders.Cronus.Api.Controllers
         private ICollection<Projection_Response> GetProjections(IEnumerable<Assembly> loadedAssemblies)
         {
             return RetrieveTypesFromAssemblies(loadedAssemblies,
-               x => x.IsAbstract == false && typeof(IProjection).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0,
+               x => HandlerRetrieveRequirements<IProjection>(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0,
                meta => new Projection_Response
                {
                    Id = meta.GetCustomAttribute<DataContractAttribute>().Name,
@@ -156,7 +178,7 @@ namespace Elders.Cronus.Api.Controllers
         private ICollection<Aggregate_Response> GetAggregates(IEnumerable<System.Reflection.Assembly> loadedAssemblies)
         {
             return RetrieveTypesFromAssemblies(loadedAssemblies,
-                x => typeof(IAggregateRoot).IsAssignableFrom(x) && x.IsInterface == false && x != typeof(AggregateRoot<>),
+                x => HandlerRetrieveRequirements<IAggregateRoot>(x) && x != typeof(AggregateRoot<>),
                 meta => new Aggregate_Response
                 {
                     Name = meta.Name,

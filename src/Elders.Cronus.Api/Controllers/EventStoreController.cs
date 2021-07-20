@@ -4,6 +4,7 @@ using System;
 using static Elders.Cronus.Api.EventStoreExplorer;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using Elders.Cronus.EventStore.Index;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -54,15 +55,28 @@ namespace Elders.Cronus.Api.Controllers
 
                 if (@event is null) return BadRequest("Event not found");
 
+                string recipientHandlers = ConcatRecipientHandlers(model.RecipientHandlers);
+
                 Dictionary<string, string> headers = new Dictionary<string, string>()
                 {
-                    { MessageHeader.RecipientHandlers, string.Join(',', model.RecipientHandlers) }
+                    { MessageHeader.AggregateRootId,  model.Id},
+                    { MessageHeader.AggregateRootRevision, model.CommitRevision.ToString()},
+                    { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
+                    { MessageHeader.RecipientHandlers, string.Join(',', recipientHandlers) }
                 };
 
                 publisher.Publish(@event, headers);
             }
 
-            return Ok();
+            return new OkObjectResult(new ResponseResult());
+        }
+
+        private string ConcatRecipientHandlers(string[] chosenRecipientHandlers)
+        {
+            string projectionIndexContract = typeof(ProjectionIndex).GetContractId();
+            string handlerContracts = string.Join(',', chosenRecipientHandlers);
+
+            return $"{projectionIndexContract},{handlerContracts}";
         }
 
         public class RepublishRequest
