@@ -91,7 +91,14 @@ namespace Elders.Cronus.Api
                 app.UseHttpsRedirection();
             }
 
-            app.UseCronusAspNetCore(httpContext => httpContext.Request.Path.Value.Contains("/domain/", System.StringComparison.OrdinalIgnoreCase) == false);
+            app.UseCronusAspNetCore(httpContext =>
+            {
+                return (
+                    httpContext.Request.Path.Value.Contains("/domain/", System.StringComparison.OrdinalIgnoreCase) ||
+                    httpContext.Request.Path.Value.Contains("/hub/", System.StringComparison.OrdinalIgnoreCase)
+                ) == false;
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
