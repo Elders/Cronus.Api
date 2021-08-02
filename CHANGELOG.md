@@ -1,3 +1,10 @@
+# [6.2.0-preview.10](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.9...v6.2.0-preview.10) (2021-08-02)
+
+
+### Bug Fixes
+
+* Connection to SignalR hubs does not require tenant resolve ([8e27716](https://github.com/Elders/Cronus.Api/commit/8e27716d2a8d911c62110e5d62e177718dd4c006))
+
 # [6.2.0-preview.9](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.8...v6.2.0-preview.9) (2021-08-02)
 
 
