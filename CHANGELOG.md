@@ -1,3 +1,10 @@
+# [6.2.0-preview.11](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.10...v6.2.0-preview.11) (2021-09-06)
+
+
+### Bug Fixes
+
+* add endpoint for replaying public event ([19a8105](https://github.com/Elders/Cronus.Api/commit/19a8105be11b175f7dc162f409224f06711ae0ce))
+
 # [6.2.0-preview.10](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.9...v6.2.0-preview.10) (2021-08-02)
 
 
