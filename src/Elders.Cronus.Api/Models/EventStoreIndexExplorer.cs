@@ -24,7 +24,6 @@ namespace Elders.Cronus.Api
         {
             EventStream stream = eventStore.Load(id);
             if (stream.Commits.Count() == 0) return new AggregateDto();
-
             var commitsDto = stream.Commits.Select(commit =>
                 new AggregateCommitDto()
                 {

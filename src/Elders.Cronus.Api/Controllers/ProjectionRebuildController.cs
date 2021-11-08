@@ -21,9 +21,20 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpPost, Route("Rebuild")]
-        public IActionResult Rebuild([FromBody]RequestModel model)
+        public IActionResult Rebuild([FromBody] RequestModel model)
         {
             var command = new RebuildProjection(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash);
+
+            if (_publisher.Publish(command))
+                return new OkObjectResult(new ResponseResult());
+
+            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(ReplayProjection)}'"));
+        }
+
+        [HttpPost, Route("Replay")]
+        public IActionResult Replay([FromBody] RequestModel model)
+        {
+            var command = new ReplayProjection(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash);
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());

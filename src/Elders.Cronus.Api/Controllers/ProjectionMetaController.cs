@@ -43,7 +43,7 @@ namespace Elders.Cronus.Api.Controllers
             if (metadata is null) return new BadRequestObjectResult(new ResponseResult<string>($"Projection with contract '{model.ProjectionContractId}' not found"));
 
             var id = new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant);
-            ProjectionExplorer.ProjectionDto dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
+            ProjectionDto dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
             var state = dto?.State as ProjectionVersionsHandlerState;
 
             var metaProjection = new ProjectionMeta()
@@ -55,7 +55,7 @@ namespace Elders.Cronus.Api.Controllers
 
             if (state is null)
             {
-                metaProjection.Versions.Add(new ProjectionVersion()
+                metaProjection.Versions.Add(new ProjectionVersionDto()
                 {
                     Status = ProjectionStatus.NotPresent,
                     Hash = projectionHasher.CalculateHash(typeof(ProjectionVersionsHandler)),
@@ -66,7 +66,7 @@ namespace Elders.Cronus.Api.Controllers
             {
                 foreach (var ver in state.AllVersions)
                 {
-                    metaProjection.Versions.Add(new ProjectionVersion()
+                    metaProjection.Versions.Add(new ProjectionVersionDto()
                     {
                         Hash = ver.Hash,
                         Revision = ver.Revision,

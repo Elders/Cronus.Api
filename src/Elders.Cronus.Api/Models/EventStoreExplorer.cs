@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Elders.Cronus.EventStore;
+using Elders.Cronus.Projections;
 using Elders.Cronus.Projections.Cassandra.EventSourcing;
 using Microsoft.Extensions.Options;
 
@@ -24,13 +25,13 @@ namespace Elders.Cronus.Api
         public async Task<AggregateDto> ExploreAsync(IAggregateRootId id)
         {
             EventStream stream = eventStore.Load(id);
-            if (stream.Commits.Count() == 0) return new AggregateDto();
+            if (stream.Commits.Any() == false) return new AggregateDto();
 
             var commitsDto = stream.Commits.Select(commit =>
                 new AggregateCommitDto()
                 {
                     AggregateRootRevision = commit.Revision,
-                    Events = commit.Events.ToEventDto().Union(commit.PublicEvents.ToEventDto()).ToList(),
+                    Events = commit.Events.ToEventDto(DateTimeOffset.FromFileTime(commit.Timestamp)).Union(commit.PublicEvents.ToEventDto()).ToList(),
                     Timestamp = DateTime.FromFileTimeUtc(commit.Timestamp)
                 }).ToList();
 
@@ -92,64 +93,103 @@ namespace Elders.Cronus.Api
 
             public DateTime Timestamp { get; set; }
         }
+    }
 
-        public class EventDto
-        {
-            public string Id { get; set; }
+    public class EventDto
+    {
+        public string Id { get; set; }
 
-            public string EventName { get; set; }
+        public string EventName { get; set; }
 
-            public object EventData { get; set; }
+        public object EventData { get; set; }
 
-            public bool IsEntityEvent { get; set; }
+        public bool IsEntityEvent { get; set; }
 
-            public bool IsPublicEvent { get; set; }
+        public bool IsPublicEvent { get; set; }
 
-            public string EntityId { get; set; }
+        public string EntityId { get; set; }
 
-            public int EventPosition { get; set; }
-        }
+        public int EventPosition { get; set; }
+
+        public DateTimeOffset Timestamp { get; set; }
     }
 
     public static class EventExtensions
     {
-        public static IEnumerable<EventStoreExplorer.EventDto> ToEventDto(this List<IEvent> events)
+        public static IEnumerable<EventDto> ToEventsDto(this ProjectionCommit commit)
+        {
+            yield return commit.Event.ToEventDto(commit.TimeStamp);
+        }
+
+        public static ProjectionCommitDto ToProjectionDto(this ProjectionCommit commit)
+        {
+            return new ProjectionCommitDto()
+            {
+                Events = new List<EventDto> { commit.Event.ToEventDto(commit.TimeStamp) },
+                Timestamp = DateTime.FromFileTimeUtc(commit.EventOrigin.Timestamp)
+            };
+        }
+
+        public static EventDto ToEventDto(this IEvent @event, DateTimeOffset dateTimeOffset)
+        {
+            return @event.ToEventDto(dateTimeOffset, 1);
+        }
+
+        public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IEvent> events, DateTimeOffset timestamp)
         {
             int eventPosition = 0;
             foreach (IEvent @event in events)
             {
-                var entityEvent = @event as EntityEvent;
-                if (ReferenceEquals(null, entityEvent))
-                {
-                    yield return new EventStoreExplorer.EventDto()
-                    {
-                        Id = @event.GetType().GetContractId(),
-                        EventName = @event.GetType().Name,
-                        EventData = @event,
-                        EventPosition = eventPosition
-                    };
-                }
-                else
-                {
-                    yield return new EventStoreExplorer.EventDto()
-                    {
-                        Id = entityEvent.Event.GetType().GetContractId(),
-                        EventName = entityEvent.Event.GetType().Name,
-                        EventData = entityEvent.Event,
-                        IsEntityEvent = true,
-                        EventPosition = eventPosition
-                    };
-                }
+                yield return @event.ToEventDto(timestamp, eventPosition);
                 eventPosition++;
             }
-
         }
 
-        public static IEnumerable<EventStoreExplorer.EventDto> ToEventDto(this IEnumerable<IPublicEvent> events)
+        public static IEnumerable<EventDto> ToEventDto(this List<IEvent> events, DateTimeOffset timestamp)
+        {
+            int eventPosition = 0;
+            foreach (IEvent @event in events)
+            {
+                yield return @event.ToEventDto(timestamp, eventPosition);
+                eventPosition++;
+            }
+        }
+
+        public static EventDto ToEventDto(this IEvent @event, DateTimeOffset timestamp, int position)
+        {
+            var entityEvent = @event as EntityEvent;
+            if (ReferenceEquals(null, entityEvent))
+            {
+                return new EventDto()
+                {
+                    Id = @event.GetType().GetContractId(),
+                    EventName = @event.GetType().Name,
+                    EventData = @event,
+                    EventPosition = position,
+                    IsPublicEvent = typeof(IPublicEvent).IsAssignableFrom(@event.GetType()),
+                    Timestamp = timestamp
+                };
+            }
+            else
+            {
+                return new EventDto()
+                {
+                    Id = entityEvent.Event.GetType().GetContractId(),
+                    EventName = entityEvent.Event.GetType().Name,
+                    EventData = entityEvent.Event,
+                    IsEntityEvent = true,
+                    EventPosition = 1,
+                    IsPublicEvent = typeof(IPublicEvent).IsAssignableFrom(@event.GetType()),
+                    Timestamp = timestamp
+                };
+            }
+        }
+
+        public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IPublicEvent> events)
         {
             foreach (IEvent @event in events)
             {
-                yield return new EventStoreExplorer.EventDto()
+                yield return new EventDto()
                 {
                     Id = @event.GetType().GetContractId(),
                     EventName = @event.GetType().Name,
