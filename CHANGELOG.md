@@ -1,3 +1,10 @@
+# [7.0.0-preview.1](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.11...v7.0.0-preview.1) (2021-11-11)
+
+
+### Features
+
+* Release ([bdaf6b9](https://github.com/Elders/Cronus.Api/commit/bdaf6b924a4959d10d5c71d558bdf3996b3cdb10))
+
 # [6.2.0-preview.11](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.10...v6.2.0-preview.11) (2021-09-06)
 
 
