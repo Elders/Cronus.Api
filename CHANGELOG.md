@@ -1,3 +1,10 @@
+# [7.0.0-preview.2](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.1...v7.0.0-preview.2) (2021-11-30)
+
+
+### Bug Fixes
+
+* Update Cronus ([dfa1287](https://github.com/Elders/Cronus.Api/commit/dfa12876adead0fa7cf7ad49e5eaf68bacd641a8))
+
 # [7.0.0-preview.1](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.11...v7.0.0-preview.1) (2021-11-11)
 
 
