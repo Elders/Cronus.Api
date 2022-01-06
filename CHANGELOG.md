@@ -1,3 +1,10 @@
+# [7.0.0-preview.3](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.2...v7.0.0-preview.3) (2022-01-06)
+
+
+### Bug Fixes
+
+* Fix issue with unwraping public events ([8f9ba5a](https://github.com/Elders/Cronus.Api/commit/8f9ba5a363f8af91dc2d0c0876cbde7fd719848c))
+
 # [7.0.0-preview.2](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.1...v7.0.0-preview.2) (2021-11-30)
 
 
