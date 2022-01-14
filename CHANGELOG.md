@@ -1,3 +1,10 @@
+# [7.0.0-preview.4](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.3...v7.0.0-preview.4) (2022-01-14)
+
+
+### Features
+
+* Adds an endpoint to force Finalize a projection build/rebuild ([2254cb5](https://github.com/Elders/Cronus.Api/commit/2254cb5a158cfd8b8a87e188a289a2b53945f600))
+
 # [7.0.0-preview.3](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.2...v7.0.0-preview.3) (2022-01-06)
 
 
