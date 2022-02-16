@@ -40,18 +40,25 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Republish")]
         public async Task<IActionResult> Republish([FromBody] RepublishRequest model)
         {
+            var arId = AggregateUrn.Parse(model.Id, Urn.Uber);
+
             if (model.IsPublicEvent)
             {
-                IPublicEvent @event = await _eventExplorer.FindPublicEventAsync(AggregateUrn.Parse(model.Id, Urn.Uber), model.CommitRevision, model.EventPosition);
+                IPublicEvent @event = await _eventExplorer.FindPublicEventAsync(arId, model.CommitRevision, model.EventPosition);
 
                 if (@event is null) return BadRequest("Event not found");
 
-                publicPublisher.Publish(@event);
+                Dictionary<string, string> headers = new Dictionary<string, string>()
+                {
+                    { MessageHeader.AggregateRootId,  arId.ToBase64()}
+                };
+
+                publicPublisher.Publish(@event, headers);
 
             }
             else
             {
-                IEvent @event = await _eventExplorer.FindEventAsync(AggregateUrn.Parse(model.Id, Urn.Uber), model.CommitRevision, model.EventPosition);
+                IEvent @event = await _eventExplorer.FindEventAsync(arId, model.CommitRevision, model.EventPosition);
 
                 if (@event is null) return BadRequest("Event not found");
 
@@ -59,7 +66,7 @@ namespace Elders.Cronus.Api.Controllers
 
                 Dictionary<string, string> headers = new Dictionary<string, string>()
                 {
-                    { MessageHeader.AggregateRootId,  model.Id},
+                    { MessageHeader.AggregateRootId,  arId.ToBase64()},
                     { MessageHeader.AggregateRootRevision, model.CommitRevision.ToString()},
                     { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
                     { MessageHeader.RecipientHandlers, string.Join(',', recipientHandlers) }
