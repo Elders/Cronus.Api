@@ -1,3 +1,10 @@
+# [7.0.0-preview.5](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.4...v7.0.0-preview.5) (2022-02-16)
+
+
+### Bug Fixes
+
+* Made it possible to add headers for public events and their subsequent encoding. ([9d997b9](https://github.com/Elders/Cronus.Api/commit/9d997b915893c9d3f6241a42c14e1bb093981daf))
+
 # [7.0.0-preview.4](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.3...v7.0.0-preview.4) (2022-01-14)
 
 
