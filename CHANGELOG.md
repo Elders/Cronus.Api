@@ -1,3 +1,10 @@
+# [7.0.0-preview.7](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.6...v7.0.0-preview.7) (2022-03-02)
+
+
+### Bug Fixes
+
+* Configure NewtonsoftJson ([f82431b](https://github.com/Elders/Cronus.Api/commit/f82431b745e4f91acbf12803da6161716f3afbf2))
+
 # [7.0.0-preview.6](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.5...v7.0.0-preview.6) (2022-03-02)
 
 
