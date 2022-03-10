@@ -1,3 +1,10 @@
+# [7.0.0-preview.8](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.7...v7.0.0-preview.8) (2022-03-10)
+
+
+### Features
+
+* Make controllers for connecting the dashboard with the monitoring service ([c298b15](https://github.com/Elders/Cronus.Api/commit/c298b15be7c5344a9cdf80bfe84743c58e7c2ee4))
+
 # [7.0.0-preview.7](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.6...v7.0.0-preview.7) (2022-03-02)
 
 
