@@ -48,6 +48,7 @@ namespace Elders.Cronus.Api
             services.AddCronus(configuration);
             services.AddCronusAspNetCore();
             services.AddCronusApi();
+            services.AddMonitor();
 
             if (authenticationEnabled)
             {
