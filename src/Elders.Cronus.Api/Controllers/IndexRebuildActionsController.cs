@@ -23,7 +23,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Rebuild")]
         public IActionResult Rebuild([FromBody] RequestModel model)
         {
-            var command = new RebuildIndex(new EventStoreIndexManagerId(model.IndexContractId, context.Tenant));
+            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.IndexContractId, context.Tenant));
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());

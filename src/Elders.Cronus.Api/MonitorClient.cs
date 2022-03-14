@@ -65,33 +65,31 @@ namespace Elders.Cronus.Api
         {
             if (request is null) throw new ArgumentNullException(nameof(request));
 
-            using (HttpResponseMessage response = await _client.SendAsync(request).ConfigureAwait(false))
+            try
             {
-                if (response.IsSuccessStatusCode)
+                using (HttpResponseMessage response = await _client.SendAsync(request).ConfigureAwait(false))
                 {
-                    using (var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    if (response.IsSuccessStatusCode)
                     {
-                        contentStream.Position = 0;
-                        T responseObject = await JsonSerializer.DeserializeAsync<T>(contentStream, options).ConfigureAwait(false);
-                        return (response, responseObject);
+                        using (var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                        {
+                            contentStream.Position = 0;
+                            T responseObject = await JsonSerializer.DeserializeAsync<T>(contentStream, options).ConfigureAwait(false);
+                            return (response, responseObject);
+                        }
+                    }
+                    else
+                    {
+                        return (response, default);
                     }
                 }
-                else
-                {
-                    return (response, default);
-                }
             }
-        }
+            catch (Exception)
+            {
 
-        private static async Task<string> StreamToStringAsync(Stream stream)
-        {
-            string content = null;
+                return (new HttpResponseMessage(), default);
+            }
 
-            if (stream != null)
-                using (var sr = new StreamReader(stream))
-                    content = await sr.ReadToEndAsync().ConfigureAwait(false);
-
-            return content;
         }
     }
 }

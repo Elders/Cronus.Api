@@ -23,7 +23,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Rebuild")]
         public IActionResult Rebuild([FromBody] RequestModel model)
         {
-            var command = new RebuildProjection(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash);
+            var command = new RebuildProjectionCommand(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash);
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
@@ -39,7 +39,7 @@ namespace Elders.Cronus.Api.Controllers
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
 
-            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(RebuildProjection)}'"));
+            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(RebuildProjectionCommand)}'"));
         }
 
         public class RequestModel
