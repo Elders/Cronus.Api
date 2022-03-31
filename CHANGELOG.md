@@ -1,3 +1,10 @@
+# [7.0.0-preview.11](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.10...v7.0.0-preview.11) (2022-03-31)
+
+
+### Bug Fixes
+
+* Migrate to 6.0.3 ([4509008](https://github.com/Elders/Cronus.Api/commit/4509008279b24170d431a73dfd86a062f2f57a8e))
+
 # [7.0.0-preview.10](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.9...v7.0.0-preview.10) (2022-03-15)
 
 
