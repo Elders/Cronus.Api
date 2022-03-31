@@ -106,7 +106,7 @@ namespace Elders.Cronus.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<RebuildProjectionHub>("/hub/projections");
+                endpoints.MapHub<RebuildProjectionHub>("/hub");
             });
         }
     }
