@@ -1,4 +1,6 @@
-﻿namespace Elders.Cronus.Api.Playground.Domain.Samples.Sagas
+﻿using System.Threading.Tasks;
+
+namespace Elders.Cronus.Api.Playground.Domain.Samples.Sagas
 {
     public class SampleReserveSaga : Saga,
         IEventHandler<SampleCreated>
@@ -9,11 +11,13 @@
         {
         }
 
-        public void Handle(SampleCreated @event)
+        public Task HandleAsync(SampleCreated @event)
         {
             var cmd = new ReserveSample(@event.Id);
 
             commandPublisher.Publish(cmd);
+
+            return Task.CompletedTask;
         }
     }
 }

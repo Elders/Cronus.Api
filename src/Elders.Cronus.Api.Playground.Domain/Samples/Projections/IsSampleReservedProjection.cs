@@ -1,5 +1,6 @@
 ﻿using Elders.Cronus.Projections;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 
 namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
@@ -12,9 +13,10 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
             Subscribe<SampleReserved>(x => x.Id);
         }
 
-        public void Handle(SampleReserved @event)
+        public Task HandleAsync(SampleReserved @event)
         {
             State.IsReserved = true;
+            return Task.CompletedTask;
         }
 
         [DataContract(Name = "0d4d9eda-6489-4cee-9303-0e931bb146d4")]
