@@ -1,3 +1,10 @@
+# [7.0.0-preview.14](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.13...v7.0.0-preview.14) (2022-04-04)
+
+
+### Bug Fixes
+
+* Try signalR with this path ([712d76d](https://github.com/Elders/Cronus.Api/commit/712d76d9682d9c26a02ec305cf3efdd8afa11588))
+
 # [7.0.0-preview.13](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.12...v7.0.0-preview.13) (2022-04-04)
 
 
