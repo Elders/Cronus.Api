@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Elders.Cronus.Discoveries;
 using Elders.Cronus.Projections;
 
-
 namespace Elders.Cronus.Api.Hubs
 {
     public class CronusDashboardUpdater : ISystemTrigger,
