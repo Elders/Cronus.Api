@@ -1,3 +1,27 @@
+# [7.0.0](https://github.com/Elders/Cronus.Api/compare/v6.2.0...v7.0.0) (2022-04-05)
+
+
+### Bug Fixes
+
+* Add Newtonsoft.Json package ([0396b63](https://github.com/Elders/Cronus.Api/commit/0396b6398a5048eeab9cb37846295858ee3c3866))
+* Configure NewtonsoftJson ([f82431b](https://github.com/Elders/Cronus.Api/commit/f82431b745e4f91acbf12803da6161716f3afbf2))
+* Fix Build ([0b88828](https://github.com/Elders/Cronus.Api/commit/0b88828bbdf70b95309f7d9280ca4c74a918746b))
+* Fix issue with unwraping public events ([8f9ba5a](https://github.com/Elders/Cronus.Api/commit/8f9ba5a363f8af91dc2d0c0876cbde7fd719848c))
+* Made it possible to add headers for public events and their subsequent encoding. ([9d997b9](https://github.com/Elders/Cronus.Api/commit/9d997b915893c9d3f6241a42c14e1bb093981daf))
+* Migrate to 6.0.3 ([4509008](https://github.com/Elders/Cronus.Api/commit/4509008279b24170d431a73dfd86a062f2f57a8e))
+* Try signalR with this path ([712d76d](https://github.com/Elders/Cronus.Api/commit/712d76d9682d9c26a02ec305cf3efdd8afa11588))
+* Update Cronus ([c86073b](https://github.com/Elders/Cronus.Api/commit/c86073bee024847034544ea6d5178fbc5bb22d39))
+* Update Cronus ([dfa1287](https://github.com/Elders/Cronus.Api/commit/dfa12876adead0fa7cf7ad49e5eaf68bacd641a8))
+* Update packages ([afc2ba7](https://github.com/Elders/Cronus.Api/commit/afc2ba7046a1df6742d503702798f3ed1e043c6a))
+* Update packages ([d143471](https://github.com/Elders/Cronus.Api/commit/d143471a268ae26865b0f1fa90737fb088abfa31))
+* Update packages ([27edc9f](https://github.com/Elders/Cronus.Api/commit/27edc9f04dc934a63eee326b134fbd3eedac7210))
+
+
+### Features
+
+* Adds an endpoint to force Finalize a projection build/rebuild ([2254cb5](https://github.com/Elders/Cronus.Api/commit/2254cb5a158cfd8b8a87e188a289a2b53945f600))
+* Make controllers for connecting the dashboard with the monitoring service ([c298b15](https://github.com/Elders/Cronus.Api/commit/c298b15be7c5344a9cdf80bfe84743c58e7c2ee4))
+
 # [7.0.0-preview.14](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.13...v7.0.0-preview.14) (2022-04-04)
 
 
