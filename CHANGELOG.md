@@ -1,21 +1,95 @@
-# [6.2.0](https://github.com/Elders/Cronus.Api/compare/v6.1.4...v6.2.0) (2021-11-16)
+# [7.0.0-preview.14](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.13...v7.0.0-preview.14) (2022-04-04)
 
 
 ### Bug Fixes
 
-* Add additional message headers to the republish api ([1becc07](https://github.com/Elders/Cronus.Api/commit/1becc0758749355be29d2427c961ea8d4e825c5d))
-* add endpoint for replaying public event ([19a8105](https://github.com/Elders/Cronus.Api/commit/19a8105be11b175f7dc162f409224f06711ae0ce))
-* Adds ID to the Ports response ([c8e791c](https://github.com/Elders/Cronus.Api/commit/c8e791c5828031e71380196f5ccf118d2829266a))
-* Adds ping controller ([f46bc16](https://github.com/Elders/Cronus.Api/commit/f46bc1619d5cc27b3099c72aebb207678e190c67))
-* bump Microsoft.SourceLink.GitHub from 1.0.0 to 1.1.1 ([a2ab407](https://github.com/Elders/Cronus.Api/commit/a2ab40750c904c2965e2890dbc600a2fb929f58b))
-* Code cleanup ([96b94ab](https://github.com/Elders/Cronus.Api/commit/96b94aba4e4bee86bfefd57d6e142edabb82f757))
-* Connection to SignalR hubs does not require tenant resolve ([8e27716](https://github.com/Elders/Cronus.Api/commit/8e27716d2a8d911c62110e5d62e177718dd4c006))
-* Fixes how handlers are collected. We do not load abstract handler anymore ([24480cd](https://github.com/Elders/Cronus.Api/commit/24480cdb04478cad8da6b0b0274c26e1dd947891))
-* Removes gitversion ([62aaa18](https://github.com/Elders/Cronus.Api/commit/62aaa18d9a7c029ec599c2f4910f9a197b39d0e8))
-* Updates copyright attribute ([d30b3d9](https://github.com/Elders/Cronus.Api/commit/d30b3d92595ecf0bb4d3614b63978be3aebfadb6))
-* Updates Cronus ([adddde3](https://github.com/Elders/Cronus.Api/commit/adddde3e5e44f3f7d2c8adfef2cf8151910d2fda))
-* Updates packages ([cd7341b](https://github.com/Elders/Cronus.Api/commit/cd7341b3452462bc0d2850cd9a055039e073acbc))
-* Updates packages ([24941d2](https://github.com/Elders/Cronus.Api/commit/24941d29c00c92630617ea3ea3b345cad1dd39ea))
+* Try signalR with this path ([712d76d](https://github.com/Elders/Cronus.Api/commit/712d76d9682d9c26a02ec305cf3efdd8afa11588))
+
+# [7.0.0-preview.13](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.12...v7.0.0-preview.13) (2022-04-04)
+
+
+### Bug Fixes
+
+* Update packages ([d143471](https://github.com/Elders/Cronus.Api/commit/d143471a268ae26865b0f1fa90737fb088abfa31))
+
+# [7.0.0-preview.12](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.11...v7.0.0-preview.12) (2022-03-31)
+
+
+### Bug Fixes
+
+* Update Cronus ([c86073b](https://github.com/Elders/Cronus.Api/commit/c86073bee024847034544ea6d5178fbc5bb22d39))
+
+# [7.0.0-preview.11](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.10...v7.0.0-preview.11) (2022-03-31)
+
+
+### Bug Fixes
+
+* Migrate to 6.0.3 ([4509008](https://github.com/Elders/Cronus.Api/commit/4509008279b24170d431a73dfd86a062f2f57a8e))
+
+# [7.0.0-preview.10](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.9...v7.0.0-preview.10) (2022-03-15)
+
+
+### Bug Fixes
+
+* Fix Build ([0b88828](https://github.com/Elders/Cronus.Api/commit/0b88828bbdf70b95309f7d9280ca4c74a918746b))
+
+# [7.0.0-preview.9](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.8...v7.0.0-preview.9) (2022-03-14)
+
+
+### Bug Fixes
+
+* Update packages ([27edc9f](https://github.com/Elders/Cronus.Api/commit/27edc9f04dc934a63eee326b134fbd3eedac7210))
+
+# [7.0.0-preview.8](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.7...v7.0.0-preview.8) (2022-03-10)
+
+
+### Features
+
+* Make controllers for connecting the dashboard with the monitoring service ([c298b15](https://github.com/Elders/Cronus.Api/commit/c298b15be7c5344a9cdf80bfe84743c58e7c2ee4))
+
+# [7.0.0-preview.7](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.6...v7.0.0-preview.7) (2022-03-02)
+
+
+### Bug Fixes
+
+* Configure NewtonsoftJson ([f82431b](https://github.com/Elders/Cronus.Api/commit/f82431b745e4f91acbf12803da6161716f3afbf2))
+
+# [7.0.0-preview.6](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.5...v7.0.0-preview.6) (2022-03-02)
+
+
+### Bug Fixes
+
+* Add Newtonsoft.Json package ([0396b63](https://github.com/Elders/Cronus.Api/commit/0396b6398a5048eeab9cb37846295858ee3c3866))
+
+# [7.0.0-preview.5](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.4...v7.0.0-preview.5) (2022-02-16)
+
+
+### Bug Fixes
+
+* Made it possible to add headers for public events and their subsequent encoding. ([9d997b9](https://github.com/Elders/Cronus.Api/commit/9d997b915893c9d3f6241a42c14e1bb093981daf))
+
+# [7.0.0-preview.4](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.3...v7.0.0-preview.4) (2022-01-14)
+
+
+### Features
+
+* Adds an endpoint to force Finalize a projection build/rebuild ([2254cb5](https://github.com/Elders/Cronus.Api/commit/2254cb5a158cfd8b8a87e188a289a2b53945f600))
+
+# [7.0.0-preview.3](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.2...v7.0.0-preview.3) (2022-01-06)
+
+
+### Bug Fixes
+
+* Fix issue with unwraping public events ([8f9ba5a](https://github.com/Elders/Cronus.Api/commit/8f9ba5a363f8af91dc2d0c0876cbde7fd719848c))
+
+# [7.0.0-preview.2](https://github.com/Elders/Cronus.Api/compare/v7.0.0-preview.1...v7.0.0-preview.2) (2021-11-30)
+
+
+### Bug Fixes
+
+* Update Cronus ([dfa1287](https://github.com/Elders/Cronus.Api/commit/dfa12876adead0fa7cf7ad49e5eaf68bacd641a8))
+
+# [7.0.0-preview.1](https://github.com/Elders/Cronus.Api/compare/v6.2.0-preview.11...v7.0.0-preview.1) (2021-11-11)
 
 
 ### Features

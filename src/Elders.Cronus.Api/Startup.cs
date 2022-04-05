@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace Elders.Cronus.Api
 {
@@ -39,12 +41,14 @@ namespace Elders.Cronus.Api
                 {
                     noContentFormatter.TreatNullValueAsNoContent = false;
                 }
-            });
+            })
+            .AddNewtonsoftJson();
 
 
             services.AddCronus(configuration);
             services.AddCronusAspNetCore();
             services.AddCronusApi();
+            services.AddMonitor();
 
             if (authenticationEnabled)
             {

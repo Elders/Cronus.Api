@@ -1,7 +1,8 @@
-﻿using Elders.Cronus.Discoveries;
-using Elders.Cronus.Projections;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Elders.Cronus.Discoveries;
+using Elders.Cronus.Projections;
+
 
 namespace Elders.Cronus.Api.Hubs
 {

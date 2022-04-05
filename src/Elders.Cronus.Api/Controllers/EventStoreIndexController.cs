@@ -47,14 +47,14 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpPost, Route("Rebuild")]
-        public IActionResult Rebuild([FromBody]RebuildIndexRequestModel model)
+        public IActionResult Rebuild([FromBody] RebuildIndexRequestModel model)
         {
-            var command = new RebuildIndex(new EventStoreIndexManagerId(model.Id, context.Tenant));
+            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.Id, context.Tenant));
 
             if (publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
 
-            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(RebuildIndex)}'"));
+            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(RebuildIndexCommand)}'"));
         }
 
         public class MetaResponseModel

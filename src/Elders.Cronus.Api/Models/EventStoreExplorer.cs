@@ -187,7 +187,7 @@ namespace Elders.Cronus.Api
 
         public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IPublicEvent> events)
         {
-            foreach (IEvent @event in events)
+            foreach (IPublicEvent @event in events)
             {
                 yield return new EventDto()
                 {
