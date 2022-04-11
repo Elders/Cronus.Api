@@ -22,7 +22,7 @@ namespace Elders.Cronus.Api
 
         public async Task<AggregateDto> ExploreAsync(IAggregateRootId id)
         {
-            EventStream stream = eventStore.Load(id);
+            EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
             if (stream.Commits.Count() == 0) return new AggregateDto();
             var commitsDto = stream.Commits.Select(commit =>
                 new AggregateCommitDto()

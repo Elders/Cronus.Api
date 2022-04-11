@@ -11,16 +11,12 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples.AppServices
         public Task HandleAsync(CreateSample command)
         {
             var sample = new Sample(command.Id, command.Volume);
-            repository.Save(sample);
-
-            return Task.CompletedTask;
+            return repository.SaveAsync(sample);
         }
 
         public Task HandleAsync(ReserveSample command)
         {
-            Update(command.Id, ar => ar.Reserve());
-
-            return Task.CompletedTask;
+            return UpdateAsync(command.Id, ar => ar.Reserve());
         }
     }
 }

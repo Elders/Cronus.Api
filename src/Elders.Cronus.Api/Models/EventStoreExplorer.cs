@@ -24,7 +24,7 @@ namespace Elders.Cronus.Api
 
         public async Task<AggregateDto> ExploreAsync(IAggregateRootId id)
         {
-            EventStream stream = eventStore.Load(id);
+            EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
             if (stream.Commits.Any() == false) return new AggregateDto();
 
             var commitsDto = stream.Commits.Select(commit =>
@@ -46,7 +46,7 @@ namespace Elders.Cronus.Api
 
         public async Task<IEvent> FindEventAsync(IAggregateRootId id, int commitRevision, int eventPosition)
         {
-            EventStream stream = eventStore.Load(id);
+            EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
 
             AggregateCommit commit = stream.Commits.Where(commit => commit.Revision == commitRevision).SingleOrDefault();
             if (commit is null == false)
@@ -62,7 +62,7 @@ namespace Elders.Cronus.Api
 
         public async Task<IPublicEvent> FindPublicEventAsync(IAggregateRootId id, int commitRevision, int eventPosition)
         {
-            EventStream stream = eventStore.Load(id);
+            EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
 
             AggregateCommit commit = stream.Commits.Where(commit => commit.Revision == commitRevision).SingleOrDefault();
             if (commit is null == false)
