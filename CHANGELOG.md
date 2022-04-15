@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/Elders/Cronus.Api/compare/v7.0.0...v7.0.1) (2022-04-15)
+
+
+### Bug Fixes
+
+* Add log for event store exploring ([1d47158](https://github.com/Elders/Cronus.Api/commit/1d4715835bd43adead1175b9b16c23a0c4439682))
+
 # [7.0.0](https://github.com/Elders/Cronus.Api/compare/v6.2.0...v7.0.0) (2022-04-05)
 
 
