@@ -5,6 +5,7 @@ using static Elders.Cronus.Api.EventStoreExplorer;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using Elders.Cronus.EventStore.Index;
+using Microsoft.Extensions.Logging;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -14,20 +15,31 @@ namespace Elders.Cronus.Api.Controllers
         private readonly EventStoreExplorer _eventExplorer;
         private readonly IPublisher<IEvent> publisher;
         private readonly IPublisher<IPublicEvent> publicPublisher;
+        private readonly ILogger<EventStoreController> logger;
 
-        public EventStoreController(EventStoreExplorer eventStoreExplorer, IPublisher<IEvent> publisher, IPublisher<IPublicEvent> publicPublisher)
+        public EventStoreController(EventStoreExplorer eventStoreExplorer, IPublisher<IEvent> publisher, IPublisher<IPublicEvent> publicPublisher, ILogger<EventStoreController> logger)
         {
             if (eventStoreExplorer is null) throw new ArgumentNullException(nameof(eventStoreExplorer));
 
             _eventExplorer = eventStoreExplorer;
             this.publisher = publisher;
             this.publicPublisher = publicPublisher;
+            this.logger = logger;
         }
 
         [HttpGet, Route("Explore")]
         public async Task<IActionResult> Explore([FromQuery] RequestModel model)
         {
-            AggregateDto result = await _eventExplorer.ExploreAsync(AggregateUrn.Parse(model.Id, Urn.Uber));
+            AggregateDto result = new AggregateDto();
+            try
+            {
+                result = await _eventExplorer.ExploreAsync(AggregateUrn.Parse(model.Id, Urn.Uber));
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(ex, () => $"Failed to explore aggregate for {model.Id}");
+            }
+
             return new OkObjectResult(new ResponseResult<AggregateDto>(result));
         }
 
