@@ -1,3 +1,13 @@
+## [8.0.1](https://github.com/Elders/Cronus.Api/compare/v8.0.0...v8.0.1) (2022-05-25)
+
+
+### Bug Fixes
+
+* bump Cronus.Persistence.Cassandra from 8.0.0-preview.1 to 8.0.0 ([5270b11](https://github.com/Elders/Cronus.Api/commit/5270b1186bc17f0ef70414b65a63a46535eef1e5))
+* bump Cronus.Projections.Cassandra ([6545fa9](https://github.com/Elders/Cronus.Api/commit/6545fa9633e888f9a939120681aa9289f51b8f99))
+* bump Microsoft.AspNetCore.Authentication.JwtBearer ([5159e2c](https://github.com/Elders/Cronus.Api/commit/5159e2c401a9f6dc38fa8237820546c1318e2dbf))
+* bump Microsoft.AspNetCore.Mvc.NewtonsoftJson from 6.0.3 to 6.0.5 ([1d46b7a](https://github.com/Elders/Cronus.Api/commit/1d46b7a46083d243814e9b20b1a2e0f23005495e))
+
 # [8.0.0](https://github.com/Elders/Cronus.Api/compare/v7.0.1...v8.0.0) (2022-05-25)
 
 ## [7.0.1](https://github.com/Elders/Cronus.Api/compare/v7.0.0...v7.0.1) (2022-04-15)
