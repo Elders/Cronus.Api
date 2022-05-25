@@ -16,9 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus.Persistence.Cassandra" Version="7.0.0-preview.8" />
-    <PackageReference Include="Cronus.Projections.Cassandra" Version="7.0.0-preview.14" />
-    <PackageReference Include="Cronus.Serialization.NewtonsoftJson" Version="7.0.0-preview.3" />
+    <PackageReference Include="Cronus.Persistence.Cassandra" Version="8.0.0-preview.1" />
+    <PackageReference Include="Cronus.Projections.Cassandra" Version="8.0.0-preview.1" />
+    <PackageReference Include="Cronus.Serialization.NewtonsoftJson" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

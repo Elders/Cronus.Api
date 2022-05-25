@@ -10,9 +10,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json.Serialization;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace Elders.Cronus.Api
 {

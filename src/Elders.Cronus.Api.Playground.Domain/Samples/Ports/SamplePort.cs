@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Elders.Cronus.Api.Playground.Domain.Samples.Ports
 {
@@ -12,9 +13,11 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples.Ports
 
         public IPublisher<ICommand> CommandPublisher { get; set; }
 
-        public void Handle(SampleReserved @event)
+        public Task HandleAsync(SampleReserved @event)
         {
             Console.WriteLine($"Sample with ID: '{@event.Id}' was reserved!");
+
+            return Task.CompletedTask;
         }
     }
 }

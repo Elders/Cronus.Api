@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Elders.Cronus.Discoveries;
 using Elders.Cronus.Projections;
+using System.Threading.Tasks;
 
 namespace Elders.Cronus.Api.Hubs
 {
@@ -18,19 +19,19 @@ namespace Elders.Cronus.Api.Hubs
                 this.hub = cronusApiAccessor.Provider.GetRequiredService<IHubContext<RebuildProjectionHub>>();
         }
 
-        public void Handle(RebuildProjectionProgress signal)
+        public async Task HandleAsync(RebuildProjectionProgress signal)
         {
-            hub.ReportProgress(signal.ProjectionTypeId, signal.ProcessedCount, signal.TotalCount).GetAwaiter().GetResult();
+            await hub.ReportProgressAsync(signal.ProjectionTypeId, signal.ProcessedCount, signal.TotalCount).ConfigureAwait(false);
         }
 
-        public void Handle(RebuildProjectionStarted signal)
+        public async Task HandleAsync(RebuildProjectionStarted signal)
         {
-            hub.RebuildStarted(signal.ProjectionTypeId).GetAwaiter().GetResult();
+            await hub.RebuildStartedAsync(signal.ProjectionTypeId).ConfigureAwait(false);
         }
 
-        public void Handle(RebuildProjectionFinished signal)
+        public async Task HandleAsync(RebuildProjectionFinished signal)
         {
-            hub.RebuildFinished(signal.ProjectionTypeId).GetAwaiter().GetResult();
+            await hub.RebuildFinishedAsync(signal.ProjectionTypeId).ConfigureAwait(false);
         }
     }
 }

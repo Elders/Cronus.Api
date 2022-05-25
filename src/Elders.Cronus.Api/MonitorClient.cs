@@ -1,8 +1,6 @@
-﻿using Elders.Cronus.Api.Controllers;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
