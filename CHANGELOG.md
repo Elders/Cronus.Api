@@ -1,3 +1,5 @@
+# [8.0.0](https://github.com/Elders/Cronus.Api/compare/v7.0.1...v8.0.0) (2022-05-25)
+
 ## [7.0.1](https://github.com/Elders/Cronus.Api/compare/v7.0.0...v7.0.1) (2022-04-15)
 
 
