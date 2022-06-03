@@ -1,3 +1,13 @@
+## [8.0.2](https://github.com/Elders/Cronus.Api/compare/v8.0.1...v8.0.2) (2022-06-03)
+
+
+### Bug Fixes
+
+* bump Cronus from 8.0.0-preview.5 to 8.0.4 ([5f9125b](https://github.com/Elders/Cronus.Api/commit/5f9125b86718a5b40385d176955c930cf5d69bed))
+* bump Cronus.AspNetCore from 7.0.0 to 8.0.0 ([2f73253](https://github.com/Elders/Cronus.Api/commit/2f73253a1fc5a066dced9e4ed1056c81bb1f5c08))
+* bump Cronus.Projections.Cassandra from 8.0.0-preview.3 to 8.0.1 ([b158cd8](https://github.com/Elders/Cronus.Api/commit/b158cd851e391e3dc83b4261add415ea56b4f866))
+* IProjectionStore.EnumerateProjection was changed to IProjectionStore.EnumerateProjectionAsync ([f7f38f6](https://github.com/Elders/Cronus.Api/commit/f7f38f6020559dceec601e775771ba7c222c35da))
+
 ## [8.0.1](https://github.com/Elders/Cronus.Api/compare/v8.0.0...v8.0.1) (2022-05-25)
 
 
