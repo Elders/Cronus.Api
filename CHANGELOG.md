@@ -1,3 +1,10 @@
+## [8.0.3](https://github.com/Elders/Cronus.Api/compare/v8.0.2...v8.0.3) (2022-06-03)
+
+
+### Bug Fixes
+
+* bump Cronus.Serialization.NewtonsoftJson from 7.0.0 to 8.0.1 ([a53c654](https://github.com/Elders/Cronus.Api/commit/a53c654848ca7e56758bbc6a5abd279dae09723a))
+
 ## [8.0.2](https://github.com/Elders/Cronus.Api/compare/v8.0.1...v8.0.2) (2022-06-03)
 
 
