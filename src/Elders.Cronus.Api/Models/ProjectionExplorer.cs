@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Elders.Cronus.MessageProcessing;
 using Elders.Cronus.Projections;
@@ -48,13 +49,12 @@ namespace Elders.Cronus.Api
 
                 if (liveVersion is null == false)
                 {
-                    var commits = new List<ProjectionCommitDto>();
-                    await foreach (var item in projectionStore.EnumerateProjectionAsync(liveVersion, id))
-                    {
-                        commits.Add(item.ToProjectionDto());
-                    }
+                    var projectionCommits = projectionStore.EnumerateProjectionAsync(liveVersion, id).ConfigureAwait(false);
 
-                    result.Commits = commits;
+                    await foreach (var commit in projectionCommits)
+                    {
+                        result.Commits.Add(commit.ToProjectionDto());
+                    }
                 }
             }
 
@@ -76,7 +76,7 @@ namespace Elders.Cronus.Api
     {
         public string Name { get; set; }
         public object State { get; set; }
-        public IEnumerable<ProjectionCommitDto> Commits { get; set; }
+        public List<ProjectionCommitDto> Commits { get; set; }
     }
 
     public class ProjectionCommitDto

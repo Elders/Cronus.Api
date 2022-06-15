@@ -7,7 +7,7 @@ namespace Elders.Cronus.Api.Hubs
 
     public static class RebuildProjectionHubExtensions
     {
-        public static async Task ReportProgressAsync(this IHubContext<RebuildProjectionHub> hub, string projectionTypeId, long processedCount, long totalCount)
+        public static async Task ReportProgressAsync(this IHubContext<RebuildProjectionHub> hub, string projectionTypeId, ulong processedCount, ulong totalCount)
         {
             if (hub?.Clients?.All is null == false)
             {
