@@ -1,3 +1,10 @@
+## [8.0.6](https://github.com/Elders/Cronus.Api/compare/v8.0.5...v8.0.6) (2022-07-06)
+
+
+### Bug Fixes
+
+* Fix capability with Swagger ([a4124ff](https://github.com/Elders/Cronus.Api/commit/a4124ff61662c913b240cc3040aa6b45cf538997))
+
 ## [8.0.5](https://github.com/Elders/Cronus.Api/compare/v8.0.4...v8.0.5) (2022-06-15)
 
 
