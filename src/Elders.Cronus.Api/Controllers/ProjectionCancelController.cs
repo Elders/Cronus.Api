@@ -23,7 +23,7 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpPost, Route("Cancel")]
-        public IActionResult Cancel([FromBody] RequestModel model)
+        public IActionResult Cancel([FromBody] ProjcetionRequestModel model)
         {
             var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);
             var command = new CancelProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), version, model.Reason ?? "Canceled by user");
@@ -34,7 +34,7 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpPost, Route("Finalize")]
-        public IActionResult Finalize([FromBody] RequestModel model)
+        public IActionResult Finalize([FromBody] ProjcetionRequestModel model)
         {
             var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);
             var command = new FinalizeProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), version);
@@ -44,7 +44,7 @@ namespace Elders.Cronus.Api.Controllers
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(FinalizeProjectionVersionRequest)}'"));
         }
 
-        public class RequestModel
+        public class ProjcetionRequestModel
         {
             [Required]
             public string ProjectionContractId { get; set; }

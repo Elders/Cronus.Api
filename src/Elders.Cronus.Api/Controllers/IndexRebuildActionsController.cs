@@ -21,7 +21,7 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpPost, Route("Rebuild")]
-        public IActionResult Rebuild([FromBody] RequestModel model)
+        public IActionResult Rebuild([FromBody] IndexRequestModel model)
         {
             var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.IndexContractId, context.Tenant));
 
@@ -32,7 +32,7 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         [HttpPost, Route("Finalize")]
-        public IActionResult Finalize([FromBody] RequestModel model)
+        public IActionResult Finalize([FromBody] IndexRequestModel model)
         {
             var command = new FinalizeEventStoreIndexRequest(new EventStoreIndexManagerId(model.IndexContractId, context.Tenant));
 
@@ -42,7 +42,7 @@ namespace Elders.Cronus.Api.Controllers
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(FinalizeEventStoreIndexRequest)}'"));
         }
 
-        public class RequestModel
+        public class IndexRequestModel
         {
             [Required]
             public string IndexContractId { get; set; }
