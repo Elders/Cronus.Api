@@ -1,3 +1,10 @@
+## [8.0.7](https://github.com/Elders/Cronus.Api/compare/v8.0.6...v8.0.7) (2022-07-22)
+
+
+### Bug Fixes
+
+* Update Cronus ([e8479c2](https://github.com/Elders/Cronus.Api/commit/e8479c2b672f758f50eeec5738d8cec215483bf4))
+
 ## [8.0.6](https://github.com/Elders/Cronus.Api/compare/v8.0.5...v8.0.6) (2022-07-06)
 
 
