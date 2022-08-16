@@ -1,3 +1,10 @@
+## [8.0.9](https://github.com/Elders/Cronus.Api/compare/v8.0.8...v8.0.9) (2022-08-16)
+
+
+### Bug Fixes
+
+* pipeline test ([7e70837](https://github.com/Elders/Cronus.Api/commit/7e708375a0445c6bb9130971daf1ba2d425bda81))
+
 ## [8.0.8](https://github.com/Elders/Cronus.Api/compare/v8.0.7...v8.0.8) (2022-08-10)
 
 
