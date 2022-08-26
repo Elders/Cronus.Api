@@ -177,6 +177,9 @@ namespace Elders.Cronus.Api.Controllers
 
         private ICollection<Aggregate_Response> GetAggregates(IEnumerable<System.Reflection.Assembly> loadedAssemblies)
         {
+            DefaulAssemblyScanner assemblyScanner = new DefaulAssemblyScanner();
+            IEnumerable<Type> allEventsInAssembly = assemblyScanner.Scan().Where(x => typeof(IEvent).IsAssignableFrom(x));
+
             return RetrieveTypesFromAssemblies(loadedAssemblies,
                 x => HandlerRetrieveRequirements<IAggregateRoot>(x) && x != typeof(AggregateRoot<>),
                 meta => new Aggregate_Response
@@ -193,20 +196,23 @@ namespace Elders.Cronus.Api.Controllers
                                             Name = x.Name
                                         })
                                     ?.ToList(),
-                    Events = GetWhenEvents(GetAggregateState(meta))
+                    Events = GetWhenEvents(GetAggregateState(meta), allEventsInAssembly)
                 });
         }
 
-        private ICollection<Event_Response> GetWhenEvents(Type type)
+        private ICollection<Event_Response> GetWhenEvents(Type type, IEnumerable<Type> allEventsInAssembly)
         {
-            var allMethods = type.GetMethods()
-                 .Where(x => x.GetParameters().Count() == 1 && typeof(IEvent).IsAssignableFrom(x.GetParameters().FirstOrDefault().ParameterType));
+            IEnumerable<Type> allEventTypesFromWhenMethods = type.GetMethods()
+             .Where(x => x.GetParameters().Count() == 1 && typeof(IEvent).IsAssignableFrom(x.GetParameters().FirstOrDefault().ParameterType))
+             .Select(x => x.GetParameters().FirstOrDefault().ParameterType);
 
-            return allMethods.Select(x =>
+            IEnumerable<Type> allNonAbstractEventsInWhenMethods = GetAllNonAbstractTypesViaDepthSearch(allEventTypesFromWhenMethods, allEventsInAssembly);
+
+            return allNonAbstractEventsInWhenMethods.Select(x =>
                                         new Event_Response
                                         {
-                                            Id = x.GetParameters().FirstOrDefault().ParameterType.GetCustomAttribute<DataContractAttribute>().Name,
-                                            Name = x.GetParameters().FirstOrDefault().ParameterType.Name
+                                            Id = x.GetCustomAttribute<DataContractAttribute>().Name,
+                                            Name = x.Name
                                         }).ToList();
         }
 
@@ -229,7 +235,43 @@ namespace Elders.Cronus.Api.Controllers
                 .SingleOrDefault(); // Just imagine that there is an Aggregate without an AppService, see?
 
             return appService;
+
         }
 
+
+        /// <summary>
+        /// That solves the situation when we have interface : interface : abstract class : abstract class : abstract class : class ... via Depth Search
+        /// </summary>
+        /// <param name="eventTypes">all event types in aggregate states</param>
+        /// <param name="allEventTypesInAssembly">all event types in the assemblu</param>
+        private IEnumerable<Type> GetAllNonAbstractTypesViaDepthSearch(IEnumerable<Type> eventTypes, IEnumerable<Type> allEventTypesInAssembly)
+        {
+            HashSet<Type> allClassesThatAreNotAbstract = new HashSet<Type>();
+
+            foreach (var type in eventTypes)
+            {
+                var typeQueue = new Queue<Type>();
+                typeQueue.Enqueue(type);
+                while (typeQueue.Count != 0)
+                {
+                    var item = typeQueue.Dequeue();
+
+                    if (item.IsAbstract == false)
+                    {
+                        allClassesThatAreNotAbstract.Add(item);
+                        continue;
+                    }
+
+                    var assignableFromEventType = allEventTypesInAssembly.Where(t => item.IsAssignableFrom(t) && t != item);
+                    foreach (var child in assignableFromEventType.Where(x => x.IsAbstract))
+                        typeQueue.Enqueue(child);
+
+                    IEnumerable<Type> notAbstract = assignableFromEventType.Where(x => x.IsAbstract == false);
+                    allClassesThatAreNotAbstract.UnionWith(notAbstract);
+                }
+            }
+
+            return allClassesThatAreNotAbstract;
+        }
     }
 }
