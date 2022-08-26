@@ -1,3 +1,10 @@
+## [8.0.10](https://github.com/Elders/Cronus.Api/compare/v8.0.9...v8.0.10) (2022-08-26)
+
+
+### Bug Fixes
+
+* issue where domain api is throwing 500 ([63db065](https://github.com/Elders/Cronus.Api/commit/63db065a457affa34299ef3209c2c84faf02ba8e))
+
 ## [8.0.9](https://github.com/Elders/Cronus.Api/compare/v8.0.8...v8.0.9) (2022-08-16)
 
 
