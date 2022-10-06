@@ -74,6 +74,11 @@ namespace Elders.Cronus.Api
 
     public class ProjectionDto
     {
+        public ProjectionDto()
+        {
+            Commits = new List<ProjectionCommitDto>();
+        }
+
         public string Name { get; set; }
         public object State { get; set; }
         public List<ProjectionCommitDto> Commits { get; set; }
@@ -81,6 +86,11 @@ namespace Elders.Cronus.Api
 
     public class ProjectionCommitDto
     {
+        public ProjectionCommitDto()
+        {
+            Events = new List<EventDto>();
+        }
+
         public IEnumerable<EventDto> Events { get; set; }
 
         public DateTimeOffset Timestamp { get; set; }
