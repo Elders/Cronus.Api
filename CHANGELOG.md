@@ -1,3 +1,10 @@
+## [8.0.11](https://github.com/Elders/Cronus.Api/compare/v8.0.10...v8.0.11) (2022-10-07)
+
+
+### Bug Fixes
+
+* Initialize empty collections in API response models for projections events ([bb1c514](https://github.com/Elders/Cronus.Api/commit/bb1c5143bce9ffa27a8fc2969913ddab70f2c13e))
+
 ## [8.0.10](https://github.com/Elders/Cronus.Api/compare/v8.0.9...v8.0.10) (2022-08-26)
 
 
