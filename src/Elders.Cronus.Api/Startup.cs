@@ -1,4 +1,5 @@
 ﻿using Elders.Cronus.Api.Hubs;
+using Elders.Cronus.Api.Security;
 using Elders.Cronus.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -16,7 +17,7 @@ namespace Elders.Cronus.Api
 {
     public class Startup
     {
-        const string JwtSectionName = "Cronus:Api:JwtAuthentication";
+        string JwtSectionName = "Cronus:Api:JwtTenantConfig";
 
         private readonly IConfiguration configuration;
         private readonly bool authenticationEnabled = false;
@@ -29,35 +30,11 @@ namespace Elders.Cronus.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(o =>
-            {
-                if (authenticationEnabled)
-                    o.Conventions.Add(new AddAuthorizeFiltersControllerConvention("global-scope"));
-
-                var noContentFormatter = o.OutputFormatters.OfType<HttpNoContentOutputFormatter>().FirstOrDefault();
-                if (noContentFormatter != null)
-                {
-                    noContentFormatter.TreatNullValueAsNoContent = false;
-                }
-            })
-            .AddNewtonsoftJson();
-
-
+            services.AddSecurity(configuration);
             services.AddCronus(configuration);
             services.AddCronusAspNetCore();
             services.AddCronusApi();
             services.AddMonitor();
-
-            if (authenticationEnabled)
-            {
-                services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, configuration.GetSection(JwtSectionName));
-                services.AddAuthentication(o =>
-                {
-                    o.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-                    o.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer();
-            }
 
             services.AddCors(options => options.AddPolicy("CorsPolicy",
                 builder =>
