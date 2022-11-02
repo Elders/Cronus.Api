@@ -1,3 +1,10 @@
+# [8.1.0](https://github.com/Elders/Cronus.Api/compare/v8.0.11...v8.1.0) (2022-11-02)
+
+
+### Features
+
+* Adds multi-tenant JWT security ([4051713](https://github.com/Elders/Cronus.Api/commit/4051713b2f69b2ba73d572663870e567e503b9fa))
+
 ## [8.0.11](https://github.com/Elders/Cronus.Api/compare/v8.0.10...v8.0.11) (2022-10-07)
 
 
