@@ -1,3 +1,10 @@
+## [8.1.1](https://github.com/Elders/Cronus.Api/compare/v8.1.0...v8.1.1) (2022-11-10)
+
+
+### Bug Fixes
+
+* Fixes a bug where anonymous APIs could not be reached ([b082c36](https://github.com/Elders/Cronus.Api/commit/b082c36c2624e6d1498d0cdd479e7cf47f5cd8e9))
+
 # [8.1.0](https://github.com/Elders/Cronus.Api/compare/v8.0.11...v8.1.0) (2022-11-02)
 
 
