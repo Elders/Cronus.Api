@@ -19,8 +19,23 @@ namespace Elders.Cronus.Api.Security
 
         public static IServiceCollection AddSecurity(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddBasicSecurity();
             services.AddMvcSecurity(configuration);
             services.AddJwtSecurity(configuration);
+
+            return services;
+        }
+
+        private static IServiceCollection AddBasicSecurity(this IServiceCollection services)
+        {
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy(BasicAuthorizationAttribute.PolicyName, new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+            });
+
+            services
+                .AddAuthentication()
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicAuthorizationAttribute.AuthenticationSchema, options => { });
 
             return services;
         }
@@ -78,7 +93,7 @@ namespace Elders.Cronus.Api.Security
                     opt.ForwardDefaultSelector = context =>
                     {
                         string authorization = context.Request.Headers[HeaderNames.Authorization];
-                        if (string.IsNullOrEmpty(authorization) == false && authorization.StartsWith("Bearer "))
+                        if (string.IsNullOrEmpty(authorization) == false && authorization.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
                         {
                             string token = authorization.Substring("Bearer ".Length).Trim();
                             JwtSecurityTokenHandler jwtHandler = new JwtSecurityTokenHandler();
@@ -90,7 +105,7 @@ namespace Elders.Cronus.Api.Security
                             }
                         }
 
-                        throw new UnableToResolveTenantException("Unable to find proper JWT token handler!");
+                        return BasicAuthorizationAttribute.AuthenticationSchema;
                     };
                 });
 
