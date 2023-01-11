@@ -1,3 +1,10 @@
+# [8.2.0](https://github.com/Elders/Cronus.Api/compare/v8.1.2...v8.2.0) (2023-01-11)
+
+
+### Features
+
+* allow configuring the host builder from the application ([70fe232](https://github.com/Elders/Cronus.Api/commit/70fe2325ecbc6347adf109e6e4f9d41e7773f073))
+
 ## [8.1.2](https://github.com/Elders/Cronus.Api/compare/v8.1.1...v8.1.2) (2022-11-24)
 
 
