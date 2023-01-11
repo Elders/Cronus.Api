@@ -21,7 +21,9 @@ namespace Elders.Cronus.Api
     {
         private static readonly ILogger logger = CronusLogger.CreateLogger(typeof(CronusApi));
 
-        public static IHost GetHost(Action<CronusApiBuilder> builder = null)
+        public static IHost GetHost(Action<CronusApiBuilder> builder = null) => GetHostBuilder(builder).Build();
+
+        public static IHostBuilder GetHostBuilder(Action<CronusApiBuilder> builder = null)
         {
             var cronusApiBuilder = new CronusApiBuilder();
             if (builder != null)
@@ -29,7 +31,7 @@ namespace Elders.Cronus.Api
 
             logger.Info(() => $"Starting Cronus API.{Environment.NewLine}If you are not able to access it using DNS or public IP make sure that you have firewall rule and urlacl setup on the hosting machine.{Environment.NewLine}Example firewall: netsh advfirewall firewall add rule name=\"Cronus\" dir=in action=allow localport=7477 protocol=tcp{Environment.NewLine}Example urlacl: netsh http add urlacl url=http://[::]:7477 user=Everyone listen=yes");
 
-            var host = Host
+            var hostBuilder = Host
                 .CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
@@ -64,11 +66,9 @@ namespace Elders.Cronus.Api
                 {
                     options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
                     options.ValidateOnBuild = false;
-                })
+                });
 
-                .Build();
-
-            return host;
+            return hostBuilder;
         }
     }
 }
