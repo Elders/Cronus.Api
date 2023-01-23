@@ -1,5 +1,5 @@
-# [9.0.0-preview.1](https://github.com/Elders/Cronus.Api/compare/v8.2.0...v9.0.0-preview.1) (2023-01-23)
-
+# [9.0.0-preview.2](https://github.com/Elders/Cronus.Api/compare/v8.2.0...v9.0.0-preview.1) (2023-01-23)
+* Updates to latest packages
 
 ### Features
 
