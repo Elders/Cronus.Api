@@ -20,7 +20,7 @@ namespace Elders.Cronus.Api
             this.boundedContext = boundedContextMonitor.CurrentValue;
         }
 
-        public async Task<AggregateDto> ExploreAsync(IAggregateRootId id)
+        public async Task<AggregateDto> ExploreAsync(AggregateRootId id)
         {
             EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
             if (stream.Commits.Count() == 0) return new AggregateDto();

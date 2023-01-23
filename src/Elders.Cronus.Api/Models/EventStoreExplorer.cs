@@ -22,7 +22,7 @@ namespace Elders.Cronus.Api
             this.boundedContext = boundedContextMonitor.CurrentValue;
         }
 
-        public async Task<AggregateDto> ExploreAsync(IAggregateRootId id)
+        public async Task<AggregateDto> ExploreAsync(AggregateRootId id)
         {
             EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
             if (stream.Commits.Any() == false) return new AggregateDto();
@@ -44,7 +44,7 @@ namespace Elders.Cronus.Api
             return arDto;
         }
 
-        public async Task<IEvent> FindEventAsync(IAggregateRootId id, int commitRevision, int eventPosition)
+        public async Task<IEvent> FindEventAsync(AggregateRootId id, int commitRevision, int eventPosition)
         {
             EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
 
@@ -60,7 +60,7 @@ namespace Elders.Cronus.Api
             return null;
         }
 
-        public async Task<IPublicEvent> FindPublicEventAsync(IAggregateRootId id, int commitRevision, int eventPosition)
+        public async Task<IPublicEvent> FindPublicEventAsync(AggregateRootId id, int commitRevision, int eventPosition)
         {
             EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
 

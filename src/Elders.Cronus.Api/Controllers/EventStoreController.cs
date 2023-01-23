@@ -33,7 +33,7 @@ namespace Elders.Cronus.Api.Controllers
             AggregateDto result = new AggregateDto();
             try
             {
-                result = await _eventExplorer.ExploreAsync(AggregateUrn.Parse(model.Id, Urn.Uber));
+                result = await _eventExplorer.ExploreAsync(AggregateRootId.Parse(model.Id, Urn.Uber));
             }
             catch (Exception ex)
             {
@@ -52,7 +52,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Republish")]
         public async Task<IActionResult> Republish([FromBody] RepublishRequest model)
         {
-            var arId = AggregateUrn.Parse(model.Id, Urn.Uber);
+            var arId = AggregateRootId.Parse(model.Id, Urn.Uber);
 
             if (model.IsPublicEvent)
             {
