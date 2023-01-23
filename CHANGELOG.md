@@ -1,3 +1,10 @@
+# [9.0.0-preview.1](https://github.com/Elders/Cronus.Api/compare/v8.2.0...v9.0.0-preview.1) (2023-01-23)
+
+
+### Features
+
+* Adds the Before timestamp when replaying events ([b96168a](https://github.com/Elders/Cronus.Api/commit/b96168ad3b21fdf0b91631d857d1c302d5db7890))
+
 # [8.2.0](https://github.com/Elders/Cronus.Api/compare/v8.1.2...v8.2.0) (2023-01-11)
 
 
