@@ -1,3 +1,15 @@
+# [9.0.0-preview.1](https://github.com/Elders/Cronus.Api/compare/v8.2.0...v9.0.0-preview.1) (2023-01-23)
+
+
+### Bug Fixes
+
+* Fixes the versioning after rebase ([ded3704](https://github.com/Elders/Cronus.Api/commit/ded37046cb06166cad0e87d487d7eade411c1f7d))
+
+
+### Features
+
+* Adds the Before timestamp when replaying events ([b96168a](https://github.com/Elders/Cronus.Api/commit/b96168ad3b21fdf0b91631d857d1c302d5db7890))
+
 # [9.0.0-preview.2](https://github.com/Elders/Cronus.Api/compare/v8.2.0...v9.0.0-preview.1) (2023-01-23)
 * Updates to latest packages
 
