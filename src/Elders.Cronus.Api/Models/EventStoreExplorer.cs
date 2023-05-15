@@ -74,7 +74,7 @@ namespace Elders.Cronus.Api
         {
             IEnumerable<EventDto> events = commit.Events.ToEventDto(DateTimeOffset.FromFileTime(commit.Timestamp));
             int lastEventPosition = events.Max(e => e.EventPosition);
-            IEnumerable<EventDto> publicEvents = commit.PublicEvents.ToEventDto(lastEventPosition);
+            IEnumerable<EventDto> publicEvents = commit.PublicEvents.ToPublicEventDto(lastEventPosition);
 
             return new AggregateCommitDto()
             {
@@ -193,7 +193,7 @@ namespace Elders.Cronus.Api
             }
         }
 
-        public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IPublicEvent> events, int lastEventPosition)
+        public static IEnumerable<EventDto> ToPublicEventDto(this IEnumerable<IPublicEvent> events, int lastEventPosition)
         {
             int eventPosition = lastEventPosition + 5;
             foreach (IPublicEvent @event in events)
