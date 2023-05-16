@@ -7,11 +7,11 @@ namespace Elders.Cronus.Api.Controllers
 {
     public class ReplayPublicEventController : ApiControllerBase
     {
-        private readonly IPublisher<ISystemEvent> signalPublisher;
+        private readonly IPublisher<ISystemSignal> signalPublisher;
         private DateTimeOffset ReplayAfterDefaultDate = new DateTimeOffset(2000, 1, 1, 0, 0, 0, 0, TimeSpan.FromHours(0));
         private DateTimeOffset ReplayBeforeDefaultDate = new DateTimeOffset(2100, 1, 1, 0, 0, 0, 0, TimeSpan.FromHours(0));
 
-        public ReplayPublicEventController(IPublisher<ISystemEvent> signalPublisher)
+        public ReplayPublicEventController(IPublisher<ISystemSignal> signalPublisher)
         {
             this.signalPublisher = signalPublisher;
         }

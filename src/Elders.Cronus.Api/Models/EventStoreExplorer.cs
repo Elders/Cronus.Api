@@ -27,13 +27,7 @@ namespace Elders.Cronus.Api
             EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
             if (stream.Commits.Any() == false) return new AggregateDto();
 
-            var commitsDto = stream.Commits.Select(commit =>
-                new AggregateCommitDto()
-                {
-                    AggregateRootRevision = commit.Revision,
-                    Events = commit.Events.ToEventDto(DateTimeOffset.FromFileTime(commit.Timestamp)).Union(commit.PublicEvents.ToEventDto()).ToList(),
-                    Timestamp = DateTime.FromFileTimeUtc(commit.Timestamp)
-                }).ToList();
+            var commitsDto = stream.Commits.Select(commit => BuildAggregateCommitDto(commit)).ToList();
 
             var arDto = new AggregateDto()
             {
@@ -74,6 +68,20 @@ namespace Elders.Cronus.Api
             }
 
             return null;
+        }
+
+        private AggregateCommitDto BuildAggregateCommitDto(AggregateCommit commit)
+        {
+            IEnumerable<EventDto> events = commit.Events.ToEventDto(DateTimeOffset.FromFileTime(commit.Timestamp));
+            int lastEventPosition = events.Max(e => e.EventPosition);
+            IEnumerable<EventDto> publicEvents = commit.PublicEvents.ToPublicEventDto(lastEventPosition);
+
+            return new AggregateCommitDto()
+            {
+                AggregateRootRevision = commit.Revision,
+                Events = events.Union(publicEvents).ToList(),
+                Timestamp = DateTime.FromFileTimeUtc(commit.Timestamp)
+            };
         }
 
         public class AggregateDto
@@ -158,7 +166,7 @@ namespace Elders.Cronus.Api
         public static EventDto ToEventDto(this IEvent @event, DateTimeOffset timestamp, int position)
         {
             var entityEvent = @event as EntityEvent;
-            if (ReferenceEquals(null, entityEvent))
+            if (entityEvent is null)
             {
                 return new EventDto()
                 {
@@ -185,8 +193,9 @@ namespace Elders.Cronus.Api
             }
         }
 
-        public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IPublicEvent> events)
+        public static IEnumerable<EventDto> ToPublicEventDto(this IEnumerable<IPublicEvent> events, int lastEventPosition)
         {
+            int eventPosition = lastEventPosition + 5;
             foreach (IPublicEvent @event in events)
             {
                 yield return new EventDto()
@@ -194,8 +203,11 @@ namespace Elders.Cronus.Api
                     Id = @event.GetType().GetContractId(),
                     EventName = @event.GetType().Name,
                     EventData = @event,
+                    EventPosition = eventPosition,
                     IsPublicEvent = true
                 };
+
+                eventPosition++;
             }
         }
     }
