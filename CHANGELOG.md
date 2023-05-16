@@ -1,3 +1,10 @@
+# [9.0.0-preview.4](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.3...v9.0.0-preview.4) (2023-05-16)
+
+
+### Bug Fixes
+
+* Fixes UI problem with public events position ([8efda63](https://github.com/Elders/Cronus.Api/commit/8efda631dff6b49e07042d0060a106f6897cdc81))
+
 # [9.0.0-preview.3](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.2...v9.0.0-preview.3) (2023-01-23)
 
 
