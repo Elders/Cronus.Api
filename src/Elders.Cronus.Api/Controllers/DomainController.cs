@@ -40,6 +40,17 @@ namespace Elders.Cronus.Api.Controllers
             return new OkObjectResult(result);
         }
 
+        [HttpGet, Route("AggregateRootIdSamples")]
+        public IActionResult GetAggregateRootIdSamples(string tenant)
+        {
+            var result = new Domain_Response();
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.IsDynamic == false);
+
+            result.AggregateIdSamples = GetAggregateIdSamples(loadedAssemblies, tenant);
+
+            return new OkObjectResult(result);
+        }
+
         [HttpGet, Route("tenants")]
         public IActionResult GetTenants()
         {
@@ -66,6 +77,15 @@ namespace Elders.Cronus.Api.Controllers
         private bool HandlerRetrieveRequirements<T>(Type handlerCandidate)
         {
             return handlerCandidate.IsAbstract == false && handlerCandidate.IsInterface == false && typeof(T).IsAssignableFrom(handlerCandidate);
+        }
+
+        static Type AggregateRootIdType = typeof(AggregateRootId<>);
+        private bool IsAggregateRootIdGeneric(Type candidate)
+        {
+            if (candidate.BaseType is null || candidate.BaseType.IsGenericType == false)
+                return false;
+
+            return candidate.IsAbstract == false && candidate.IsInterface == false && AggregateRootIdType.IsAssignableFrom(candidate.BaseType.GetGenericTypeDefinition());
         }
 
         private ICollection<Gateway_Response> GetGateways(IEnumerable<Assembly> loadedAssemblies)
@@ -198,6 +218,26 @@ namespace Elders.Cronus.Api.Controllers
                                     ?.ToList(),
                     Events = GetWhenEvents(GetAggregateState(meta), allEventsInAssembly)
                 });
+        }
+
+        private ICollection<AggregateIdSample_Response> GetAggregateIdSamples(IEnumerable<System.Reflection.Assembly> loadedAssemblies, string tenant)
+        {
+            return RetrieveTypesFromAssemblies(loadedAssemblies,
+                x => IsAggregateRootIdGeneric(x),
+                meta => new AggregateIdSample_Response
+                {
+                    IdSample = ExtractSample(meta, tenant),
+                });
+        }
+
+        const string AggregateRootId_MethodName_New = "New";
+        private string ExtractSample(Type aggregateIdType, string tenant)
+        {
+            MethodInfo[] typeStaticMethods = aggregateIdType.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+            MethodInfo methodFactoryInfo = typeStaticMethods.Where(found => found.GetParameters().Length == 2 && found.Name == AggregateRootId_MethodName_New).Single();
+            Urn idInstance = (Urn)methodFactoryInfo.Invoke(null, new[] { tenant, "" });
+
+            return idInstance.Value;
         }
 
         private ICollection<Event_Response> GetWhenEvents(Type type, IEnumerable<Type> allEventsInAssembly)

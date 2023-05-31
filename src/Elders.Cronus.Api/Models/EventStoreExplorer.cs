@@ -22,7 +22,7 @@ namespace Elders.Cronus.Api
             this.boundedContext = boundedContextMonitor.CurrentValue;
         }
 
-        public async Task<AggregateDto> ExploreAsync(AggregateRootId id)
+        public async Task<AggregateDto> ExploreAsync(AggregateRootId id, bool metaOnly)
         {
             EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
             if (stream.Commits.Any() == false) return new AggregateDto();
@@ -31,7 +31,7 @@ namespace Elders.Cronus.Api
                 new AggregateCommitDto()
                 {
                     AggregateRootRevision = commit.Revision,
-                    Events = commit.Events.ToEventDto(DateTimeOffset.FromFileTime(commit.Timestamp)).Union(commit.PublicEvents.ToEventDto()).ToList(),
+                    Events = commit.Events.ToEventDto(DateTimeOffset.FromFileTime(commit.Timestamp), metaOnly).Union(commit.PublicEvents.ToEventDto(metaOnly)).ToList(),
                     Timestamp = DateTime.FromFileTimeUtc(commit.Timestamp)
                 }).ToList();
 
@@ -116,46 +116,36 @@ namespace Elders.Cronus.Api
 
     public static class EventExtensions
     {
-        public static IEnumerable<EventDto> ToEventsDto(this ProjectionCommit commit)
+        public static IEnumerable<EventDto> ToEventsDto(this ProjectionCommit commit, bool metaOnly)
         {
-            yield return commit.Event.ToEventDto(commit.TimeStamp);
+            yield return commit.Event.ToEventDto(commit.TimeStamp, metaOnly);
         }
 
         public static ProjectionCommitDto ToProjectionDto(this ProjectionCommit commit)
         {
             return new ProjectionCommitDto()
             {
-                Events = new List<EventDto> { commit.Event.ToEventDto(commit.TimeStamp) },
+                Events = new List<EventDto> { commit.Event.ToEventDto(commit.TimeStamp, false) },
                 Timestamp = DateTime.FromFileTimeUtc(commit.EventOrigin.Timestamp)
             };
         }
 
-        public static EventDto ToEventDto(this IEvent @event, DateTimeOffset dateTimeOffset)
+        public static EventDto ToEventDto(this IEvent @event, DateTimeOffset dateTimeOffset, bool metaOnly)
         {
-            return @event.ToEventDto(dateTimeOffset, 1);
+            return @event.ToEventDto(dateTimeOffset, 1, metaOnly);
         }
 
-        public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IEvent> events, DateTimeOffset timestamp)
-        {
-            int eventPosition = 0;
-            foreach (IEvent @event in events)
-            {
-                yield return @event.ToEventDto(timestamp, eventPosition);
-                eventPosition++;
-            }
-        }
-
-        public static IEnumerable<EventDto> ToEventDto(this List<IEvent> events, DateTimeOffset timestamp)
+        public static IEnumerable<EventDto> ToEventDto(this List<IEvent> events, DateTimeOffset timestamp, bool metaOnly)
         {
             int eventPosition = 0;
             foreach (IEvent @event in events)
             {
-                yield return @event.ToEventDto(timestamp, eventPosition);
+                yield return @event.ToEventDto(timestamp, eventPosition, metaOnly);
                 eventPosition++;
             }
         }
 
-        public static EventDto ToEventDto(this IEvent @event, DateTimeOffset timestamp, int position)
+        public static EventDto ToEventDto(this IEvent @event, DateTimeOffset timestamp, int position, bool metaOnly)
         {
             var entityEvent = @event as EntityEvent;
             if (ReferenceEquals(null, entityEvent))
@@ -164,7 +154,7 @@ namespace Elders.Cronus.Api
                 {
                     Id = @event.GetType().GetContractId(),
                     EventName = @event.GetType().Name,
-                    EventData = @event,
+                    EventData = metaOnly ? null : @event,
                     EventPosition = position,
                     IsPublicEvent = typeof(IPublicEvent).IsAssignableFrom(@event.GetType()),
                     Timestamp = timestamp
@@ -176,7 +166,7 @@ namespace Elders.Cronus.Api
                 {
                     Id = entityEvent.Event.GetType().GetContractId(),
                     EventName = entityEvent.Event.GetType().Name,
-                    EventData = entityEvent.Event,
+                    EventData = metaOnly ? null : entityEvent.Event,
                     IsEntityEvent = true,
                     EventPosition = 1,
                     IsPublicEvent = typeof(IPublicEvent).IsAssignableFrom(@event.GetType()),
@@ -185,7 +175,7 @@ namespace Elders.Cronus.Api
             }
         }
 
-        public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IPublicEvent> events)
+        public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IPublicEvent> events, bool metaOnly)
         {
             foreach (IPublicEvent @event in events)
             {
@@ -193,7 +183,7 @@ namespace Elders.Cronus.Api
                 {
                     Id = @event.GetType().GetContractId(),
                     EventName = @event.GetType().Name,
-                    EventData = @event,
+                    EventData = metaOnly ? null : @event,
                     IsPublicEvent = true
                 };
             }

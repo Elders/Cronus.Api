@@ -13,6 +13,8 @@ namespace Elders.Cronus.Api.Controllers
 
             public IEnumerable<Aggregate_Response> Aggregates { get; set; }
 
+            public IEnumerable<AggregateIdSample_Response> AggregateIdSamples { get; set; }
+
             public IEnumerable<Event_Response> Events { get; set; }
 
             public IEnumerable<Command_Response> Commands { get; set; }

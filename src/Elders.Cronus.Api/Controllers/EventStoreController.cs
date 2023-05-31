@@ -33,7 +33,7 @@ namespace Elders.Cronus.Api.Controllers
             AggregateDto result = new AggregateDto();
             try
             {
-                result = await _eventExplorer.ExploreAsync(AggregateRootId.Parse(model.Id, Urn.Uber));
+                result = await _eventExplorer.ExploreAsync(AggregateRootId.Parse(model.Id, Urn.Uber), model.MetaOnly);
             }
             catch (Exception ex)
             {
@@ -47,6 +47,8 @@ namespace Elders.Cronus.Api.Controllers
         {
             [Required]
             public string Id { get; set; }
+
+            public bool MetaOnly { get; set; }
         }
 
         [HttpPost, Route("Republish")]
