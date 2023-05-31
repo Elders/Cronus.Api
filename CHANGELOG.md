@@ -1,3 +1,10 @@
+# [9.0.0-preview.5](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.4...v9.0.0-preview.5) (2023-05-31)
+
+
+### Bug Fixes
+
+* Fixes issue where the timestamp for republished event was not properly set. ([8d5ac97](https://github.com/Elders/Cronus.Api/commit/8d5ac97df84fccf7e5f7ea752d070703c2959476))
+
 # [9.0.0-preview.4](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.3...v9.0.0-preview.4) (2023-05-16)
 
 
