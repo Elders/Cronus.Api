@@ -1,3 +1,10 @@
+## [8.2.1](https://github.com/Elders/Cronus.Api/compare/v8.2.0...v8.2.1) (2023-05-31)
+
+
+### Bug Fixes
+
+* Does not encode AggregateRootId to avoid double encoding ([3b8fb0b](https://github.com/Elders/Cronus.Api/commit/3b8fb0b037016bbe0c543d4f8d9ddd73fc66df4b))
+
 # [8.2.0](https://github.com/Elders/Cronus.Api/compare/v8.1.2...v8.2.0) (2023-01-11)
 
 
