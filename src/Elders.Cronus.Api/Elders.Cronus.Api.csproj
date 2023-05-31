@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <PackageReference Include="Cronus" Version="9.0.0-preview.42" />
-    <PackageReference Include="Cronus.AspNetCore" Version="8.1.1" />
+    <PackageReference Include="Cronus.AspNetCore" Version="8.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
