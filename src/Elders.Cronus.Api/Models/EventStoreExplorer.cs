@@ -38,7 +38,7 @@ namespace Elders.Cronus.Api
             return arDto;
         }
 
-        public async Task<IEvent> FindEventAsync(AggregateRootId id, int commitRevision, int eventPosition)
+        public async Task<RepublishEventData> FindEventAsync(AggregateRootId id, int commitRevision, int eventPosition)
         {
             EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
 
@@ -47,11 +47,24 @@ namespace Elders.Cronus.Api
             {
                 if (commit.Events.Count > eventPosition)
                 {
-                    return commit.Events[eventPosition].Unwrap();
+                    return new RepublishEventData(commit.Events[eventPosition].Unwrap(), commit.Timestamp);
                 }
             }
 
             return null;
+        }
+
+        public class RepublishEventData
+        {
+            public RepublishEventData(IEvent eventToRepublish, long timestamp)
+            {
+                EventToRepublish = eventToRepublish;
+                Timestamp = timestamp;
+            }
+
+            public IEvent EventToRepublish { get; private set; }
+
+            public long Timestamp { get; private set; }
         }
 
         public async Task<IPublicEvent> FindPublicEventAsync(AggregateRootId id, int commitRevision, int eventPosition)

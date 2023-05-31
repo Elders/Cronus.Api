@@ -70,9 +70,9 @@ namespace Elders.Cronus.Api.Controllers
             }
             else
             {
-                IEvent @event = await _eventExplorer.FindEventAsync(arId, model.CommitRevision, model.EventPosition);
+                RepublishEventData eventData = await _eventExplorer.FindEventAsync(arId, model.CommitRevision, model.EventPosition);
 
-                if (@event is null) return BadRequest("Event not found");
+                if (eventData is null) return BadRequest("Event not found");
 
                 string recipientHandlers = ConcatRecipientHandlers(model.RecipientHandlers);
 
@@ -81,10 +81,11 @@ namespace Elders.Cronus.Api.Controllers
                     { MessageHeader.AggregateRootId,  arId.ToBase64()},
                     { MessageHeader.AggregateRootRevision, model.CommitRevision.ToString()},
                     { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
+                    { MessageHeader.AggregateCommitTimestamp, eventData.Timestamp.ToString() },
                     { MessageHeader.RecipientHandlers, string.Join(',', recipientHandlers) }
                 };
 
-                publisher.Publish(@event, headers);
+                publisher.Publish(eventData.EventToRepublish, headers);
             }
 
             return new OkObjectResult(new ResponseResult());
