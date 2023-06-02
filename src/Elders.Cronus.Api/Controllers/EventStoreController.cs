@@ -62,7 +62,7 @@ namespace Elders.Cronus.Api.Controllers
 
                 Dictionary<string, string> headers = new Dictionary<string, string>()
                 {
-                    { MessageHeader.AggregateRootId,  arId.ToBase64()}
+                    { MessageHeader.AggregateRootId,  arId.Value}
                 };
 
                 publicPublisher.Publish(@event, headers);
@@ -78,7 +78,7 @@ namespace Elders.Cronus.Api.Controllers
 
                 Dictionary<string, string> headers = new Dictionary<string, string>()
                 {
-                    { MessageHeader.AggregateRootId,  arId.ToBase64()},
+                    { MessageHeader.AggregateRootId,  arId.Value},
                     { MessageHeader.AggregateRootRevision, model.CommitRevision.ToString()},
                     { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
                     { MessageHeader.AggregateCommitTimestamp, eventData.Timestamp.ToString() },
