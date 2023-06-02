@@ -1,3 +1,10 @@
+# [9.0.0-preview.6](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.5...v9.0.0-preview.6) (2023-06-02)
+
+
+### Bug Fixes
+
+* Does not encode aggregateIds when we republish events ([0a2ec23](https://github.com/Elders/Cronus.Api/commit/0a2ec23e5dd9d3dfe8d0f44dbbba06378ea3e4b4))
+
 # [9.0.0-preview.5](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.4...v9.0.0-preview.5) (2023-05-31)
 
 
