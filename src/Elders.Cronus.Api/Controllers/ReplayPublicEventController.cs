@@ -31,7 +31,7 @@ namespace Elders.Cronus.Api.Controllers
                 RecipientBoundedContext = model.RecipientBoundedContext,
                 RecipientHandlers = model.RecipientHandlers,
                 SourceEventTypeId = model.SourceEventTypeId,
-                ReplayOptions = new ReplayPublicEventsOptions()
+                ReplayOptions = new ReplayEventsOptions()
                 {
                     After = ReplayAfterDefaultDate,
                     Before = ReplayBeforeDefaultDate

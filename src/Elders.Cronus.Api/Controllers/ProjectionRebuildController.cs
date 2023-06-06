@@ -1,8 +1,10 @@
-﻿using Elders.Cronus.MessageProcessing;
+﻿using Elders.Cronus.EventStore.Players;
+using Elders.Cronus.MessageProcessing;
 using Elders.Cronus.Projections.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -23,7 +25,18 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Rebuild")]
         public IActionResult Rebuild([FromBody] RequestModel model)
         {
-            var command = new RebuildProjectionCommand(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash);
+            model.PlayerOptions ??= new PlayerOptions();
+            var replayEventsOptions = new ReplayEventsOptions()
+            {
+                After = model.PlayerOptions.After,
+                Before = model.PlayerOptions.Before
+            };
+
+            // This if statement should go inside the ReplayEventsOptions somehow
+            if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue && model.PlayerOptions.MaxDegreeOfParallelism.Value > 0 && model.PlayerOptions.MaxDegreeOfParallelism.Value < 100)
+                replayEventsOptions.MaxDegreeOfParallelism = model.PlayerOptions.MaxDegreeOfParallelism.Value;
+
+            var command = new RebuildProjectionCommand(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash, replayEventsOptions);
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
@@ -34,7 +47,18 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Replay")]
         public IActionResult Replay([FromBody] RequestModel model)
         {
-            var command = new ReplayProjection(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash);
+            model.PlayerOptions ??= new PlayerOptions();
+            var replayEventsOptions = new ReplayEventsOptions()
+            {
+                After = model.PlayerOptions.After,
+                Before = model.PlayerOptions.Before
+            };
+
+            // This if statement should go inside the ReplayEventsOptions somehow
+            if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue && model.PlayerOptions.MaxDegreeOfParallelism.Value > 0 && model.PlayerOptions.MaxDegreeOfParallelism.Value < 100)
+                replayEventsOptions.MaxDegreeOfParallelism = model.PlayerOptions.MaxDegreeOfParallelism.Value;
+
+            var command = new ReplayProjection(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash, replayEventsOptions);
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
@@ -44,11 +68,27 @@ namespace Elders.Cronus.Api.Controllers
 
         public class RequestModel
         {
+            public RequestModel()
+            {
+                PlayerOptions = new PlayerOptions();
+            }
+
             [Required]
             public string ProjectionContractId { get; set; }
 
             [Required]
             public string Hash { get; set; }
+
+            public PlayerOptions PlayerOptions { get; set; }
+        }
+
+        public class PlayerOptions
+        {
+            public DateTimeOffset? After { get; set; }
+
+            public DateTimeOffset? Before { get; set; }
+
+            public int? MaxDegreeOfParallelism { get; set; }
         }
     }
 }

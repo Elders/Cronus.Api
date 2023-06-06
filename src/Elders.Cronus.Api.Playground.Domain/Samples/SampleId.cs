@@ -56,7 +56,7 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result = null;
                 return false;

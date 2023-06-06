@@ -13,7 +13,7 @@
     <Description>Cronus is a lightweight framework for building event driven systems with DDD/CQRS in mind.</Description>
     <PackageTags>CQRS DDD ES Event store sourcing cronus</PackageTags>
 
-    <Copyright>Copyright © Elders OSS 2013-2022</Copyright>
+    <Copyright>Copyright © Elders OSS 2013-2023</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RequireLicenseAcceptance>true</RequireLicenseAcceptance>
 
@@ -28,24 +28,16 @@
     <RootNamespace>Elders.Cronus.Api</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <AssemblyVersion>8.0.0</AssemblyVersion>
+    <AssemblyVersion>9.0.0</AssemblyVersion>
 
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus" Version="9.0.0-preview.42" />
+    <PackageReference Include="Cronus" Version="9.0.0-preview.43" />
     <PackageReference Include="Cronus.AspNetCore" Version="8.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
