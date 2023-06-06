@@ -1,3 +1,10 @@
+# [9.0.0-preview.7](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.6...v9.0.0-preview.7) (2023-06-06)
+
+
+### Features
+
+* Adds support for replaying projections with start/end date ([e6d0691](https://github.com/Elders/Cronus.Api/commit/e6d06911f42571439febb9f4931dd9359edc1a75))
+
 # [9.0.0-preview.6](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.5...v9.0.0-preview.6) (2023-06-02)
 
 
