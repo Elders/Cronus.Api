@@ -185,14 +185,27 @@ namespace Elders.Cronus.Api.Controllers
 
         private ICollection<Event_Response> GetEvents(IEnumerable<Assembly> loadedAssemblies)
         {
-            return RetrieveTypesFromAssemblies(loadedAssemblies,
+            var events = RetrieveTypesFromAssemblies(loadedAssemblies,
                x => typeof(IEvent).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0,
                meta => new Event_Response
                {
                    Id = meta.GetCustomAttribute<DataContractAttribute>().Name,
                    Name = meta.Name,
-                   Properties = meta.GetProperties(BindingFlags.Public).Select(x => x.Name).ToList()
+                   Properties = meta.GetProperties(BindingFlags.Public).Select(x => x.Name).ToList(),
+                   IsPublicEvent = false
                });
+
+            var publicEvents = RetrieveTypesFromAssemblies(loadedAssemblies,
+               x => typeof(IPublicEvent).IsAssignableFrom(x) && x.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0,
+               meta => new Event_Response
+               {
+                   Id = meta.GetCustomAttribute<DataContractAttribute>().Name,
+                   Name = meta.Name,
+                   Properties = meta.GetProperties(BindingFlags.Public).Select(x => x.Name).ToList(),
+                   IsPublicEvent = true
+               });
+            var allEvents = events.Concat(publicEvents);
+            return allEvents.ToList();
         }
 
         private ICollection<Aggregate_Response> GetAggregates(IEnumerable<System.Reflection.Assembly> loadedAssemblies)
