@@ -12,6 +12,8 @@ namespace Elders.Cronus.Api.Controllers
             }
 
             public List<string> Properties { get; set; }
+
+            public bool IsPublicEvent { get; set; }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -9,6 +10,11 @@ namespace Elders.Cronus.Api.Controllers
             public IEnumerable<Event_Response> Events { get; set; }
 
             public IEnumerable<Command_Response> Commands { get; set; }
+        }
+
+        public class AggregateIdSample_Response
+        {
+            public string IdSample { get; set; }
         }
     }
 }
