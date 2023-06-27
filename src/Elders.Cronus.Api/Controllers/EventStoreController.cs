@@ -48,9 +48,10 @@ namespace Elders.Cronus.Api.Controllers
         public async Task<IActionResult> ExploreWithPaging([FromBody] ExploreEventStoreWithPagingRequestModel model)
         {
             ExploreWithPagingResponse result = ExploreWithPagingResponse.Empty();
+            PagingOptions options = new PagingOptions(model.Take, model.PaginationToken);
             try
             {
-                result = await _eventExplorer.ExploreEventsWithPagingAsync(AggregateRootId.Parse(model.Id, Urn.Uber), model.PaginationToken, model.Take);
+                result = await _eventExplorer.ExploreEventsWithPagingAsync(AggregateRootId.Parse(model.Id, Urn.Uber), options);
 
             }
             catch (Exception ex)

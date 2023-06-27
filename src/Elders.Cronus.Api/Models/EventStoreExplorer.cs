@@ -41,16 +41,12 @@ namespace Elders.Cronus.Api
             return arDto;
         }
 
-        public async Task<ExploreWithPagingResponse> ExploreEventsWithPagingAsync(AggregateRootId id, byte[] paginationToken, int take)
+        public async Task<ExploreWithPagingResponse> ExploreEventsWithPagingAsync(AggregateRootId id, PagingOptions options)
         {
-            PagingOptions pagingOptions = new PagingOptions(take, paginationToken);
-
-            LoadAggregateRawEventsWithPagingResult loadResult = await eventStore.LoadWithPagingDescendingAsync(id, pagingOptions);
-            if (loadResult is null || loadResult.RawEvents.Any() == false)
-                return ExploreWithPagingResponse.Empty();
-
+            LoadAggregateRawEventsWithPagingResult loadResult = await eventStore.LoadWithPagingDescendingAsync(id, options);
             List<RawEventDto> result = loadResult.RawEvents.Select(x => GetRawEventDto(x)).ToList();
-            return new ExploreWithPagingResponse(result, loadResult.PaginationToken);
+
+            return new ExploreWithPagingResponse(result, loadResult.Options.PaginationToken);
         }
 
         public async Task<RepublishEventData> FindEventAsync(AggregateRootId id, int commitRevision, int eventPosition)
@@ -68,21 +64,13 @@ namespace Elders.Cronus.Api
 
             return null;
         }
+
         public RawEventDto GetRawEventDto(AggregateEventRaw @event)
         {
-            IMessage messageData = GetMessageData(@event);
+            IMessage messageData = (IMessage)_serializer.DeserializeFromBytes(@event.Data);
             return messageData.ToRawEventDto(DateTimeOffset.FromFileTime(@event.Timestamp), @event.Position, @event.Revision);
         }
 
-        public IMessage GetMessageData(AggregateEventRaw @event)
-        {
-            IMessage messageData;
-            using (var stream = new MemoryStream(@event.Data))
-            {
-                messageData = (IMessage)_serializer.Deserialize(stream);
-            }
-            return messageData;
-        }
         public async Task<IPublicEvent> FindPublicEventAsync(AggregateRootId id, int commitRevision, int eventPosition)
         {
             EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
@@ -98,6 +86,7 @@ namespace Elders.Cronus.Api
 
             return null;
         }
+
         public async Task<AggregateEventRaw> GetAggregateEventRaw(IndexRecord record)
         {
             AggregateEventRaw @event = await eventStore.LoadAggregateEventRaw(record).ConfigureAwait(false);
