@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Elders.Cronus.EventStore;
-using Elders.Cronus.Projections;
+using Elders.Cronus.EventStore.Index;
 using Elders.Cronus.Projections.Cassandra.EventSourcing;
 using Microsoft.Extensions.Options;
 
@@ -13,13 +14,15 @@ namespace Elders.Cronus.Api
     {
         private readonly IEventStore eventStore;
         private readonly BoundedContext boundedContext;
+        private readonly ISerializer _serializer;
 
-        public EventStoreExplorer(IEventStore eventStore, IOptionsMonitor<BoundedContext> boundedContextMonitor)
+        public EventStoreExplorer(IEventStore eventStore, IOptionsMonitor<BoundedContext> boundedContextMonitor, ISerializer serializer)
         {
             if (ReferenceEquals(null, eventStore) == true) throw new ArgumentNullException(nameof(eventStore));
 
             this.eventStore = eventStore;
             this.boundedContext = boundedContextMonitor.CurrentValue;
+            _serializer = serializer;
         }
 
         public async Task<AggregateDto> ExploreAsync(AggregateRootId id)
@@ -38,6 +41,14 @@ namespace Elders.Cronus.Api
             return arDto;
         }
 
+        public async Task<ExploreWithPagingResponse> ExploreEventsWithPagingAsync(AggregateRootId id, PagingOptions options)
+        {
+            LoadAggregateRawEventsWithPagingResult loadResult = await eventStore.LoadWithPagingDescendingAsync(id, options);
+            List<RawEventDto> result = loadResult.RawEvents.Select(x => GetRawEventDto(x)).ToList();
+
+            return new ExploreWithPagingResponse(result, loadResult.Options.PaginationToken);
+        }
+
         public async Task<RepublishEventData> FindEventAsync(AggregateRootId id, int commitRevision, int eventPosition)
         {
             EventStream stream = await eventStore.LoadAsync(id).ConfigureAwait(false);
@@ -54,17 +65,10 @@ namespace Elders.Cronus.Api
             return null;
         }
 
-        public class RepublishEventData
+        public RawEventDto GetRawEventDto(AggregateEventRaw @event)
         {
-            public RepublishEventData(IEvent eventToRepublish, long timestamp)
-            {
-                EventToRepublish = eventToRepublish;
-                Timestamp = timestamp;
-            }
-
-            public IEvent EventToRepublish { get; private set; }
-
-            public long Timestamp { get; private set; }
+            IMessage messageData = (IMessage)_serializer.DeserializeFromBytes(@event.Data);
+            return messageData.ToRawEventDto(DateTimeOffset.FromFileTime(@event.Timestamp), @event.Position, @event.Revision);
         }
 
         public async Task<IPublicEvent> FindPublicEventAsync(AggregateRootId id, int commitRevision, int eventPosition)
@@ -83,7 +87,13 @@ namespace Elders.Cronus.Api
             return null;
         }
 
-        private AggregateCommitDto BuildAggregateCommitDto(AggregateCommit commit)
+        public async Task<AggregateEventRaw> GetAggregateEventRaw(IndexRecord record)
+        {
+            AggregateEventRaw @event = await eventStore.LoadAggregateEventRaw(record).ConfigureAwait(false);
+            return @event;
+        }
+
+        private static AggregateCommitDto BuildAggregateCommitDto(AggregateCommit commit)
         {
             IEnumerable<EventDto> events = commit.Events.ToEventDto(DateTimeOffset.FromFileTime(commit.Timestamp));
             int lastEventPosition = events.Max(e => e.EventPosition);
@@ -135,93 +145,89 @@ namespace Elders.Cronus.Api
         public DateTimeOffset Timestamp { get; set; }
     }
 
-    public static class EventExtensions
+    public class RawEventDto
     {
-        public static IEnumerable<EventDto> ToEventsDto(this ProjectionCommit commit)
+        public string Id { get; set; }
+
+        public string EventName { get; set; }
+
+        public object EventData { get; set; }
+
+        public bool IsEntityEvent { get; set; }
+
+        public bool IsPublicEvent { get; set; }
+
+        public string EntityId { get; set; }
+
+        public int EventPosition { get; set; }
+
+        public int EventRevision { get; set; }
+
+        public DateTimeOffset Timestamp { get; set; }
+    }
+
+    public class ExploreWithPagingResponse
+    {
+        public ExploreWithPagingResponse(List<RawEventDto> events, byte[] paginationToken)
         {
-            yield return commit.Event.ToEventDto(commit.TimeStamp);
+            Events = events;
+            PaginationToken = paginationToken;
         }
 
-        public static ProjectionCommitDto ToProjectionDto(this ProjectionCommit commit)
+        public List<RawEventDto> Events { get; set; }
+
+        public byte[] PaginationToken { get; set; }
+
+        public static ExploreWithPagingResponse Empty() => new ExploreWithPagingResponse(new List<RawEventDto>(), null);
+    }
+
+    public class RepublishEventData
+    {
+        public RepublishEventData(IEvent eventToRepublish, long timestamp)
         {
-            return new ProjectionCommitDto()
-            {
-                Events = new List<EventDto> { commit.Event.ToEventDto(commit.TimeStamp) },
-                Timestamp = DateTime.FromFileTimeUtc(commit.EventOrigin.Timestamp)
-            };
+            EventToRepublish = eventToRepublish;
+            Timestamp = timestamp;
         }
 
-        public static EventDto ToEventDto(this IEvent @event, DateTimeOffset dateTimeOffset)
+        public IEvent EventToRepublish { get; private set; }
+
+        public long Timestamp { get; private set; }
+    }
+
+    public class RepublishEventNew
+    {
+        RepublishEventNew(IEvent @event)
         {
-            return @event.ToEventDto(dateTimeOffset, 1);
+            IsPublicEvent = false;
+            Event = @event;
         }
 
-        public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IEvent> events, DateTimeOffset timestamp)
+        RepublishEventNew(IPublicEvent @event)
         {
-            int eventPosition = 0;
-            foreach (IEvent @event in events)
-            {
-                yield return @event.ToEventDto(timestamp, eventPosition);
-                eventPosition++;
-            }
+            IsPublicEvent = true;
+            PublicEvent = @event;
         }
 
-        public static IEnumerable<EventDto> ToEventDto(this List<IEvent> events, DateTimeOffset timestamp)
+        public bool IsPublicEvent { get; private set; }
+
+        public IEvent Event { get; private set; }
+
+        public IPublicEvent PublicEvent { get; private set; }
+
+        public static RepublishEventNew GetNormalEvent(IEvent @event) => new RepublishEventNew(@event);
+        public static RepublishEventNew GetPublicEvent(IPublicEvent publicEvent) => new RepublishEventNew(publicEvent);
+    }
+
+    public class RepublishEventDataNew
+    {
+        internal RepublishEventDataNew(long timestamp, IEvent @event)
         {
-            int eventPosition = 0;
-            foreach (IEvent @event in events)
-            {
-                yield return @event.ToEventDto(timestamp, eventPosition);
-                eventPosition++;
-            }
+            Timestamp = timestamp;
+            Event = @event;
         }
 
-        public static EventDto ToEventDto(this IEvent @event, DateTimeOffset timestamp, int position)
-        {
-            var entityEvent = @event as EntityEvent;
-            if (entityEvent is null)
-            {
-                return new EventDto()
-                {
-                    Id = @event.GetType().GetContractId(),
-                    EventName = @event.GetType().Name,
-                    EventData = @event,
-                    EventPosition = position,
-                    IsPublicEvent = typeof(IPublicEvent).IsAssignableFrom(@event.GetType()),
-                    Timestamp = timestamp
-                };
-            }
-            else
-            {
-                return new EventDto()
-                {
-                    Id = entityEvent.Event.GetType().GetContractId(),
-                    EventName = entityEvent.Event.GetType().Name,
-                    EventData = entityEvent.Event,
-                    IsEntityEvent = true,
-                    EventPosition = 1,
-                    IsPublicEvent = typeof(IPublicEvent).IsAssignableFrom(@event.GetType()),
-                    Timestamp = timestamp
-                };
-            }
-        }
+        public long Timestamp { get; private set; }
 
-        public static IEnumerable<EventDto> ToPublicEventDto(this IEnumerable<IPublicEvent> events, int lastEventPosition)
-        {
-            int eventPosition = lastEventPosition + 5;
-            foreach (IPublicEvent @event in events)
-            {
-                yield return new EventDto()
-                {
-                    Id = @event.GetType().GetContractId(),
-                    EventName = @event.GetType().Name,
-                    EventData = @event,
-                    EventPosition = eventPosition,
-                    IsPublicEvent = true
-                };
-
-                eventPosition++;
-            }
-        }
+        public IEvent Event { get; private set; }
     }
 }
