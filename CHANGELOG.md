@@ -1,3 +1,10 @@
+# [9.0.0-preview.8](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.7...v9.0.0-preview.8) (2023-06-27)
+
+
+### Features
+
+* Adds the ability to load ARs with paging ([d83d1ca](https://github.com/Elders/Cronus.Api/commit/d83d1ca9cf55fab8834bb5007be80dd338730feb))
+
 # [9.0.0-preview.7](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.6...v9.0.0-preview.7) (2023-06-06)
 
 
