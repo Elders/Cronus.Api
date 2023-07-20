@@ -1,3 +1,10 @@
+# [9.0.0-preview.9](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.8...v9.0.0-preview.9) (2023-07-20)
+
+
+### Bug Fixes
+
+* Updates to start using ICronusContextAccessor ([ab0b290](https://github.com/Elders/Cronus.Api/commit/ab0b2909d5bf19b4d1a6927961fc67c6536ff6df))
+
 # [9.0.0-preview.8](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.7...v9.0.0-preview.8) (2023-06-27)
 
 
