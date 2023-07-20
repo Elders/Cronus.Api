@@ -14,11 +14,11 @@ namespace Elders.Cronus.Api.Controllers
         private readonly TypeContainer<IEventStoreIndex> endicesTypes;
         private readonly IPublisher<ICommand> publisher;
         private readonly ProjectionExplorer projection;
-        private readonly CronusContext context;
+        private readonly ICronusContextAccessor contextAccessor;
 
-        public EventStoreIndexController(CronusContext context, TypeContainer<IEventStoreIndex> endicesTypes, IPublisher<ICommand> publisher, ProjectionExplorer projection)
+        public EventStoreIndexController(ICronusContextAccessor contextAccessor, TypeContainer<IEventStoreIndex> endicesTypes, IPublisher<ICommand> publisher, ProjectionExplorer projection)
         {
-            this.context = context;
+            this.contextAccessor = contextAccessor;
             this.endicesTypes = endicesTypes;
             this.publisher = publisher;
             this.projection = projection;
@@ -31,7 +31,7 @@ namespace Elders.Cronus.Api.Controllers
 
             foreach (var index in endicesTypes.Items)
             {
-                var status = await projection.ExploreAsync(new EventStoreIndexManagerId(index.GetContractId(), context.Tenant), typeof(EventStoreIndexStatus));
+                var status = await projection.ExploreAsync(new EventStoreIndexManagerId(index.GetContractId(), contextAccessor.CronusContext.Tenant), typeof(EventStoreIndexStatus));
 
                 MetaResponseModel indexResponse = new MetaResponseModel()
                 {
@@ -49,7 +49,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Rebuild")]
         public IActionResult Rebuild([FromBody] RebuildIndexRequestModel model)
         {
-            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.Id, context.Tenant));
+            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.Id, contextAccessor.CronusContext.Tenant));
 
             if (publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());

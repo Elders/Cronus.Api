@@ -112,7 +112,7 @@ namespace Elders.Cronus.Api.Controllers
             IndexRecord record = new IndexRecord(model.EventContract, id.RawId, model.CommitRevision, model.EventPosition, model.Timestamp);
             AggregateEventRaw rawEvent = await _eventExplorer.GetAggregateEventRaw(record).ConfigureAwait(false);
 
-            ReadOnlyMemory<byte> rawData = rawEvent.Data;
+            byte[] rawData = rawEvent.Data;
 
             if (rawEvent is null)
                 return BadRequest("Event not found");

@@ -17,15 +17,15 @@ namespace Elders.Cronus.Api.Controllers
     public class ProjectionMetaController : ApiControllerBase
     {
         private readonly ProjectionExplorer _projectionExplorer;
-        private readonly CronusContext context;
+        private readonly ICronusContextAccessor contextAccessor;
         private readonly ProjectionHasher projectionHasher;
 
-        public ProjectionMetaController(ProjectionExplorer projectionExplorer, CronusContext context, ProjectionHasher projectionHasher)
+        public ProjectionMetaController(ProjectionExplorer projectionExplorer, ICronusContextAccessor contextAccessor, ProjectionHasher projectionHasher)
         {
             if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
 
             _projectionExplorer = projectionExplorer;
-            this.context = context;
+            this.contextAccessor = contextAccessor;
             this.projectionHasher = projectionHasher;
         }
 
@@ -42,7 +42,7 @@ namespace Elders.Cronus.Api.Controllers
 
             if (metadata is null) return new BadRequestObjectResult(new ResponseResult<string>($"Projection with contract '{model.ProjectionContractId}' not found"));
 
-            var id = new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant);
+            var id = new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant);
             ProjectionDto dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
             var state = dto?.State as ProjectionVersionsHandlerState;
 

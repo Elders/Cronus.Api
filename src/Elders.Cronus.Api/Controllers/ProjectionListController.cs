@@ -15,16 +15,16 @@ namespace Elders.Cronus.Api.Controllers
     public class ProjectionListController : ApiControllerBase
     {
         private readonly ProjectionExplorer _projectionExplorer;
-        private readonly CronusContext context;
+        private readonly ICronusContextAccessor contextAccessor;
         private readonly ProjectionHasher projectionHasher;
 
-        public ProjectionListController(ProjectionExplorer projectionExplorer, CronusContext context, ProjectionHasher projectionHasher)
+        public ProjectionListController(ProjectionExplorer projectionExplorer, ICronusContextAccessor contextAccessor, ProjectionHasher projectionHasher)
         {
             if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
-            if (context is null) throw new ArgumentNullException(nameof(context));
+            if (contextAccessor is null) throw new ArgumentNullException(nameof(contextAccessor));
 
             _projectionExplorer = projectionExplorer;
-            this.context = context;
+            this.contextAccessor = contextAccessor;
             this.projectionHasher = projectionHasher;
         }
 
@@ -40,7 +40,7 @@ namespace Elders.Cronus.Api.Controllers
             ProjectionListDto result = new ProjectionListDto();
             foreach (var meta in projectionMetaData)
             {
-                var id = new ProjectionVersionManagerId(meta.GetContractId(), context.Tenant);
+                var id = new ProjectionVersionManagerId(meta.GetContractId(), contextAccessor.CronusContext.Tenant);
                 var dto = await _projectionExplorer.ExploreAsync(id, typeof(ProjectionVersionsHandler));
                 ProjectionVersionsHandlerState state = dto?.State as ProjectionVersionsHandlerState;
                 var metaProjection = new ProjectionMeta()

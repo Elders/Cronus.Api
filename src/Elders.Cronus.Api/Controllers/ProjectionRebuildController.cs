@@ -12,14 +12,14 @@ namespace Elders.Cronus.Api.Controllers
     public class ProjectionRebuildController : ApiControllerBase
     {
         private readonly IPublisher<ICommand> _publisher;
-        private readonly CronusContext context;
+        private readonly ICronusContextAccessor contextAccessor;
 
-        public ProjectionRebuildController(IPublisher<ICommand> publisher, CronusContext context)
+        public ProjectionRebuildController(IPublisher<ICommand> publisher, ICronusContextAccessor contextAccessor)
         {
             if (publisher is null) throw new ArgumentNullException(nameof(publisher));
 
             _publisher = publisher;
-            this.context = context;
+            this.contextAccessor = contextAccessor;
         }
 
         [HttpPost, Route("Rebuild")]
@@ -36,7 +36,7 @@ namespace Elders.Cronus.Api.Controllers
             if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue && model.PlayerOptions.MaxDegreeOfParallelism.Value > 0 && model.PlayerOptions.MaxDegreeOfParallelism.Value < 100)
                 replayEventsOptions.MaxDegreeOfParallelism = model.PlayerOptions.MaxDegreeOfParallelism.Value;
 
-            var command = new RebuildProjectionCommand(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash, replayEventsOptions);
+            var command = new RebuildProjectionCommand(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
@@ -58,7 +58,7 @@ namespace Elders.Cronus.Api.Controllers
             if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue && model.PlayerOptions.MaxDegreeOfParallelism.Value > 0 && model.PlayerOptions.MaxDegreeOfParallelism.Value < 100)
                 replayEventsOptions.MaxDegreeOfParallelism = model.PlayerOptions.MaxDegreeOfParallelism.Value;
 
-            var command = new ReplayProjection(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), model.Hash, replayEventsOptions);
+            var command = new ReplayProjection(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());

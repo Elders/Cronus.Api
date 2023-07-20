@@ -11,22 +11,22 @@ namespace Elders.Cronus.Api.Controllers
     public class ProjectionCancelController : ApiControllerBase
     {
         private readonly IPublisher<ICommand> _publisher;
-        private readonly CronusContext context;
+        private readonly ICronusContextAccessor contextAccessor;
 
-        public ProjectionCancelController(IPublisher<ICommand> publisher, CronusContext context)
+        public ProjectionCancelController(IPublisher<ICommand> publisher, ICronusContextAccessor contextAccessor)
         {
             if (publisher is null) throw new ArgumentNullException(nameof(publisher));
-            if (context is null) throw new ArgumentNullException(nameof(context));
+            if (contextAccessor is null) throw new ArgumentNullException(nameof(contextAccessor));
 
             _publisher = publisher;
-            this.context = context;
+            this.contextAccessor = contextAccessor;
         }
 
         [HttpPost, Route("Cancel")]
         public IActionResult Cancel([FromBody] ProjcetionRequestModel model)
         {
             var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);
-            var command = new CancelProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), version, model.Reason ?? "Canceled by user");
+            var command = new CancelProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), version, model.Reason ?? "Canceled by user");
 
             if (_publisher.Publish(command)) return new OkObjectResult(new ResponseResult());
 
@@ -37,7 +37,7 @@ namespace Elders.Cronus.Api.Controllers
         public IActionResult Finalize([FromBody] ProjcetionRequestModel model)
         {
             var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);
-            var command = new FinalizeProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId, context.Tenant), version);
+            var command = new FinalizeProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), version);
 
             if (_publisher.Publish(command)) return new OkObjectResult(new ResponseResult());
 
