@@ -1,3 +1,10 @@
+# [9.0.0-preview.10](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.9...v9.0.0-preview.10) (2023-07-28)
+
+
+### Bug Fixes
+
+* Updates packages ([4616612](https://github.com/Elders/Cronus.Api/commit/4616612a85ae8078fe8ebbf45cd3e56b9d5df3e0))
+
 # [9.0.0-preview.9](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.8...v9.0.0-preview.9) (2023-07-20)
 
 
