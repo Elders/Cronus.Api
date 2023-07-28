@@ -67,7 +67,7 @@ namespace Elders.Cronus.Api
 
         public RawEventDto GetRawEventDto(AggregateEventRaw @event)
         {
-            IMessage messageData = (IMessage)_serializer.DeserializeFromBytes(@event.Data);
+            IMessage messageData = _serializer.DeserializeFromBytes<IMessage>(@event.Data);
             return messageData.ToRawEventDto(DateTimeOffset.FromFileTime(@event.Timestamp), @event.Position, @event.Revision);
         }
 
