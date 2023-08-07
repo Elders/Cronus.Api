@@ -34,7 +34,7 @@ namespace Elders.Cronus.Api.Controllers
             AggregateDto result = new AggregateDto();
             try
             {
-                result = await _eventExplorer.ExploreAsync(AggregateRootId.Parse(model.Id, Urn.Uber));
+                result = await _eventExplorer.ExploreAsync(AggregateRootId.Parse(model.Id));
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace Elders.Cronus.Api.Controllers
             PagingOptions options = new PagingOptions(model.Take, model.PaginationToken);
             try
             {
-                result = await _eventExplorer.ExploreEventsWithPagingAsync(AggregateRootId.Parse(model.Id, Urn.Uber), options);
+                result = await _eventExplorer.ExploreEventsWithPagingAsync(AggregateRootId.Parse(model.Id), options);
 
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Republish")]
         public async Task<IActionResult> Republish([FromBody] RepublishRequest model)
         {
-            var arId = AggregateRootId.Parse(model.Id, Urn.Uber);
+            var arId = AggregateRootId.Parse(model.Id);
 
             if (model.IsPublicEvent)
             {
@@ -108,7 +108,7 @@ namespace Elders.Cronus.Api.Controllers
         [Route("RepublishNew")]
         public async Task<IActionResult> RepublishNew([FromBody] RepublishRequestNew model)
         {
-            AggregateRootId id = AggregateRootId.Parse(model.Id, Urn.Uber);
+            AggregateRootId id = AggregateRootId.Parse(model.Id);
             IndexRecord record = new IndexRecord(model.EventContract, id.RawId, model.CommitRevision, model.EventPosition, model.Timestamp);
             AggregateEventRaw rawEvent = await _eventExplorer.GetAggregateEventRaw(record).ConfigureAwait(false);
 
@@ -123,7 +123,7 @@ namespace Elders.Cronus.Api.Controllers
             {
                 Dictionary<string, string> headers = new Dictionary<string, string>()
                 {
-                    { MessageHeader.AggregateRootId,  id.ToBase64()}
+                    { MessageHeader.AggregateRootId,  id.Value}
                 };
 
                 publicPublisher.Publish(rawData, eventType, headers);
@@ -133,7 +133,7 @@ namespace Elders.Cronus.Api.Controllers
                 string recipientHandlers = ConcatRecipientHandlers(model.RecipientHandlers);
                 Dictionary<string, string> headers = new Dictionary<string, string>()
                 {
-                    { MessageHeader.AggregateRootId,  id.ToBase64()},
+                    { MessageHeader.AggregateRootId,  id.Value},
                     { MessageHeader.AggregateRootRevision, model.CommitRevision.ToString()},
                     { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
                     { MessageHeader.AggregateCommitTimestamp, rawEvent.Timestamp.ToString() },
