@@ -1,3 +1,10 @@
+# [9.0.0-preview.12](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.11...v9.0.0-preview.12) (2023-08-11)
+
+
+### Bug Fixes
+
+* Fixes issue with RepublishNew ([da9c576](https://github.com/Elders/Cronus.Api/commit/da9c5766ce42814587cd960e9a261a3e6e6fda21))
+
 # [9.0.0-preview.11](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.10...v9.0.0-preview.11) (2023-08-07)
 
 # [9.0.0-preview.10](https://github.com/Elders/Cronus.Api/compare/v9.0.0-preview.9...v9.0.0-preview.10) (2023-07-28)
