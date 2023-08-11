@@ -7,24 +7,27 @@ using System.Collections.Generic;
 using Elders.Cronus.EventStore.Index;
 using Microsoft.Extensions.Logging;
 using Elders.Cronus.EventStore;
+using Elders.Cronus.MessageProcessing;
 
 namespace Elders.Cronus.Api.Controllers
 {
     [Route("EventStore")]
     public class EventStoreController : ApiControllerBase
     {
-        private readonly EventStoreExplorer _eventExplorer;
+        private readonly EventStoreExplorer eventExplorer;
         private readonly IPublisher<IEvent> publisher;
         private readonly IPublisher<IPublicEvent> publicPublisher;
+        private readonly ICronusContextAccessor cronusContextAccessor;
         private readonly ILogger<EventStoreController> logger;
 
-        public EventStoreController(EventStoreExplorer eventStoreExplorer, IPublisher<IEvent> publisher, IPublisher<IPublicEvent> publicPublisher, ILogger<EventStoreController> logger)
+        public EventStoreController(EventStoreExplorer eventStoreExplorer, IPublisher<IEvent> publisher, IPublisher<IPublicEvent> publicPublisher, ICronusContextAccessor cronusContextAccessor, ILogger<EventStoreController> logger)
         {
             if (eventStoreExplorer is null) throw new ArgumentNullException(nameof(eventStoreExplorer));
 
-            _eventExplorer = eventStoreExplorer;
+            this.eventExplorer = eventStoreExplorer;
             this.publisher = publisher;
             this.publicPublisher = publicPublisher;
+            this.cronusContextAccessor = cronusContextAccessor;
             this.logger = logger;
         }
 
@@ -34,7 +37,7 @@ namespace Elders.Cronus.Api.Controllers
             AggregateDto result = new AggregateDto();
             try
             {
-                result = await _eventExplorer.ExploreAsync(AggregateRootId.Parse(model.Id));
+                result = await eventExplorer.ExploreAsync(AggregateRootId.Parse(model.Id));
             }
             catch (Exception ex)
             {
@@ -51,7 +54,7 @@ namespace Elders.Cronus.Api.Controllers
             PagingOptions options = new PagingOptions(model.Take, model.PaginationToken);
             try
             {
-                result = await _eventExplorer.ExploreEventsWithPagingAsync(AggregateRootId.Parse(model.Id), options);
+                result = await eventExplorer.ExploreEventsWithPagingAsync(AggregateRootId.Parse(model.Id), options);
 
             }
             catch (Exception ex)
@@ -69,7 +72,7 @@ namespace Elders.Cronus.Api.Controllers
 
             if (model.IsPublicEvent)
             {
-                IPublicEvent @event = await _eventExplorer.FindPublicEventAsync(arId, model.CommitRevision, model.EventPosition);
+                IPublicEvent @event = await eventExplorer.FindPublicEventAsync(arId, model.CommitRevision, model.EventPosition);
 
                 if (@event is null) return BadRequest("Event not found");
 
@@ -83,7 +86,7 @@ namespace Elders.Cronus.Api.Controllers
             }
             else
             {
-                RepublishEventData eventData = await _eventExplorer.FindEventAsync(arId, model.CommitRevision, model.EventPosition);
+                RepublishEventData eventData = await eventExplorer.FindEventAsync(arId, model.CommitRevision, model.EventPosition);
 
                 if (eventData is null) return BadRequest("Event not found");
 
@@ -110,7 +113,7 @@ namespace Elders.Cronus.Api.Controllers
         {
             AggregateRootId id = AggregateRootId.Parse(model.Id);
             IndexRecord record = new IndexRecord(model.EventContract, id.RawId, model.CommitRevision, model.EventPosition, model.Timestamp);
-            AggregateEventRaw rawEvent = await _eventExplorer.GetAggregateEventRaw(record).ConfigureAwait(false);
+            AggregateEventRaw rawEvent = await eventExplorer.GetAggregateEventRaw(record).ConfigureAwait(false);
 
             byte[] rawData = rawEvent.Data;
 
@@ -118,15 +121,19 @@ namespace Elders.Cronus.Api.Controllers
                 return BadRequest("Event not found");
 
             Type eventType = model.EventContract.GetTypeByContract();
+            string tenant = cronusContextAccessor.CronusContext.Tenant;
 
             if (model.IsPublicEvent)
             {
                 Dictionary<string, string> headers = new Dictionary<string, string>()
                 {
-                    { MessageHeader.AggregateRootId,  id.Value}
+                    { MessageHeader.AggregateRootId,  id.Value},
+                    { MessageHeader.AggregateRootRevision, model.CommitRevision.ToString()},
+                    { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
+                    { MessageHeader.AggregateCommitTimestamp, rawEvent.Timestamp.ToString() },
                 };
 
-                publicPublisher.Publish(rawData, eventType, headers);
+                publicPublisher.Publish(rawData, eventType, tenant, headers);
             }
             else
             {
@@ -138,8 +145,9 @@ namespace Elders.Cronus.Api.Controllers
                     { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
                     { MessageHeader.AggregateCommitTimestamp, rawEvent.Timestamp.ToString() },
                     { MessageHeader.RecipientHandlers, string.Join(',', recipientHandlers) }
-            };
-                publisher.Publish(rawData, eventType, headers);
+                };
+
+                publisher.Publish(rawData, eventType, tenant, headers);
             }
 
             return new OkObjectResult(new ResponseResult());
