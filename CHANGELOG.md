@@ -1,3 +1,24 @@
+# [9.0.0](https://github.com/Elders/Cronus.Api/compare/v8.2.1...v9.0.0) (2023-08-22)
+
+
+### Bug Fixes
+
+* Does not encode aggregateIds when we republish events ([0a2ec23](https://github.com/Elders/Cronus.Api/commit/0a2ec23e5dd9d3dfe8d0f44dbbba06378ea3e4b4))
+* Fixes issue where the timestamp for republished event was not properly set. ([8d5ac97](https://github.com/Elders/Cronus.Api/commit/8d5ac97df84fccf7e5f7ea752d070703c2959476))
+* Fixes issue with RepublishNew ([da9c576](https://github.com/Elders/Cronus.Api/commit/da9c5766ce42814587cd960e9a261a3e6e6fda21))
+* Fixes the versioning after rebase ([ded3704](https://github.com/Elders/Cronus.Api/commit/ded37046cb06166cad0e87d487d7eade411c1f7d))
+* Fixes UI problem with public events position ([8efda63](https://github.com/Elders/Cronus.Api/commit/8efda631dff6b49e07042d0060a106f6897cdc81))
+* try to fix versioning ([5a86503](https://github.com/Elders/Cronus.Api/commit/5a86503113a168861b67808acdbdcd773ef7a69e))
+* Updates packages ([4616612](https://github.com/Elders/Cronus.Api/commit/4616612a85ae8078fe8ebbf45cd3e56b9d5df3e0))
+* Updates to start using ICronusContextAccessor ([ab0b290](https://github.com/Elders/Cronus.Api/commit/ab0b2909d5bf19b4d1a6927961fc67c6536ff6df))
+
+
+### Features
+
+* Adds support for replaying projections with start/end date ([e6d0691](https://github.com/Elders/Cronus.Api/commit/e6d06911f42571439febb9f4931dd9359edc1a75))
+* Adds the ability to load ARs with paging ([d83d1ca](https://github.com/Elders/Cronus.Api/commit/d83d1ca9cf55fab8834bb5007be80dd338730feb))
+* Adds the Before timestamp when replaying events ([b96168a](https://github.com/Elders/Cronus.Api/commit/b96168ad3b21fdf0b91631d857d1c302d5db7890))
+
 ## [8.2.1](https://github.com/Elders/Cronus.Api/compare/v8.2.0...v8.2.1) (2023-05-31)
 
 
