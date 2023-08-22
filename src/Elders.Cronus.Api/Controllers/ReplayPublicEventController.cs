@@ -1,20 +1,17 @@
 ﻿using Elders.Cronus.EventStore.Players;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Elders.Cronus.Api.Controllers
 {
     public class ReplayPublicEventController : ApiControllerBase
     {
-        private readonly IPublisher<ISystemEvent> signalPublisher;
+        private readonly IPublisher<ISystemSignal> signalPublisher;
         private DateTimeOffset ReplayAfterDefaultDate = new DateTimeOffset(2000, 1, 1, 0, 0, 0, 0, TimeSpan.FromHours(0));
+        private DateTimeOffset ReplayBeforeDefaultDate = new DateTimeOffset(2100, 1, 1, 0, 0, 0, 0, TimeSpan.FromHours(0));
 
-        public ReplayPublicEventController(IPublisher<ISystemEvent> signalPublisher)
+        public ReplayPublicEventController(IPublisher<ISystemSignal> signalPublisher)
         {
             this.signalPublisher = signalPublisher;
         }
@@ -25,15 +22,19 @@ namespace Elders.Cronus.Api.Controllers
             if (model.ReplayAfter.HasValue)
                 ReplayAfterDefaultDate = model.ReplayAfter.Value;
 
+            if (model.ReplayBefore.HasValue)
+                ReplayBeforeDefaultDate = model.ReplayBefore.Value;
+
             var replay = new ReplayPublicEventsRequested()
             {
                 Tenant = model.Tenant,
                 RecipientBoundedContext = model.RecipientBoundedContext,
                 RecipientHandlers = model.RecipientHandlers,
                 SourceEventTypeId = model.SourceEventTypeId,
-                ReplayOptions = new ReplayPublicEventsOptions()
+                ReplayOptions = new ReplayEventsOptions()
                 {
-                    After = ReplayAfterDefaultDate
+                    After = ReplayAfterDefaultDate,
+                    Before = ReplayBeforeDefaultDate
                 }
             };
 
@@ -59,5 +60,7 @@ namespace Elders.Cronus.Api.Controllers
         public string SourceEventTypeId { get; set; }
 
         public DateTimeOffset? ReplayAfter { get; set; }
+
+        public DateTimeOffset? ReplayBefore { get; set; }
     }
 }

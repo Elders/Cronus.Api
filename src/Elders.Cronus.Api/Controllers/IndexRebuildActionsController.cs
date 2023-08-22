@@ -10,20 +10,20 @@ namespace Elders.Cronus.Api.Controllers
     public class IndexRebuildActionsController : ApiControllerBase
     {
         private readonly IPublisher<ICommand> _publisher;
-        private readonly CronusContext context;
+        private readonly ICronusContextAccessor contextAccessor;
 
-        public IndexRebuildActionsController(IPublisher<ICommand> publisher, CronusContext context)
+        public IndexRebuildActionsController(IPublisher<ICommand> publisher, ICronusContextAccessor contextAccessor)
         {
             if (publisher is null) throw new ArgumentNullException(nameof(publisher));
 
             _publisher = publisher;
-            this.context = context;
+            this.contextAccessor = contextAccessor;
         }
 
         [HttpPost, Route("Rebuild")]
         public IActionResult Rebuild([FromBody] IndexRequestModel model)
         {
-            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.IndexContractId, context.Tenant));
+            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.IndexContractId, contextAccessor.CronusContext.Tenant));
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
@@ -34,7 +34,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Finalize")]
         public IActionResult Finalize([FromBody] IndexRequestModel model)
         {
-            var command = new FinalizeEventStoreIndexRequest(new EventStoreIndexManagerId(model.IndexContractId, context.Tenant));
+            var command = new FinalizeEventStoreIndexRequest(new EventStoreIndexManagerId(model.IndexContractId, contextAccessor.CronusContext.Tenant));
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());

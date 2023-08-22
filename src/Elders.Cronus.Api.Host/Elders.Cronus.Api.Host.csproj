@@ -16,18 +16,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus.Persistence.Cassandra" Version="8.0.5" />
-    <PackageReference Include="Cronus.Projections.Cassandra" Version="8.0.8" />
-    <PackageReference Include="Cronus.Serialization.NewtonsoftJson" Version="8.0.2" />
+    <PackageReference Include="Cronus.Persistence.Cassandra" Version="9.0.0" />
+    <PackageReference Include="Cronus.Projections.Cassandra" Version="9.0.0" />
+    <PackageReference Include="Cronus.Serialization.NewtonsoftJson" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Elders.Cronus.Api.Playground.Domain\Elders.Cronus.Api.Playground.Domain.csproj" />
     <ProjectReference Include="..\Elders.Cronus.Api\Elders.Cronus.Api.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

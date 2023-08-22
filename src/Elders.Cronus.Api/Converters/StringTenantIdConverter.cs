@@ -24,7 +24,7 @@ namespace Elders.Cronus.Api.Converters
             if (urn.IsBase64String())
                 urn = urn.Base64Decode();
 
-            var urnParsed = AggregateUrn.Parse(urn);
+            var urnParsed = AggregateRootId.Parse(urn);
             return new AggregateRootId(urnParsed.AggregateRootName, urnParsed);
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Elders.Cronus.MessageProcessing;
 using Elders.Cronus.Projections;
@@ -12,17 +11,17 @@ namespace Elders.Cronus.Api
     {
         private readonly IProjectionReader projections;
         private readonly IProjectionStore projectionStore;
-        private readonly CronusContext context;
+        private readonly ICronusContextAccessor contextAccessor;
 
-        public ProjectionExplorer(IProjectionReader projections, IProjectionStore projectionStore, CronusContext context)
+        public ProjectionExplorer(IProjectionReader projections, IProjectionStore projectionStore, ICronusContextAccessor contextAccessor)
         {
             if (ReferenceEquals(null, projections) == true) throw new ArgumentNullException(nameof(projections));
             if (ReferenceEquals(null, projectionStore) == true) throw new ArgumentNullException(nameof(projectionStore));
-            if (ReferenceEquals(null, context) == true) throw new ArgumentNullException(nameof(context));
+            if (ReferenceEquals(null, contextAccessor) == true) throw new ArgumentNullException(nameof(contextAccessor));
 
             this.projections = projections;
             this.projectionStore = projectionStore;
-            this.context = context;
+            this.contextAccessor = contextAccessor;
         }
 
         public async Task<ProjectionDto> ExploreAsync(IBlobId id, Type projectionType)
@@ -63,7 +62,7 @@ namespace Elders.Cronus.Api
 
         private async Task<ProjectionVersion> GetLiveVersion(Type projectionType)
         {
-            var projectionVersionManagerId = new ProjectionVersionManagerId(projectionType.GetContractId(), context.Tenant);
+            var projectionVersionManagerId = new ProjectionVersionManagerId(projectionType.GetContractId(), contextAccessor.CronusContext.Tenant);
             ProjectionDto dto = await ExploreAsync(projectionVersionManagerId, typeof(ProjectionVersionsHandler)).ConfigureAwait(false);
             var state = dto?.State as ProjectionVersionsHandlerState;
 

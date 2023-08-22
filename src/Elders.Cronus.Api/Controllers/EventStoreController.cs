@@ -6,24 +6,28 @@ using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using Elders.Cronus.EventStore.Index;
 using Microsoft.Extensions.Logging;
+using Elders.Cronus.EventStore;
+using Elders.Cronus.MessageProcessing;
 
 namespace Elders.Cronus.Api.Controllers
 {
     [Route("EventStore")]
     public class EventStoreController : ApiControllerBase
     {
-        private readonly EventStoreExplorer _eventExplorer;
+        private readonly EventStoreExplorer eventExplorer;
         private readonly IPublisher<IEvent> publisher;
         private readonly IPublisher<IPublicEvent> publicPublisher;
+        private readonly ICronusContextAccessor cronusContextAccessor;
         private readonly ILogger<EventStoreController> logger;
 
-        public EventStoreController(EventStoreExplorer eventStoreExplorer, IPublisher<IEvent> publisher, IPublisher<IPublicEvent> publicPublisher, ILogger<EventStoreController> logger)
+        public EventStoreController(EventStoreExplorer eventStoreExplorer, IPublisher<IEvent> publisher, IPublisher<IPublicEvent> publicPublisher, ICronusContextAccessor cronusContextAccessor, ILogger<EventStoreController> logger)
         {
             if (eventStoreExplorer is null) throw new ArgumentNullException(nameof(eventStoreExplorer));
 
-            _eventExplorer = eventStoreExplorer;
+            this.eventExplorer = eventStoreExplorer;
             this.publisher = publisher;
             this.publicPublisher = publicPublisher;
+            this.cronusContextAccessor = cronusContextAccessor;
             this.logger = logger;
         }
 
@@ -33,7 +37,7 @@ namespace Elders.Cronus.Api.Controllers
             AggregateDto result = new AggregateDto();
             try
             {
-                result = await _eventExplorer.ExploreAsync(AggregateUrn.Parse(model.Id, Urn.Uber));
+                result = await eventExplorer.ExploreAsync(AggregateRootId.Parse(model.Id));
             }
             catch (Exception ex)
             {
@@ -43,26 +47,38 @@ namespace Elders.Cronus.Api.Controllers
             return new OkObjectResult(new ResponseResult<AggregateDto>(result));
         }
 
-        public class RequestModel
+        [HttpPost, Route("ExploreWithPaging")]
+        public async Task<IActionResult> ExploreWithPaging([FromBody] ExploreEventStoreWithPagingRequestModel model)
         {
-            [Required]
-            public string Id { get; set; }
+            ExploreWithPagingResponse result = ExploreWithPagingResponse.Empty();
+            PagingOptions options = new PagingOptions(model.Take, model.PaginationToken);
+            try
+            {
+                result = await eventExplorer.ExploreEventsWithPagingAsync(AggregateRootId.Parse(model.Id), options);
+
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(ex, () => $"Failed to explore aggregate with paging. Id: {model.Id}");
+            }
+
+            return new OkObjectResult(new ResponseResult<ExploreWithPagingResponse>(result));
         }
 
         [HttpPost, Route("Republish")]
         public async Task<IActionResult> Republish([FromBody] RepublishRequest model)
         {
-            var arId = AggregateUrn.Parse(model.Id, Urn.Uber);
+            var arId = AggregateRootId.Parse(model.Id);
 
             if (model.IsPublicEvent)
             {
-                IPublicEvent @event = await _eventExplorer.FindPublicEventAsync(arId, model.CommitRevision, model.EventPosition);
+                IPublicEvent @event = await eventExplorer.FindPublicEventAsync(arId, model.CommitRevision, model.EventPosition);
 
                 if (@event is null) return BadRequest("Event not found");
 
                 Dictionary<string, string> headers = new Dictionary<string, string>()
                 {
-                    { MessageHeader.AggregateRootId,  arId.Value }
+                    { MessageHeader.AggregateRootId,  arId.Value}
                 };
 
                 publicPublisher.Publish(@event, headers);
@@ -70,9 +86,9 @@ namespace Elders.Cronus.Api.Controllers
             }
             else
             {
-                IEvent @event = await _eventExplorer.FindEventAsync(arId, model.CommitRevision, model.EventPosition);
+                RepublishEventData eventData = await eventExplorer.FindEventAsync(arId, model.CommitRevision, model.EventPosition);
 
-                if (@event is null) return BadRequest("Event not found");
+                if (eventData is null) return BadRequest("Event not found");
 
                 string recipientHandlers = ConcatRecipientHandlers(model.RecipientHandlers);
 
@@ -81,10 +97,57 @@ namespace Elders.Cronus.Api.Controllers
                     { MessageHeader.AggregateRootId,  arId.Value},
                     { MessageHeader.AggregateRootRevision, model.CommitRevision.ToString()},
                     { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
+                    { MessageHeader.AggregateCommitTimestamp, eventData.Timestamp.ToString() },
                     { MessageHeader.RecipientHandlers, string.Join(',', recipientHandlers) }
                 };
 
-                publisher.Publish(@event, headers);
+                publisher.Publish(eventData.EventToRepublish, headers);
+            }
+
+            return new OkObjectResult(new ResponseResult());
+        }
+
+        [HttpPost]
+        [Route("RepublishNew")]
+        public async Task<IActionResult> RepublishNew([FromBody] RepublishRequestNew model)
+        {
+            AggregateRootId id = AggregateRootId.Parse(model.Id);
+            IndexRecord record = new IndexRecord(model.EventContract, id.RawId, model.CommitRevision, model.EventPosition, model.Timestamp);
+            AggregateEventRaw rawEvent = await eventExplorer.GetAggregateEventRaw(record).ConfigureAwait(false);
+
+            byte[] rawData = rawEvent.Data;
+
+            if (rawEvent is null)
+                return BadRequest("Event not found");
+
+            Type eventType = model.EventContract.GetTypeByContract();
+            string tenant = cronusContextAccessor.CronusContext.Tenant;
+
+            if (model.IsPublicEvent)
+            {
+                Dictionary<string, string> headers = new Dictionary<string, string>()
+                {
+                    { MessageHeader.AggregateRootId,  id.Value},
+                    { MessageHeader.AggregateRootRevision, model.CommitRevision.ToString()},
+                    { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
+                    { MessageHeader.AggregateCommitTimestamp, rawEvent.Timestamp.ToString() },
+                };
+
+                publicPublisher.Publish(rawData, eventType, tenant, headers);
+            }
+            else
+            {
+                string recipientHandlers = ConcatRecipientHandlers(model.RecipientHandlers);
+                Dictionary<string, string> headers = new Dictionary<string, string>()
+                {
+                    { MessageHeader.AggregateRootId,  id.Value},
+                    { MessageHeader.AggregateRootRevision, model.CommitRevision.ToString()},
+                    { MessageHeader.AggregateRootEventPosition, model.EventPosition.ToString() },
+                    { MessageHeader.AggregateCommitTimestamp, rawEvent.Timestamp.ToString() },
+                    { MessageHeader.RecipientHandlers, string.Join(',', recipientHandlers) }
+                };
+
+                publisher.Publish(rawData, eventType, tenant, headers);
             }
 
             return new OkObjectResult(new ResponseResult());
@@ -113,6 +176,45 @@ namespace Elders.Cronus.Api.Controllers
             public int EventPosition { get; set; }
 
             public bool IsPublicEvent { get; set; }
+        }
+
+        public class RepublishRequestNew
+        {
+            [Required]
+            public string[] RecipientHandlers { get; set; }
+
+            [Required]
+            public string Id { get; set; }
+
+            [Required]
+            public int CommitRevision { get; set; }
+
+            [Required]
+            public int EventPosition { get; set; }
+
+            public bool IsPublicEvent { get; set; }
+
+            [Required]
+            public long Timestamp { get; set; }
+
+            [Required]
+            public string EventContract { get; set; }
+        }
+
+        public class ExploreEventStoreWithPagingRequestModel
+        {
+            [Required]
+            public string Id { get; set; }
+
+            public byte[] PaginationToken { get; set; }
+
+            public int Take { get; set; }
+        }
+
+        public class RequestModel
+        {
+            [Required]
+            public string Id { get; set; }
         }
     }
 }

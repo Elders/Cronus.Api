@@ -1,5 +1,4 @@
-﻿using Elders.Cronus.Projections.Versioning;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -13,18 +12,16 @@ namespace Elders.Cronus.Api.Controllers
     public class IndexListController : ApiControllerBase
     {
         private readonly ProjectionExplorer _projectionExplorer;
-        private readonly CronusContext context;
-        private readonly ProjectionHasher projectionHasher;
+        private readonly ICronusContextAccessor contextAccessor;
         private readonly TypeContainer<IEventStoreIndex> indicesMeta;
 
-        public IndexListController(ProjectionExplorer projectionExplorer, CronusContext context, ProjectionHasher projectionHasher, TypeContainer<IEventStoreIndex> indicesMeta)
+        public IndexListController(ProjectionExplorer projectionExplorer, ICronusContextAccessor contextAccessor, TypeContainer<IEventStoreIndex> indicesMeta)
         {
             if (projectionExplorer is null) throw new ArgumentNullException(nameof(projectionExplorer));
-            if (context is null) throw new ArgumentNullException(nameof(context));
+            if (contextAccessor is null) throw new ArgumentNullException(nameof(contextAccessor));
 
             _projectionExplorer = projectionExplorer;
-            this.context = context;
-            this.projectionHasher = projectionHasher;
+            this.contextAccessor = contextAccessor;
             this.indicesMeta = indicesMeta;
         }
 
@@ -34,7 +31,7 @@ namespace Elders.Cronus.Api.Controllers
             IndexListDto result = new IndexListDto();
             foreach (var meta in indicesMeta.Items)
             {
-                var id = new EventStoreIndexManagerId(meta.GetContractId(), context.Tenant);
+                var id = new EventStoreIndexManagerId(meta.GetContractId(), contextAccessor.CronusContext.Tenant);
                 var dto = await _projectionExplorer.ExploreAsync(id, typeof(EventStoreIndexStatus));
                 EventStoreIndexStatusState state = dto?.State as EventStoreIndexStatusState;
                 var metaIndex = new IndexMeta()

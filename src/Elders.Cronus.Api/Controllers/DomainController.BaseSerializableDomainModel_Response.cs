@@ -4,10 +4,7 @@
     {
         public class BaseSerializableDomainModel_Response : BaseDomainModel_Response
         {
-            /// <summary>
-            /// Data contract name
-            /// </summary>
-            public string Id { get; set; }
+
         }
     }
 }

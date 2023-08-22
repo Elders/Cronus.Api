@@ -21,8 +21,6 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
     public abstract class CronusApiId<T> : AggregateRootId
         where T : CronusApiId<T>
     {
-        static UberUrnFormatProvider urnFormatProvider = new UberUrnFormatProvider();
-
         protected CronusApiId() { }
 
         protected CronusApiId(string id, string rootName, string tenant) : base(id, rootName, tenant) { }
@@ -31,7 +29,7 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
         {
             var instance = (T)Activator.CreateInstance(typeof(T), true);
 
-            var stringTenantUrn = AggregateRootId.Parse(id, urnFormatProvider);
+            var stringTenantUrn = AggregateRootId.Parse(id);
             var newId = instance.Construct(stringTenantUrn.Id, stringTenantUrn.Tenant);
             if (stringTenantUrn.AggregateRootName == newId.AggregateRootName)
                 return newId;
@@ -46,7 +44,7 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
             {
                 var instance = (T)Activator.CreateInstance(typeof(T), true);
 
-                var stringTenantUrn = AggregateRootId.Parse(id, urnFormatProvider);
+                var stringTenantUrn = AggregateRootId.Parse(id);
                 var newId = instance.Construct(stringTenantUrn.Id, stringTenantUrn.Tenant);
                 if (stringTenantUrn.AggregateRootName == newId.AggregateRootName)
                     result = newId;
@@ -56,7 +54,7 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result = null;
                 return false;
