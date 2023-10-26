@@ -26,16 +26,21 @@ namespace Elders.Cronus.Api
 
         public async Task<ProjectionDto> ExploreAsync(IBlobId id, Type projectionType)
         {
-            return default;
-            //var result = new ProjectionDto();
-            //var projectionResult = await projections.GetAsync(id);
-            //if (projectionResult.IsSuccess)
-            //{
-            //    result.Name = projectionType.Name;
-            //    result.State = projectionResult.Data.State;
-            //}
+            var result = new ProjectionDto();
 
-            //return result;
+            var instanceType = typeof(IProjectionReader);
+            var method = instanceType.GetMethod(nameof(IProjectionReader.GetAsync));
+            var genericMethod = method.MakeGenericMethod(projectionType);
+            dynamic task = genericMethod.Invoke(projections, new[] { id });
+            var projectionResult = await task;
+
+            if (projectionResult.IsSuccess)
+            {
+                result.Name = projectionType.Name;
+                result.State = projectionResult.Data.State;
+            }
+
+            return result;
         }
 
         public async Task<ProjectionDto> ExploreIncludingEventsAsync(IBlobId id, Type projectionType)
