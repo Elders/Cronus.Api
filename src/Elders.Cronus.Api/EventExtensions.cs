@@ -11,12 +11,12 @@ namespace Elders.Cronus.Api
             yield return commit.Event.ToEventDto(commit.TimeStamp);
         }
 
-        public static ProjectionCommitDto ToProjectionDto(this ProjectionCommit commit)
+        public static ProjectionCommitDto ToProjectionDto(this ProjectionCommitPreview commit)
         {
             return new ProjectionCommitDto()
             {
-                Events = new List<EventDto> { commit.Event.ToEventDto(commit.TimeStamp) },
-                Timestamp = DateTime.FromFileTimeUtc(commit.EventOrigin.Timestamp)
+                Events = new List<EventDto> { commit.Event.ToEventDto(commit.Event.Timestamp) },
+                Timestamp = commit.Event.Timestamp
             };
         }
 

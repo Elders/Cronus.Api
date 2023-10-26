@@ -1,4 +1,6 @@
-﻿namespace Elders.Cronus.Api.Playground.Domain.Samples
+﻿using System;
+
+namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
     public class Sample : AggregateRoot<SampleState>
     {
@@ -6,14 +8,14 @@
 
         public Sample(SampleId experienceId, Volume volume)
         {
-            Apply(new SampleCreated(experienceId, volume));
+            Apply(new SampleCreated(experienceId, volume, DateTimeOffset.UtcNow));
         }
 
         public void Reserve()
         {
             if (state.IsNotReserved)
             {
-                var @event = new SampleReserved(state.Id);
+                var @event = new SampleReserved(state.Id, DateTimeOffset.UtcNow);
                 Apply(@event);
             }
         }

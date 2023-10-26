@@ -26,15 +26,16 @@ namespace Elders.Cronus.Api
 
         public async Task<ProjectionDto> ExploreAsync(IBlobId id, Type projectionType)
         {
-            var result = new ProjectionDto();
-            var projectionResult = await projections.GetAsync(id, projectionType);
-            if (projectionResult.IsSuccess)
-            {
-                result.Name = projectionType.Name;
-                result.State = projectionResult.Data.State;
-            }
+            return default;
+            //var result = new ProjectionDto();
+            //var projectionResult = await projections.GetAsync(id);
+            //if (projectionResult.IsSuccess)
+            //{
+            //    result.Name = projectionType.Name;
+            //    result.State = projectionResult.Data.State;
+            //}
 
-            return result;
+            //return result;
         }
 
         public async Task<ProjectionDto> ExploreIncludingEventsAsync(IBlobId id, Type projectionType)
@@ -48,9 +49,9 @@ namespace Elders.Cronus.Api
 
                 if (liveVersion is null == false)
                 {
-                    var projectionCommits = projectionStore.EnumerateProjectionAsync(liveVersion, id).ConfigureAwait(false);
+                    var projectionCommits = projectionStore.LoadAsync(liveVersion, id).ConfigureAwait(false);
 
-                    await foreach (var commit in projectionCommits)
+                    await foreach (ProjectionCommitPreview commit in projectionCommits)
                     {
                         result.Commits.Add(commit.ToProjectionDto());
                     }

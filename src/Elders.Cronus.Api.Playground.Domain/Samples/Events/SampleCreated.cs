@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
@@ -7,10 +8,11 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
     {
         SampleCreated() { }
 
-        public SampleCreated(SampleId id, Volume volume)
+        public SampleCreated(SampleId id, Volume volume, DateTimeOffset timestamp)
         {
             Id = id;
             Volume = volume;
+            Timestamp = timestamp;
         }
 
         [DataMember(Order = 1)]
@@ -18,5 +20,8 @@ namespace Elders.Cronus.Api.Playground.Domain.Samples
 
         [DataMember(Order = 2)]
         public Volume Volume { get; private set; }
+
+        [DataMember(Order = 3)]
+        public DateTimeOffset Timestamp { get; private set; }
     }
 }
