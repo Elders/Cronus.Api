@@ -43,7 +43,7 @@ namespace Elders.Cronus.Api
 
         public async Task<ExploreWithPagingResponse> ExploreEventsWithPagingAsync(AggregateRootId id, PagingOptions options)
         {
-            LoadAggregateRawEventsWithPagingResult loadResult = await eventStore.LoadWithPagingDescendingAsync(id, options);
+            LoadAggregateRawEventsWithPagingResult loadResult = await eventStore.LoadWithPagingAsync(id, options);
             List<RawEventDto> result = loadResult.RawEvents.Select(x => GetRawEventDto(x)).ToList();
 
             return new ExploreWithPagingResponse(result, loadResult.Options.PaginationToken);
