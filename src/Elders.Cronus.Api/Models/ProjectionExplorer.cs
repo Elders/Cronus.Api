@@ -27,7 +27,13 @@ namespace Elders.Cronus.Api
         public async Task<ProjectionDto> ExploreAsync(IBlobId id, Type projectionType)
         {
             var result = new ProjectionDto();
-            var projectionResult = await projections.GetAsync(id, projectionType);
+
+            var instanceType = typeof(IProjectionReader);
+            var method = instanceType.GetMethod(nameof(IProjectionReader.GetAsync));
+            var genericMethod = method.MakeGenericMethod(projectionType);
+            dynamic task = genericMethod.Invoke(projections, new[] { id });
+            var projectionResult = await task;
+
             if (projectionResult.IsSuccess)
             {
                 result.Name = projectionType.Name;
@@ -48,9 +54,9 @@ namespace Elders.Cronus.Api
 
                 if (liveVersion is null == false)
                 {
-                    var projectionCommits = projectionStore.EnumerateProjectionAsync(liveVersion, id).ConfigureAwait(false);
+                    var projectionCommits = projectionStore.LoadAsync(liveVersion, id).ConfigureAwait(false);
 
-                    await foreach (var commit in projectionCommits)
+                    await foreach (ProjectionCommitPreview commit in projectionCommits)
                     {
                         result.Commits.Add(commit.ToProjectionDto());
                     }
