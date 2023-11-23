@@ -4,7 +4,6 @@ using Elders.Cronus.Projections.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 
 namespace Elders.Cronus.Api.Controllers
 {
