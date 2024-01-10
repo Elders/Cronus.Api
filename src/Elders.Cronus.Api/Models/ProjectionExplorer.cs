@@ -51,7 +51,7 @@ namespace Elders.Cronus.Api
                 {
                     var projectionCommits = projectionStore.LoadAsync(liveVersion, id).ConfigureAwait(false);
 
-                    await foreach (ProjectionCommitPreview commit in projectionCommits)
+                    await foreach (ProjectionCommit commit in projectionCommits)
                     {
                         result.Commits.Add(commit.ToProjectionDto());
                     }

@@ -6,12 +6,7 @@ namespace Elders.Cronus.Api
 {
     public static class EventExtensions
     {
-        public static IEnumerable<EventDto> ToEventsDto(this ProjectionCommit commit)
-        {
-            yield return commit.Event.ToEventDto(commit.TimeStamp);
-        }
-
-        public static ProjectionCommitDto ToProjectionDto(this ProjectionCommitPreview commit)
+        public static ProjectionCommitDto ToProjectionDto(this ProjectionCommit commit)
         {
             return new ProjectionCommitDto()
             {
