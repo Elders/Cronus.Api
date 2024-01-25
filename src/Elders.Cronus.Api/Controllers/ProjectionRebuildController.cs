@@ -1,9 +1,9 @@
-﻿using Elders.Cronus.EventStore.Players;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Elders.Cronus.EventStore.Players;
 using Elders.Cronus.MessageProcessing;
 using Elders.Cronus.Projections.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -35,12 +35,12 @@ namespace Elders.Cronus.Api.Controllers
             if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue && model.PlayerOptions.MaxDegreeOfParallelism.Value > 0 && model.PlayerOptions.MaxDegreeOfParallelism.Value < 100)
                 replayEventsOptions.MaxDegreeOfParallelism = model.PlayerOptions.MaxDegreeOfParallelism.Value;
 
-            var command = new RebuildProjectionCommand(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
+            var command = new FixProjectionVersion(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
 
-            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(ReplayProjection)}'"));
+            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(FixProjectionVersion)}'"));
         }
 
         [HttpPost, Route("Replay")]
@@ -57,12 +57,12 @@ namespace Elders.Cronus.Api.Controllers
             if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue && model.PlayerOptions.MaxDegreeOfParallelism.Value > 0 && model.PlayerOptions.MaxDegreeOfParallelism.Value < 100)
                 replayEventsOptions.MaxDegreeOfParallelism = model.PlayerOptions.MaxDegreeOfParallelism.Value;
 
-            var command = new ReplayProjection(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
+            var command = new NewProjectionVersion(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
 
-            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(RebuildProjectionCommand)}'"));
+            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(NewProjectionVersion)}'"));
         }
 
         public class RequestModel
