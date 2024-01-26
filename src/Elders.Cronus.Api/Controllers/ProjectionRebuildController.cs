@@ -32,7 +32,7 @@ namespace Elders.Cronus.Api.Controllers
             };
 
             // This if statement should go inside the ReplayEventsOptions somehow
-            if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue && model.PlayerOptions.MaxDegreeOfParallelism.Value > 0 && model.PlayerOptions.MaxDegreeOfParallelism.Value < 100)
+            if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue)
                 replayEventsOptions.MaxDegreeOfParallelism = model.PlayerOptions.MaxDegreeOfParallelism.Value;
 
             var command = new FixProjectionVersion(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
@@ -54,7 +54,7 @@ namespace Elders.Cronus.Api.Controllers
             };
 
             // This if statement should go inside the ReplayEventsOptions somehow
-            if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue && model.PlayerOptions.MaxDegreeOfParallelism.Value > 0 && model.PlayerOptions.MaxDegreeOfParallelism.Value < 100)
+            if (model.PlayerOptions.MaxDegreeOfParallelism.HasValue)
                 replayEventsOptions.MaxDegreeOfParallelism = model.PlayerOptions.MaxDegreeOfParallelism.Value;
 
             var command = new NewProjectionVersion(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
@@ -87,6 +87,7 @@ namespace Elders.Cronus.Api.Controllers
 
             public DateTimeOffset? Before { get; set; }
 
+            [Range(1, 10_000)]
             public int? MaxDegreeOfParallelism { get; set; }
         }
     }
