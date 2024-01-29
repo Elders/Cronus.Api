@@ -118,8 +118,8 @@ namespace Elders.Cronus.Api.Controllers
                     Name = meta.Name,
                     Events = meta
                                 .GetInterfaces()
-                                    .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEventHandler<>))
-                                    .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(IEvent).IsAssignableFrom(x))
+                                    .Where(x => x.IsGenericType && (x.GetGenericTypeDefinition() == typeof(IEventHandler<>) || x.GetGenericTypeDefinition() == typeof(IPublicEventHandler<>)))
+                                    .SelectMany(ff => ff.GetGenericArguments()).Where(x => typeof(IEvent).IsAssignableFrom(x) || typeof(IPublicEvent).IsAssignableFrom(x))
                                     .Select(x =>
                                         new Event_Response
                                         {
