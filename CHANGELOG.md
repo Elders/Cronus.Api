@@ -1,3 +1,10 @@
+# [9.1.0](https://github.com/Elders/Cronus.Api/compare/v9.0.1...v9.1.0) (2024-01-29)
+
+
+### Features
+
+* Request port events from other BCs ([4a88733](https://github.com/Elders/Cronus.Api/commit/4a887331e23f5480de19ea9470a32ebed0bd4766))
+
 ## [9.0.1](https://github.com/Elders/Cronus.Api/compare/v9.0.0...v9.0.1) (2023-11-08)
 
 
