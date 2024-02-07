@@ -1,13 +1,13 @@
-﻿using Elders.Cronus.Discoveries;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Threading.Tasks;
+using Elders.Cronus.Discoveries;
+using Elders.Cronus.MessageProcessing;
 using Elders.Cronus.Projections;
 using Elders.Cronus.Projections.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Elders.Cronus.MessageProcessing;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -47,7 +47,7 @@ namespace Elders.Cronus.Api.Controllers
                 {
                     ProjectionContractId = meta.GetContractId(),
                     ProjectionName = meta.Name,
-                    IsReplayable = typeof(IAmEventSourcedProjection).IsAssignableFrom(meta)
+                    IsReplayable = typeof(IAmEventSourcedProjection).IsAssignableFrom(meta) || typeof(IProjectionDefinition).IsAssignableFrom(meta)
                 };
                 if (ReferenceEquals(null, state))
                 {
