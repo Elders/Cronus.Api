@@ -23,7 +23,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Rebuild")]
         public IActionResult Rebuild([FromBody] IndexRequestModel model)
         {
-            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.IndexContractId, contextAccessor.CronusContext.Tenant));
+            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.IndexContractId, contextAccessor.CronusContext.Tenant), model.MaxDegreeOfParallelism);
 
             if (_publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
@@ -46,6 +46,8 @@ namespace Elders.Cronus.Api.Controllers
         {
             [Required]
             public string IndexContractId { get; set; }
+
+            public int? MaxDegreeOfParallelism { get; set; }
         }
     }
 }
