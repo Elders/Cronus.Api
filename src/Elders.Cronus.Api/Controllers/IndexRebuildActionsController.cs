@@ -1,8 +1,8 @@
-﻿using Elders.Cronus.EventStore.Index;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Elders.Cronus.EventStore.Index;
 using Elders.Cronus.MessageProcessing;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Elders.Cronus.Api.Controllers
 {
