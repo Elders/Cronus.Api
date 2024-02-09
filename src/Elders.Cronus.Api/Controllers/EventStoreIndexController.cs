@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Elders.Cronus.EventStore.Index;
-using System.Collections.Generic;
-using Elders.Cronus.MessageProcessing;
-using Elders.Cronus.EventStore.Index.Handlers;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Elders.Cronus.EventStore.Index;
+using Elders.Cronus.EventStore.Index.Handlers;
+using Elders.Cronus.MessageProcessing;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -49,7 +49,7 @@ namespace Elders.Cronus.Api.Controllers
         [HttpPost, Route("Rebuild")]
         public IActionResult Rebuild([FromBody] RebuildIndexRequestModel model)
         {
-            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.Id, contextAccessor.CronusContext.Tenant));
+            var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.Id, contextAccessor.CronusContext.Tenant), model.MaxDegreeOfParallelism);
 
             if (publisher.Publish(command))
                 return new OkObjectResult(new ResponseResult());
@@ -75,6 +75,8 @@ namespace Elders.Cronus.Api.Controllers
         {
             [Required]
             public string Id { get; set; }
+
+            public int? MaxDegreeOfParallelism { get; set; }
         }
     }
 }
