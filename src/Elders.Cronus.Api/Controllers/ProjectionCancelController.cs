@@ -22,13 +22,26 @@ namespace Elders.Cronus.Api.Controllers
             this.contextAccessor = contextAccessor;
         }
 
+        [HttpPost, Route("Pause")]
+        public IActionResult Pause([FromBody] ProjcetionRequestModel model)
+        {
+            var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);
+            var command = new PauseProjectionVersion(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), version);
+
+            if (_publisher.Publish(command))
+                return new OkObjectResult(new ResponseResult());
+
+            return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(NewProjectionVersion)}'"));
+        }
+
         [HttpPost, Route("Cancel")]
         public IActionResult Cancel([FromBody] ProjcetionRequestModel model)
         {
             var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);
             var command = new CancelProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), version, model.Reason ?? "Canceled by user");
 
-            if (_publisher.Publish(command)) return new OkObjectResult(new ResponseResult());
+            if (_publisher.Publish(command))
+                return new OkObjectResult(new ResponseResult());
 
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(CancelProjectionVersionRequest)}'"));
         }
@@ -39,7 +52,8 @@ namespace Elders.Cronus.Api.Controllers
             var version = new Projections.ProjectionVersion(model.ProjectionContractId, ProjectionStatus.Create(model.Version.Status), model.Version.Revision, model.Version.Hash);
             var command = new FinalizeProjectionVersionRequest(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), version);
 
-            if (_publisher.Publish(command)) return new OkObjectResult(new ResponseResult());
+            if (_publisher.Publish(command))
+                return new OkObjectResult(new ResponseResult());
 
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(FinalizeProjectionVersionRequest)}'"));
         }

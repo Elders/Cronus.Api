@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Elders.Cronus.EventStore.Players;
 using Elders.Cronus.MessageProcessing;
+using Elders.Cronus.Projections;
 using Elders.Cronus.Projections.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,8 +22,8 @@ namespace Elders.Cronus.Api.Controllers
             this.contextAccessor = contextAccessor;
         }
 
-        [HttpPost, Route("Rebuild")]
-        public IActionResult Rebuild([FromBody] RequestModel model)
+        [HttpPost, Route("Fix"), Route("Rebuild")]
+        public IActionResult Fix([FromBody] RequestModel model)
         {
             model.PlayerOptions ??= new PlayerOptions();
             var replayEventsOptions = new ReplayEventsOptions()
@@ -43,8 +44,8 @@ namespace Elders.Cronus.Api.Controllers
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(FixProjectionVersion)}'"));
         }
 
-        [HttpPost, Route("Replay")]
-        public IActionResult Replay([FromBody] RequestModel model)
+        [HttpPost, Route("New"), Route("Replay")]
+        public IActionResult New([FromBody] RequestModel model)
         {
             model.PlayerOptions ??= new PlayerOptions();
             var replayEventsOptions = new ReplayEventsOptions()

@@ -10,27 +10,17 @@ namespace Elders.Cronus.Api
         {
             return new ProjectionCommitDto()
             {
-                Events = new List<EventDto> { commit.Event.ToEventDto(commit.Event.Timestamp) },
+                Events = new List<EventDto> { commit.Event.ToProjectionEventDto(commit.Event.Timestamp) },
                 Timestamp = commit.Event.Timestamp
             };
         }
 
-        public static EventDto ToEventDto(this IEvent @event, DateTimeOffset dateTimeOffset)
+        public static EventDto ToProjectionEventDto(this IEvent @event, DateTimeOffset dateTimeOffset)
         {
-            return @event.ToEventDto(dateTimeOffset, 1);
+            return @event.ToEventDto(dateTimeOffset, -1); // WHY -1 ?!? => Projections do not use positions to order events but TS.
         }
 
         public static IEnumerable<EventDto> ToEventDto(this IEnumerable<IEvent> events, DateTimeOffset timestamp)
-        {
-            int eventPosition = 0;
-            foreach (IEvent @event in events)
-            {
-                yield return @event.ToEventDto(timestamp, eventPosition);
-                eventPosition++;
-            }
-        }
-
-        public static IEnumerable<EventDto> ToEventDto(this List<IEvent> events, DateTimeOffset timestamp)
         {
             int eventPosition = 0;
             foreach (IEvent @event in events)
@@ -63,7 +53,7 @@ namespace Elders.Cronus.Api
                     EventName = entityEvent.Event.GetType().Name,
                     EventData = entityEvent.Event,
                     IsEntityEvent = true,
-                    EventPosition = 1,
+                    EventPosition = 1, // Why 1?
                     IsPublicEvent = typeof(IPublicEvent).IsAssignableFrom(@event.GetType()),
                     Timestamp = timestamp
                 };
