@@ -24,23 +24,30 @@ namespace Elders.Cronus.Api
             this.contextAccessor = contextAccessor;
         }
 
-        public async Task<ProjectionDto> ExploreAsync(IBlobId id, Type projectionType)
+        public async Task<ProjectionDto> ExploreAsync(IBlobId id, Type projectionType, DateTimeOffset? asOf = null)
         {
             var result = new ProjectionDto();
-            ReadResult<IProjectionDefinition> projectionResult = await projections.GetAsync(id, projectionType);
+            ReadResult<IProjectionDefinition> projectionResult;
+            if (asOf.HasValue)
+            {
+                projectionResult = await projections.GetAsOfAsync(id, projectionType, asOf.Value).ConfigureAwait(false);
+            }
+            else
+            {
+                projectionResult = await projections.GetAsync(id, projectionType).ConfigureAwait(false);
+            }
 
             if (projectionResult.IsSuccess)
             {
                 result.Name = projectionType.Name;
                 result.State = projectionResult.Data.State;
             }
-
             return result;
         }
 
-        public async Task<ProjectionDto> ExploreIncludingEventsAsync(IBlobId id, Type projectionType)
+        public async Task<ProjectionDto> ExploreIncludingEventsAsync(IBlobId id, Type projectionType, DateTimeOffset? asOf)
         {
-            ProjectionDto result = await ExploreAsync(id, projectionType).ConfigureAwait(false);
+            ProjectionDto result = await ExploreAsync(id, projectionType, asOf).ConfigureAwait(false);
 
             bool projectionHasState = result.State is null == false;
             if (projectionHasState)

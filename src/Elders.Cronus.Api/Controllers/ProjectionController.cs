@@ -21,7 +21,7 @@ namespace Elders.Cronus.Api.Controllers
         public async Task<IActionResult> ExploreAsync([FromQuery] RequestModel model)
         {
             var projectionType = model.ProjectionName.GetTypeByContract();
-            ProjectionDto result = await _projectionExplorer.ExploreAsync(new Urn(model.Id), projectionType).ConfigureAwait(false);
+            ProjectionDto result = await _projectionExplorer.ExploreAsync(new Urn(model.Id), projectionType, model.AsOf).ConfigureAwait(false);
             return new OkObjectResult(new ResponseResult<ProjectionDto>(result));
         }
 
@@ -29,7 +29,7 @@ namespace Elders.Cronus.Api.Controllers
         public async Task<IActionResult> ExploreEvents([FromQuery] RequestModel model)
         {
             var projectionType = model.ProjectionName.GetTypeByContract();
-            ProjectionDto result = await _projectionExplorer.ExploreIncludingEventsAsync(new Urn(model.Id), projectionType).ConfigureAwait(false);
+            ProjectionDto result = await _projectionExplorer.ExploreIncludingEventsAsync(new Urn(model.Id), projectionType, model.AsOf).ConfigureAwait(false);
             result.State = null;
 
             return new OkObjectResult(new ResponseResult<ProjectionDto>(result));
@@ -42,6 +42,8 @@ namespace Elders.Cronus.Api.Controllers
 
             [Required]
             public string ProjectionName { get; set; }
+
+            public DateTimeOffset? AsOf { get; set; }
         }
     }
 }
