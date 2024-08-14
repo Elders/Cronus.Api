@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Elders.Cronus.EventStore;
 using Elders.Cronus.MessageProcessing;
 using Elders.Cronus.Projections;
+using Elders.Cronus.Projections.Cassandra;
 using Elders.Cronus.Projections.Versioning;
 
 namespace Elders.Cronus.Api
@@ -54,14 +56,26 @@ namespace Elders.Cronus.Api
             {
                 ProjectionVersion liveVersion = await GetLiveVersion(projectionType);
 
+                ProjectionStream stream = ProjectionStream.Empty();
                 if (liveVersion is null == false)
                 {
-                    var projectionCommits = projectionStore.LoadAsync(liveVersion, id).ConfigureAwait(false);
 
-                    await foreach (ProjectionCommit commit in projectionCommits)
+                    ProjectionQueryOptions options = new ProjectionQueryOptions(id, liveVersion, new PagingOptions(1000, null, Order.Ascending));
+                    ProjectionsOperator @operator = new ProjectionsOperator()
                     {
-                        result.Commits.Add(commit.ToProjectionDto());
-                    }
+                        OnProjectionStreamLoadedAsync = projectionStream =>
+                        {
+                            stream = projectionStream;
+                            return Task.CompletedTask;
+                        }
+                    };
+
+                    await projectionStore.EnumerateProjectionsAsync(@operator, options).ConfigureAwait(false);
+                }
+
+                foreach (IEvent @event in stream)
+                {
+                    result.Commits.Add(@event.ToProjectionDto());
                 }
             }
 
