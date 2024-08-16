@@ -59,8 +59,16 @@ namespace Elders.Cronus.Api
                 ProjectionStream stream = ProjectionStream.Empty();
                 if (liveVersion is null == false)
                 {
+                    ProjectionQueryOptions options;
+                    if (asOf.HasValue)
+                    {
+                        options = new ProjectionQueryOptions(id, liveVersion, asOf.Value);
+                    }
+                    else
+                    {
+                        options = new ProjectionQueryOptions(id, liveVersion, new PagingOptions(1000, null, Order.Ascending));
+                    }
 
-                    ProjectionQueryOptions options = new ProjectionQueryOptions(id, liveVersion, new PagingOptions(1000, null, Order.Ascending));
                     ProjectionsOperator @operator = new ProjectionsOperator()
                     {
                         OnProjectionStreamLoadedAsync = projectionStream =>
