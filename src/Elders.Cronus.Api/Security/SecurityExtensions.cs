@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 
 namespace Elders.Cronus.Api.Security
 {
@@ -41,13 +42,8 @@ namespace Elders.Cronus.Api.Security
 
         private static IServiceCollection AddMvcSecurity(this IServiceCollection services, IConfiguration configuration)
         {
-            authenticationEnabled = configuration.GetSection(JwtSectionName).Exists();
-
             services.AddMvc(o =>
             {
-                if (authenticationEnabled)
-                    o.Conventions.Add(new AddAuthorizeFiltersControllerConvention(Scope.Global));
-
                 HttpNoContentOutputFormatter noContentFormatter = o.OutputFormatters.OfType<HttpNoContentOutputFormatter>().FirstOrDefault();
                 if (noContentFormatter != null)
                 {
@@ -67,14 +63,6 @@ namespace Elders.Cronus.Api.Security
             {
                 List<TenantJWTOptions> tenantConfigurations = new List<TenantJWTOptions>();
                 configuration.GetRequiredSection(JwtSectionName).Bind(tenantConfigurations);
-
-                services.AddAuthorization(opt =>
-                {
-                    foreach (TenantJWTOptions tenantConfig in tenantConfigurations)
-                    {
-                        opt.AddPolicy(Scope.Global, policy => policy.Requirements.Add(new HasScopeRequirement(Scope.Global, tenantConfig.JwtBearerOptions.Authority)));
-                    }
-                });
 
                 AuthenticationBuilder builder = services.AddAuthentication(opt =>
                 {
@@ -108,7 +96,7 @@ namespace Elders.Cronus.Api.Security
                     };
                 });
 
-                services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+                services.AddAuthorization();
             }
 
             return services;
@@ -121,6 +109,16 @@ namespace Elders.Cronus.Api.Security
                 o.Authority = jwtBearerOptions.Authority;
                 o.Audience = jwtBearerOptions.Audience;
                 o.RequireHttpsMetadata = jwtBearerOptions.RequireHttpsMetadata;
+                o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidIssuer = jwtBearerOptions.Authority,
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromSeconds(5),
+                    ValidateIssuerSigningKey = true,
+                    ValidAudience = jwtBearerOptions.Audience,
+                    ValidateAudience = string.IsNullOrEmpty(jwtBearerOptions.Audience) == false
+                };
             });
         }
     }
