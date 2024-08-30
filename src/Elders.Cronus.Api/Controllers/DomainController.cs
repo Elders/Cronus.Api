@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Elders.Cronus.Discoveries;
-using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Elders.Cronus.Projections;
-using Microsoft.Extensions.Options;
+using Elders.Cronus.Discoveries;
 using Elders.Cronus.Multitenancy;
+using Elders.Cronus.Projections;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -244,11 +244,12 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         const string AggregateRootId_MethodName_New = "New";
+        delegate AggregateRootId New(ReadOnlySpan<char> tenant, ReadOnlySpan<char> id);
         private string ExtractSample(Type aggregateIdType, string tenant)
         {
             MethodInfo[] typeStaticMethods = aggregateIdType.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
             MethodInfo methodFactoryInfo = typeStaticMethods.Where(found => found.GetParameters().Length == 2 && found.Name == AggregateRootId_MethodName_New).Single();
-            Urn idInstance = (Urn)methodFactoryInfo.Invoke(null, new[] { tenant, "" });
+            AggregateRootId idInstance = methodFactoryInfo.CreateDelegate<New>(null)(tenant.AsSpan(), "id");
 
             return idInstance.Value;
         }
