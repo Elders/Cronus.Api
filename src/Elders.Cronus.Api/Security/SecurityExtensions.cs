@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace Elders.Cronus.Api.Security
 {
@@ -50,7 +51,10 @@ namespace Elders.Cronus.Api.Security
                     noContentFormatter.TreatNullValueAsNoContent = false;
                 }
             })
-           .AddNewtonsoftJson();
+           .AddNewtonsoftJson(options =>
+           {
+               options.SerializerSettings.Converters.Add(new ReadOnlyMemoryJsonConverter<byte>());
+           });
 
             return services;
         }
@@ -127,5 +131,19 @@ namespace Elders.Cronus.Api.Security
     {
         public string Name { get; set; }
         public JwtBearerOptions JwtBearerOptions { get; set; }
+    }
+
+    sealed class ReadOnlyMemoryJsonConverter<T> : JsonConverter<ReadOnlyMemory<T>>
+    {
+        public override ReadOnlyMemory<T> ReadJson(JsonReader reader, Type objectType, ReadOnlyMemory<T> existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            var buffer = serializer.Deserialize<T[]>(reader);
+            return new ReadOnlyMemory<T>(buffer);
+        }
+
+        public override void WriteJson(JsonWriter writer, ReadOnlyMemory<T> value, JsonSerializer serializer)
+        {
+            serializer.Serialize(writer, value.ToArray());
+        }
     }
 }
