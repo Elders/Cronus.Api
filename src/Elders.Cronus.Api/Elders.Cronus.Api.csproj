@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <PackageReference Include="Cronus" Version="11.0.0-preview.5" />
-    <PackageReference Include="Cronus.AspNetCore" Version="11.0.0-preview.2" />
+    <PackageReference Include="Cronus.AspNetCore" Version="11.0.0-preview.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.8" />
   </ItemGroup>
