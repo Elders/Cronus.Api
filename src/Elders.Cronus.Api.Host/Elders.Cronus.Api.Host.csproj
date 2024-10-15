@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,9 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus.Persistence.Cassandra" Version="11.0.0-preview.2" />
-    <PackageReference Include="Cronus.Projections.Cassandra" Version="11.0.0-preview.2" />
-    <PackageReference Include="Cronus.Serialization.NewtonsoftJson" Version="11.0.0-preview.2" />
+    <PackageReference Include="Cronus.Persistence.Cassandra" Version="11.0.0-preview.4" />
+    <PackageReference Include="Cronus.Projections.Cassandra" Version="11.0.0-preview.3" />
+    <PackageReference Include="Cronus.Serialization.NewtonsoftJson" Version="11.0.0-preview.3" />
   </ItemGroup>
 
   <ItemGroup>

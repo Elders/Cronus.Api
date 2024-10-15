@@ -79,7 +79,7 @@ namespace Elders.Cronus.Api.Controllers
             return handlerCandidate.IsAbstract == false && handlerCandidate.IsInterface == false && typeof(T).IsAssignableFrom(handlerCandidate);
         }
 
-        static Type AggregateRootIdType = typeof(AggregateRootId<>);
+        static Type AggregateRootIdType = typeof(AggregateRootId);
         private bool IsAggregateRootIdGeneric(Type candidate)
         {
             if (candidate.BaseType is null || candidate.BaseType.IsGenericType == false)
