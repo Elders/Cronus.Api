@@ -29,7 +29,8 @@ namespace Elders.Cronus.Api
             if (builder != null)
                 builder(cronusApiBuilder);
 
-            logger.Info(() => $"Starting Cronus API.{Environment.NewLine}If you are not able to access it using DNS or public IP make sure that you have firewall rule and urlacl setup on the hosting machine.{Environment.NewLine}Example firewall: netsh advfirewall firewall add rule name=\"Cronus\" dir=in action=allow localport=7477 protocol=tcp{Environment.NewLine}Example urlacl: netsh http add urlacl url=http://[::]:7477 user=Everyone listen=yes");
+            if (logger.IsEnabled(LogLevel.Information))
+                logger.LogInformation($"Starting Cronus API.{Environment.NewLine}If you are not able to access it using DNS or public IP make sure that you have firewall rule and urlacl setup on the hosting machine.{Environment.NewLine}Example firewall: netsh advfirewall firewall add rule name=\"Cronus\" dir=in action=allow localport=7477 protocol=tcp{Environment.NewLine}Example urlacl: netsh http add urlacl url=http://[::]:7477 user=Everyone listen=yes");
 
             var hostBuilder = Host
                 .CreateDefaultBuilder()
