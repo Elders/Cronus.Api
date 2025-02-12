@@ -4,18 +4,18 @@ using System.Runtime.Serialization;
 namespace Elders.Cronus.Api.Playground.Domain.Samples
 {
     [DataContract(Name = "12f54e09-f844-4613-b472-6c6cf4a37c71")]
-    public class Volume : ValueObject<Volume>
+    public record class Volume
     {
         Volume() { }
 
-        public Volume(int ammount)
+        public Volume(int amount)
         {
-            if (ammount <= 0) throw new ArgumentException("Volume ammount must be possitive.");
+            if (amount <= 0) throw new ArgumentException("Volume amount must be possitive.");
 
-            Ammount = ammount;
+            Amount = amount;
         }
 
         [DataMember(Order = 1)]
-        public int Ammount { get; private set; }
+        public int Amount { get; private set; }
     }
 }

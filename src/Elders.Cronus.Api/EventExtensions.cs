@@ -15,6 +15,15 @@ namespace Elders.Cronus.Api
             };
         }
 
+        public static ProjectionCommitDto ToProjectionDto(this IEvent @event)
+        {
+            return new ProjectionCommitDto()
+            {
+                Events = new List<EventDto> { @event.ToProjectionEventDto(@event.Timestamp) },
+                Timestamp = @event.Timestamp
+            };
+        }
+
         public static EventDto ToProjectionEventDto(this IEvent @event, DateTimeOffset dateTimeOffset)
         {
             return @event.ToEventDto(dateTimeOffset, -1); // WHY -1 ?!? => Projections do not use positions to order events but TS.

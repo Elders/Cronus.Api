@@ -41,7 +41,7 @@ namespace Elders.Cronus.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.ErrorException(ex, () => $"Failed to explore aggregate for {model.Id}");
+                logger.LogError(ex, "Failed to explore aggregate for {modelId}", model.Id);
             }
 
             return new OkObjectResult(new ResponseResult<AggregateDto>(result));
@@ -59,7 +59,7 @@ namespace Elders.Cronus.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.ErrorException(ex, () => $"Failed to explore aggregate with paging. Id: {model.Id}");
+                logger.LogError(ex, "Failed to explore aggregate with paging. Id: {modelId}", model.Id);
             }
 
             return new OkObjectResult(new ResponseResult<ExploreWithPagingResponse>(result));

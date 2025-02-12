@@ -25,7 +25,7 @@ namespace Elders.Cronus.Api.Converters
                 urn = urn.Base64Decode();
 
             var urnParsed = AggregateRootId.Parse(urn);
-            return new AggregateRootId(urnParsed.AggregateRootName, urnParsed);
+            return new AggregateRootId(urnParsed.NID, urnParsed.AggregateRootName, urnParsed.NSS);
         }
 
         public override object GetValue(AggregateRootId instance)
