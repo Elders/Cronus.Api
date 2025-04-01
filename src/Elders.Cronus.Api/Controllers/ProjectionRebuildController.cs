@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using Elders.Cronus.EventStore.Players;
 using Elders.Cronus.MessageProcessing;
-using Elders.Cronus.Projections;
 using Elders.Cronus.Projections.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
