@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System;
 using System.ComponentModel.DataAnnotations;
+using Elders.Cronus.DangerZone;
 
 namespace Elders.Cronus.Api.Controllers
 {
