@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 using Elders.Cronus.EventStore.Index;
 using Elders.Cronus.MessageProcessing;
 using Microsoft.AspNetCore.Mvc;
@@ -20,23 +22,33 @@ namespace Elders.Cronus.Api.Controllers
             this.contextAccessor = contextAccessor;
         }
 
+        /// <summary>
+        /// Issues a <see cref="RebuildIndexCommand"/> for the specified event-store index.
+        /// </summary>
+        /// <param name="model">The request describing the index contract id and optional max degree of parallelism.</param>
+        /// <param name="cancellationToken">Propagates notification that the request should be canceled (bound to <see cref="HttpContext.RequestAborted"/>).</param>
         [HttpPost, Route("Rebuild")]
-        public IActionResult Rebuild([FromBody] IndexRequestModel model)
+        public async Task<IActionResult> Rebuild([FromBody] IndexRequestModel model, CancellationToken cancellationToken)
         {
             var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.IndexContractId, contextAccessor.CronusContext.Tenant), model.MaxDegreeOfParallelism);
 
-            if (_publisher.Publish(command))
+            if (await _publisher.PublishAsync(command, cancellationToken: cancellationToken))
                 return new OkObjectResult(new ResponseResult());
 
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(FinalizeEventStoreIndexRequest)}'"));
         }
 
+        /// <summary>
+        /// Issues a <see cref="FinalizeEventStoreIndexRequest"/> for the specified event-store index.
+        /// </summary>
+        /// <param name="model">The request describing the index contract id.</param>
+        /// <param name="cancellationToken">Propagates notification that the request should be canceled (bound to <see cref="HttpContext.RequestAborted"/>).</param>
         [HttpPost, Route("Finalize")]
-        public IActionResult Finalize([FromBody] IndexRequestModel model)
+        public async Task<IActionResult> Finalize([FromBody] IndexRequestModel model, CancellationToken cancellationToken)
         {
             var command = new FinalizeEventStoreIndexRequest(new EventStoreIndexManagerId(model.IndexContractId, contextAccessor.CronusContext.Tenant));
 
-            if (_publisher.Publish(command))
+            if (await _publisher.PublishAsync(command, cancellationToken: cancellationToken))
                 return new OkObjectResult(new ResponseResult());
 
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(FinalizeEventStoreIndexRequest)}'"));

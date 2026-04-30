@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 using System.Threading.Tasks;
 using System;
 using static Elders.Cronus.Api.EventStoreExplorer;
@@ -65,8 +66,13 @@ namespace Elders.Cronus.Api.Controllers
             return new OkObjectResult(new ResponseResult<ExploreWithPagingResponse>(result));
         }
 
+        /// <summary>
+        /// Republishes a previously stored event by fetching it from the event store and dispatching it through the appropriate publisher.
+        /// </summary>
+        /// <param name="model">The republish request describing the aggregate root, revision, position and whether the event is public.</param>
+        /// <param name="cancellationToken">Propagates notification that the request should be canceled (bound to <see cref="HttpContext.RequestAborted"/>).</param>
         [HttpPost, Route("Republish")]
-        public async Task<IActionResult> Republish([FromBody] RepublishRequest model)
+        public async Task<IActionResult> Republish([FromBody] RepublishRequest model, CancellationToken cancellationToken)
         {
             var arId = AggregateRootId.Parse(model.Id);
 
@@ -81,7 +87,7 @@ namespace Elders.Cronus.Api.Controllers
                     { MessageHeader.AggregateRootId,  arId.Value}
                 };
 
-                publicPublisher.Publish(@event, headers);
+                await publicPublisher.PublishAsync(@event, headers, cancellationToken);
 
             }
             else
@@ -101,15 +107,20 @@ namespace Elders.Cronus.Api.Controllers
                     { MessageHeader.RecipientHandlers, string.Join(',', recipientHandlers) }
                 };
 
-                publisher.Publish(eventData.EventToRepublish, headers);
+                await publisher.PublishAsync(eventData.EventToRepublish, headers, cancellationToken);
             }
 
             return new OkObjectResult(new ResponseResult());
         }
 
+        /// <summary>
+        /// Republishes a previously stored event using the raw-bytes overload, preserving the original payload format and metadata.
+        /// </summary>
+        /// <param name="model">The republish request describing the aggregate, revision, position, timestamp and event contract.</param>
+        /// <param name="cancellationToken">Propagates notification that the request should be canceled (bound to <see cref="HttpContext.RequestAborted"/>).</param>
         [HttpPost]
         [Route("RepublishNew")]
-        public async Task<IActionResult> RepublishNew([FromBody] RepublishRequestNew model)
+        public async Task<IActionResult> RepublishNew([FromBody] RepublishRequestNew model, CancellationToken cancellationToken)
         {
             AggregateRootId id = AggregateRootId.Parse(model.Id);
             IndexRecord record = new IndexRecord(model.EventContract, id.RawId, model.CommitRevision, model.EventPosition, model.Timestamp);
@@ -133,7 +144,7 @@ namespace Elders.Cronus.Api.Controllers
                     { MessageHeader.AggregateCommitTimestamp, rawEvent.Timestamp.ToString() },
                 };
 
-                publicPublisher.Publish(rawData, eventType, tenant, headers);
+                await publicPublisher.PublishAsync(rawData, eventType, tenant, headers, cancellationToken);
             }
             else
             {
@@ -147,7 +158,7 @@ namespace Elders.Cronus.Api.Controllers
                     { MessageHeader.RecipientHandlers, string.Join(',', recipientHandlers) }
                 };
 
-                publisher.Publish(rawData, eventType, tenant, headers);
+                await publisher.PublishAsync(rawData, eventType, tenant, headers, cancellationToken);
             }
 
             return new OkObjectResult(new ResponseResult());

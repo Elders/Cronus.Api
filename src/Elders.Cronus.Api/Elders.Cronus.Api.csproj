@@ -34,8 +34,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronus" Version="11.2.5" />
-    <PackageReference Include="Cronus.AspNetCore" Version="11.0.0" />
+    <PackageReference Include="Cronus" Version="12.0.0-preview.1" />
+    <PackageReference Include="Cronus.AspNetCore" Version="12.0.0-preview.1" />
+    <PackageReference Include="Cronus.DomainModeling" Version="12.0.0-preview.8" />
   </ItemGroup>
 
   <ItemGroup>

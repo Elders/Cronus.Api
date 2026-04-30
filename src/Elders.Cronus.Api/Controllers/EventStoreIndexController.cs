@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using Elders.Cronus.EventStore.Index;
 using Elders.Cronus.EventStore.Index.Handlers;
@@ -46,12 +47,17 @@ namespace Elders.Cronus.Api.Controllers
             return new OkObjectResult(new ResponseResult<List<MetaResponseModel>>(result));
         }
 
+        /// <summary>
+        /// Issues a <see cref="RebuildIndexCommand"/> for the specified event-store index.
+        /// </summary>
+        /// <param name="model">The rebuild request describing the index contract id and optional max degree of parallelism.</param>
+        /// <param name="cancellationToken">Propagates notification that the request should be canceled (bound to <see cref="HttpContext.RequestAborted"/>).</param>
         [HttpPost, Route("Rebuild")]
-        public IActionResult Rebuild([FromBody] RebuildIndexRequestModel model)
+        public async Task<IActionResult> Rebuild([FromBody] RebuildIndexRequestModel model, CancellationToken cancellationToken)
         {
             var command = new RebuildIndexCommand(new EventStoreIndexManagerId(model.Id, contextAccessor.CronusContext.Tenant), model.MaxDegreeOfParallelism);
 
-            if (publisher.Publish(command))
+            if (await publisher.PublishAsync(command, cancellationToken: cancellationToken))
                 return new OkObjectResult(new ResponseResult());
 
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(RebuildIndexCommand)}'"));

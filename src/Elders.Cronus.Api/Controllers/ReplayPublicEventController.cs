@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Elders.Cronus.Api.Controllers
 {
@@ -16,8 +18,13 @@ namespace Elders.Cronus.Api.Controllers
             this.signalPublisher = signalPublisher;
         }
 
+        /// <summary>
+        /// Issues a <see cref="ReplayPublicEventsRequested"/> system signal to replay public events to the specified handlers.
+        /// </summary>
+        /// <param name="model">The replay request describing tenant, recipient bounded context, recipient handlers, source event type and replay window.</param>
+        /// <param name="cancellationToken">Propagates notification that the request should be canceled (bound to <see cref="HttpContext.RequestAborted"/>).</param>
         [HttpPost, Route("ReplayPublicEvent")]
-        public IActionResult ReplayPublicEvent([FromBody] ReplayPublicEventRequest model)
+        public async Task<IActionResult> ReplayPublicEvent([FromBody] ReplayPublicEventRequest model, CancellationToken cancellationToken)
         {
             if (model.ReplayAfter.HasValue)
                 ReplayAfterDefaultDate = model.ReplayAfter.Value;
@@ -38,7 +45,7 @@ namespace Elders.Cronus.Api.Controllers
                 }
             };
 
-            if (signalPublisher.Publish(replay))
+            if (await signalPublisher.PublishAsync(replay, cancellationToken: cancellationToken))
                 return new OkObjectResult(new ResponseResult());
 
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish '{nameof(ReplayPublicEventsRequested)}'"));

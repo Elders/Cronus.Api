@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 using Elders.Cronus.EventStore.Players;
 using Elders.Cronus.MessageProcessing;
 using Elders.Cronus.Projections.Versioning;
@@ -21,8 +23,13 @@ namespace Elders.Cronus.Api.Controllers
             this.contextAccessor = contextAccessor;
         }
 
+        /// <summary>
+        /// Fixes a projection by replaying events through the existing version.
+        /// </summary>
+        /// <param name="model">The request describing the projection contract id, hash, and replay player options.</param>
+        /// <param name="cancellationToken">Propagates notification that the request should be canceled (bound to <see cref="HttpContext.RequestAborted"/>).</param>
         [HttpPost, Route("Fix"), Route("Rebuild")]
-        public IActionResult Fix([FromBody] RequestModel model)
+        public async Task<IActionResult> Fix([FromBody] RequestModel model, CancellationToken cancellationToken)
         {
             model.PlayerOptions ??= new PlayerOptions();
             var replayEventsOptions = new ReplayEventsOptions()
@@ -37,14 +44,19 @@ namespace Elders.Cronus.Api.Controllers
 
             var command = new FixProjectionVersion(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
 
-            if (_publisher.Publish(command))
+            if (await _publisher.PublishAsync(command, cancellationToken: cancellationToken))
                 return new OkObjectResult(new ResponseResult());
 
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(FixProjectionVersion)}'"));
         }
 
+        /// <summary>
+        /// Provisions a new projection version and replays events into it.
+        /// </summary>
+        /// <param name="model">The request describing the projection contract id, hash, and replay player options.</param>
+        /// <param name="cancellationToken">Propagates notification that the request should be canceled (bound to <see cref="HttpContext.RequestAborted"/>).</param>
         [HttpPost, Route("New"), Route("Replay")]
-        public IActionResult New([FromBody] RequestModel model)
+        public async Task<IActionResult> New([FromBody] RequestModel model, CancellationToken cancellationToken)
         {
             model.PlayerOptions ??= new PlayerOptions();
             var replayEventsOptions = new ReplayEventsOptions()
@@ -59,7 +71,7 @@ namespace Elders.Cronus.Api.Controllers
 
             var command = new NewProjectionVersion(new ProjectionVersionManagerId(model.ProjectionContractId, contextAccessor.CronusContext.Tenant), model.Hash, replayEventsOptions);
 
-            if (_publisher.Publish(command))
+            if (await _publisher.PublishAsync(command, cancellationToken: cancellationToken))
                 return new OkObjectResult(new ResponseResult());
 
             return new BadRequestObjectResult(new ResponseResult<string>($"Unable to publish command '{nameof(NewProjectionVersion)}'"));
