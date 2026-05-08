@@ -244,12 +244,12 @@ namespace Elders.Cronus.Api.Controllers
         }
 
         const string AggregateRootId_MethodName_New = "New";
-        delegate AggregateRootId New(ReadOnlySpan<char> tenant, ReadOnlySpan<char> id);
+        delegate AggregateRootId New(string tenant, string id);
         private string ExtractSample(Type aggregateIdType, string tenant)
         {
             MethodInfo[] typeStaticMethods = aggregateIdType.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
             MethodInfo methodFactoryInfo = typeStaticMethods.Where(found => found.GetParameters().Length == 2 && found.Name == AggregateRootId_MethodName_New).Single();
-            AggregateRootId idInstance = methodFactoryInfo.CreateDelegate<New>(null)(tenant.AsSpan(), "id");
+            AggregateRootId idInstance = methodFactoryInfo.CreateDelegate<New>(null)(tenant, "id");
 
             return idInstance.Value;
         }
